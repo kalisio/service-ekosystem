@@ -2,8 +2,8 @@ const express = require('@feathersjs/express')
 
 module.exports = {
   apiPath: '/api',
-  host: 'localhost',
-  port: 3030,
+  host: process.env.HOSTNAME || 'localhost',
+  port: process.env.PORT || 8187,
   public: './public/',
   origins: [
     'http://localhost:3030'

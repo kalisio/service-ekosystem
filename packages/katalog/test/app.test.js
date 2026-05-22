@@ -48,7 +48,7 @@ describe('Katalog application tests', () => {
   })
 
   it('populates the catalog service with layer files on startup', async () => {
-    const catalogService = app.service('catalog')
+    const catalogService = app.getService('catalog')
 
     const layers = await catalogService.find({ query: {}, paginate: false })
     const layerArray = Array.isArray(layers) ? layers : layers.data

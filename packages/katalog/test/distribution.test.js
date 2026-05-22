@@ -17,7 +17,7 @@ describe('Distribution tests', () => {
     consumer.configure(distribution({
       key: 'kalisio',
       services: () => false,
-      remoteServices: (service) => service.key === 'kalisio',
+      remoteServices: (service) => service.key === 'katalog',
       middlewares: { after: express.errorHandler() }
     }))
   }, 60000)
@@ -29,7 +29,7 @@ describe('Distribution tests', () => {
 
   it('discovers the catalog service remotely', { timeout: 35000 }, async () => {
     const catalog = await vi.waitFor(
-      () => consumer.service('catalog'),
+      () => consumer.service('api/catalog'),
       { timeout: 30000, interval: 500 }
     )
     expect(catalog).toBeDefined()
@@ -38,25 +38,25 @@ describe('Distribution tests', () => {
   // Layers are stored in MongoDB — total reflects the real DB count
   describe('Layers', () => {
     it('returns OverlayLayers', async () => {
-      const res = await consumer.service('catalog').find({ query: { type: 'OverlayLayer' } })
+      const res = await consumer.service('api/catalog').find({ query: { type: 'OverlayLayer' } })
       expect(Array.isArray(res.data)).toBe(true)
       expect(res.total).toBeGreaterThan(0)
     })
 
     it('returns BaseLayers', async () => {
-      const res = await consumer.service('catalog').find({ query: { type: 'BaseLayer' } })
+      const res = await consumer.service('api/catalog').find({ query: { type: 'BaseLayer' } })
       expect(Array.isArray(res.data)).toBe(true)
       expect(res.total).toBeGreaterThan(0)
     })
 
     it('returns TerrainLayers', async () => {
-      const res = await consumer.service('catalog').find({ query: { type: 'TerrainLayer' } })
+      const res = await consumer.service('api/catalog').find({ query: { type: 'TerrainLayer' } })
       expect(Array.isArray(res.data)).toBe(true)
       expect(res.total).toBeGreaterThan(0)
     })
 
     it('excludes Category and Sublegend from default find', async () => {
-      const res = await consumer.service('catalog').find({ query: {} })
+      const res = await consumer.service('api/catalog').find({ query: {} })
       expect(Array.isArray(res.data)).toBe(true)
       const hasCategory = res.data.some(item => item.type === 'Category')
       const hasSublegend = res.data.some(item => item.type === 'Sublegend')
@@ -65,7 +65,7 @@ describe('Distribution tests', () => {
     })
 
     it('can filter layers by tags', async () => {
-      const res = await consumer.service('catalog').find({ query: { type: 'OverlayLayer', tags: { $in: ['administrative'] } } })
+      const res = await consumer.service('api/catalog').find({ query: { type: 'OverlayLayer', tags: { $in: ['administrative'] } } })
       expect(Array.isArray(res.data)).toBe(true)
       expect(res.total).toBeGreaterThan(0)
       expect(res.data.every(layer => layer.tags.includes('administrative'))).toBe(true)
@@ -76,14 +76,14 @@ describe('Distribution tests', () => {
   // They are NOT stored in MongoDB so total stays 0 — only data.length reflects them
   describe('Categories', () => {
     it('returns categories when queried by type', async () => {
-      const res = await consumer.service('catalog').find({ query: { type: 'Category' } })
+      const res = await consumer.service('api/catalog').find({ query: { type: 'Category' } })
       expect(Array.isArray(res.data)).toBe(true)
       expect(res.data.length).toBeGreaterThan(0)
       expect(res.data.every(item => item.type === 'Category')).toBe(true)
     })
 
     it('every category has a name and icon', async () => {
-      const res = await consumer.service('catalog').find({ query: { type: 'Category' } })
+      const res = await consumer.service('api/catalog').find({ query: { type: 'Category' } })
       expect(res.data.every(cat => cat.name && cat.icon)).toBe(true)
     })
   })
@@ -91,7 +91,7 @@ describe('Distribution tests', () => {
   // Sublegends come from config files, injected by the getDefaultSublegends hook
   describe('Sublegends', () => {
     it('returns sublegends when queried by type', async () => {
-      const res = await consumer.service('catalog').find({ query: { type: 'Sublegend' } })
+      const res = await consumer.service('api/catalog').find({ query: { type: 'Sublegend' } })
       expect(Array.isArray(res.data)).toBe(true)
       expect(res.data.length).toBeGreaterThan(0)
       expect(res.data.every(item => item.type === 'Sublegend')).toBe(true)
@@ -103,13 +103,13 @@ describe('Distribution tests', () => {
     let createdId
 
     beforeAll(async () => {
-      const doc = await consumer.service('catalog').create({ name: 'test-layer', type: 'OverlayLayer' })
+      const doc = await consumer.service('api/catalog').create({ name: 'test-layer', type: 'OverlayLayer' })
       createdId = doc._id.toString()
     })
 
     afterAll(async () => {
       if (createdId) {
-        await consumer.service('catalog').remove(createdId).catch(() => {})
+        await consumer.service('api/catalog').remove(createdId).catch(() => {})
       }
     })
 
@@ -118,20 +118,20 @@ describe('Distribution tests', () => {
     })
 
     it('gets the document by id', async () => {
-      const doc = await consumer.service('catalog').get(createdId)
+      const doc = await consumer.service('api/catalog').get(createdId)
       expect(doc._id.toString()).toBe(createdId)
       expect(doc.name).toBe('test-layer')
     })
 
     it('patches the document', async () => {
-      const doc = await consumer.service('catalog').patch(createdId, { name: 'test-layer-patched' })
+      const doc = await consumer.service('api/catalog').patch(createdId, { name: 'test-layer-patched' })
       expect(doc.name).toBe('test-layer-patched')
     })
 
     it('removes the document', async () => {
-      const doc = await consumer.service('catalog').remove(createdId)
+      const doc = await consumer.service('api/catalog').remove(createdId)
       expect(doc._id.toString()).toBe(createdId)
-      await expect(consumer.service('catalog').get(createdId)).rejects.toThrow()
+      await expect(consumer.service('api/catalog').get(createdId)).rejects.toThrow()
       createdId = null
     })
   })
