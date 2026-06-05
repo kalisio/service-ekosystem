@@ -6,26 +6,30 @@ module.exports = function ({ wmtsUrl, tmsUrl, wmsUrl, wcsUrl, k2Url, s3Url }) {
       fr: {
         Layers: {
           POPULATION: 'Population',
-          POPULATION_DESCRIPTION: 'Nombre d\'individus'
+          POPULATION_DESCRIPTION: "Nombre d'individus - Edition 2021 (Filosofi)",
+          POPULATION_DESCRIPTION_1km: "Nombre d'individus par km² - Edition 2021 (Filosofi)",
+          POPULATION_DESCRIPTION_200m: "Nombre d'individus par 200m² - Edition 2021 (Filosofi)"
         }
       },
       en: {
         Layers: {
           POPULATION: 'Population',
-          POPULATION_DESCRIPTION: 'Number of persons'
+          POPULATION_DESCRIPTION: 'Number of persons – 2021 edition (Filosofi)',
+          POPULATION_DESCRIPTION_1km: 'Number of persons – 2021 edition (Filosofi)',
+          POPULATION_DESCRIPTION_200m: 'Number of persons – 2021 edition (Filosofi)'
         }
       }
     },
     tags: [
-      'demography', 'administrative'
+      'demography', 'population'
     ],
     iconUrl: '',
     icon: 'las la-th',
-    attribution: 'Population © INSEE – données disponibles sous <a href="https://catalogue-donnees.insee.fr/">licence ouverte</a>',
+    attribution: '© <a href="https://insee.fr">INSEE</a>',
     legend: [{
       type: 'symbols',
-      label: 'Layers.POPULATION_DESCRIPTION',
-      maxZoom: 12,
+      label: 'Layers.POPULATION_DESCRIPTION_1km',
+      maxZoom: 13,
       content: {
         symbols: [
           { symbol: { 'media/KShape': { options: { shape: 'rect', color: '#FFFFB2' } } }, label: '1 - 400' },
@@ -39,7 +43,7 @@ module.exports = function ({ wmtsUrl, tmsUrl, wmsUrl, wcsUrl, k2Url, s3Url }) {
       }
     }, {
       type: 'symbols',
-      label: 'Layers.POPULATION_DESCRIPTION',
+      label: 'Layers.POPULATION_DESCRIPTION_200m',
       minZoom: 13,
       content: {
         symbols: [
@@ -70,26 +74,28 @@ module.exports = function ({ wmtsUrl, tmsUrl, wmsUrl, wcsUrl, k2Url, s3Url }) {
       fr: {
         Layers: {
           POPULATION_DENSITY: 'Densité de population',
-          POPULATION_DENSITY_DESCRIPTION: 'Nombre d\'individus par Km²'
+          POPULATION_DENSITY_DESCRIPTION: "Densité de population - nombre d'individus par km² - Edition 2021 (Filosofi)",
+          POPULATION_DENSITY_DESCRIPTION_200: "Densité de population - nombre d'individus par 200m² - Edition 2021 (Filosofi)"
         }
       },
       en: {
         Layers: {
           POPULATION_DENSITY: 'Population density',
-          POPULATION_DENSITY_DESCRIPTION: 'Number of persons per Km²'
+          POPULATION_DENSITY_DESCRIPTION: 'Population density - number of habitants per km² - 2021 edition (Filosofi)',
+          POPULATION_DENSITY_DESCRIPTION_200: 'Population density - number of habitants per 200m² - 2021 edition (Filosofi)'
         }
       }
     },
     tags: [
-      'demography', 'administrative'
+      'demography', 'population'
     ],
     iconUrl: '',
     icon: 'las la-th',
-    attribution: '© INSEE – données disponibles sous <a href="https://catalogue-donnees.insee.fr/">licence ouverte</a>',
+    attribution: '© <a href="https://insee.fr">INSEE</a>',
     legend: [{
       type: 'symbols',
       label: 'Layers.POPULATION_DENSITY_DESCRIPTION',
-      maxZoom: 12,
+      maxZoom: 13,
       content: {
         symbols: [
           { symbol: { 'media/KShape': { options: { shape: 'rect', color: '#FFFFB2' } } }, label: '1 - 400' },
@@ -103,7 +109,7 @@ module.exports = function ({ wmtsUrl, tmsUrl, wmsUrl, wcsUrl, k2Url, s3Url }) {
       }
     }, {
       type: 'symbols',
-      label: 'Layers.POPULATION_DENSITY_DESCRIPTION',
+      label: 'Layers.POPULATION_DENSITY_DESCRIPTION_200',
       minZoom: 13,
       content: {
         symbols: [
@@ -127,7 +133,59 @@ module.exports = function ({ wmtsUrl, tmsUrl, wmsUrl, wcsUrl, k2Url, s3Url }) {
       maxNativeZoom: 14,
       tms: true
     }
-  }, {
+  },
+  {
+    name: 'Layers.POPULATION_DENSITY_EUROPE',
+    description: 'Layers.POPULATION_DENSITY_EUROPE_DESCRIPTION',
+    i18n: {
+      fr: {
+        Layers: {
+          POPULATION_DENSITY_EUROPE: 'Densité de population Europe',
+          POPULATION_DENSITY_EUROPE_DESCRIPTION: "Densité de population - Europe - nombre d'individus par km² - Edition 2021 (Eurostats)"
+        }
+      },
+      en: {
+        Layers: {
+          POPULATION_DENSITY_EUROPE: 'Population density Europe',
+          POPULATION_DENSITY_EUROPE_DESCRIPTION: 'Population density - Europe - number of habitants per km² - 2021 edition (Eurostats)'
+        }
+      }
+    },
+    tags: [
+      'demography', 'population'
+    ],
+    iconUrl: '',
+    icon: 'las la-th',
+    attribution: '© <a href="https://ec.europa.eu/eurostat/web/gisco/geodata/population-distribution/population-grids">Eurostats</a>',
+    legend: [{
+      type: 'symbols',
+      label: 'Layers.POPULATION_DENSITY_EUROPE_DESCRIPTION',
+      minZoom: 6,
+      content: {
+        symbols: [
+          { symbol: { 'media/KShape': { options: { shape: 'rect', color: '#FFFFB2' } } }, label: '1 - 400' },
+          { symbol: { 'media/KShape': { options: { shape: 'rect', color: '#FDD976' } } }, label: '400 - 1500' },
+          { symbol: { 'media/KShape': { options: { shape: 'rect', color: '#FEB554' } } }, label: '1500 - 3500' },
+          { symbol: { 'media/KShape': { options: { shape: 'rect', color: '#FD8D3C' } } }, label: '3500 - 7000' },
+          { symbol: { 'media/KShape': { options: { shape: 'rect', color: '#FC4E2A' } } }, label: '7000 - 12000' },
+          { symbol: { 'media/KShape': { options: { shape: 'rect', color: '#E31A1C' } } }, label: '12000 - 25000' },
+          { symbol: { 'media/KShape': { options: { shape: 'rect', color: '#B10026' } } }, label: '25000 - 110000' }
+        ]
+      }
+    }],
+    type: 'OverlayLayer',
+    leaflet: {
+      type: 'tileLayer',
+      source: `${tmsUrl}/population-density-europe@GLOBAL_WEBMERCATOR/{z}/{x}/{y}.png`,
+      opacity: 0.5,
+      minZoom: 10,
+      maxZoom: 21,
+      minNativeZoom: 10,
+      maxNativeZoom: 11,
+      tms: true
+    }
+  },
+  {
     name: 'Layers.POPULATION_DETAILS',
     description: 'Layers.POPULATION_DETAILS_DESCRIPTION',
     i18n: {
@@ -145,7 +203,7 @@ module.exports = function ({ wmtsUrl, tmsUrl, wmsUrl, wcsUrl, k2Url, s3Url }) {
       }
     },
     tags: [
-      'demography', 'administrative'
+      'demography', 'population'
     ],
     iconUrl: '',
     icon: 'las la-male',
