@@ -5,7 +5,8 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "node --conditions=development --watch src/index.js",
+    "build": "DOCKER_BUILDKIT=1 docker build -t geokoder:${TAG:-latest} -f ./Dockerfile ../..",
+    "dev": "node --conditions=development --watch src/main.js",
     "lint": "standard --fix",
     "test": "vitest run --coverage"
   },
