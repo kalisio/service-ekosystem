@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { createServer } from './main.js'
+import { createServer } from './server.js'
 
 async function run () {
   try {

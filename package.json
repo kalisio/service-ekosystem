@@ -5,8 +5,9 @@
   "packageManager": "pnpm@10.1.0",
   "scripts": {
     "build": "pnpm -r build",
-    "build:katalog": "pnpm --filter @kalisio/katalog build",
+    "build:service-geokoder": "pnpm --filter @kalisio/service-geokoder build",
     "build:service-kapture": "pnpm --filter @kalisio/service-kapture build",
+    "build:service-katalog": "pnpm --filter @kalisio/service-katalog build",
     "changeset": "changeset",
     "changeset:release": "pnpm build && changeset publish",
     "changeset:status": "changeset status",
@@ -15,16 +16,16 @@
     "docs:dev": "pnpm --filter docs run dev",
     "inspect": "pnpm knip",
     "lint": "pnpm -r lint",
-    "lint:katalog": "pnpm --filter @kalisio/katalog lint",
-    "lint:service-kapture": "pnpm --filter @kalisio/service-kapture lint",
     "lint:service-geokoder": "pnpm --filter @kalisio/service-geokoder lint",
+    "lint:service-kapture": "pnpm --filter @kalisio/service-kapture lint",
+    "lint:service-katalog": "pnpm --filter @kalisio/service-katalog lint",
     "posttest": "pnpm lcov-result-merger --prepend-source-files 'packages/*/coverage/lcov.info' coverage/lcov.info",
     "prepare": "husky",
     "pretest": "mkdir -p coverage",
     "test": "pnpm -r test",
-    "test:katalog": "pnpm --filter @kalisio/katalog test",
+    "test:service-geokoder": "pnpm --filter @kalisio/service-geokoder test",
     "test:service-kapture": "pnpm --filter @kalisio/service-kapture test",
-    "test:service-geokoder": "pnpm --filter @kalisio/service-geokoder lint"
+    "test:service-katalog": "pnpm --filter @kalisio/service-katalog test"
   },
   "keywords": [
     "kalisio"
@@ -64,9 +65,6 @@
     "onlyBuiltDependencies": [
       "sqlite3",
       "@mapbox/vtquery",
-      "puppeteer"
-    ],
-    "ignoredBuiltDependencies": [
       "puppeteer"
     ]
   }

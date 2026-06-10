@@ -3,30 +3,19 @@
   "description": "Lightweight geocoder service providing forward and reverse geocoding",
   "version": "0.0.0",
   "type": "module",
-  "exports": {
-    ".": {
-      "development": "./src/index.js",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs"
-    }
-  },
-  "files": [
-    "dist"
-  ],
-  "standard": {
-    "ignore": [
-      "dist/**"
-    ]
-  },
   "scripts": {
-    "build": "vite build",
-    "postbuild": "publint",
-    "dev": "node --watch src/index.js",
+    "dev": "node --conditions=development --watch src/index.js",
     "lint": "standard --fix",
     "test": "vitest run --coverage"
   },
   "keywords": [
-    "kalisio"
+    "kalisio",
+    "geokoder",
+    "geocoder",
+    "openstreetmap",
+    "ban",
+    "mbtiles",
+    "kano"
   ],
   "author": {
     "name": "Kalisio",
@@ -72,14 +61,5 @@
   },
   "engines": {
     "node": ">=20"
-  },
-  "publishConfig": {
-    "access": "public",
-    "exports": {
-      ".": {
-        "import": "./dist/index.mjs",
-        "require": "./dist/index.cjs"
-      }
-    }
   }
 }
