@@ -4,6 +4,7 @@
   "version": "0.0.0",
   "packageManager": "pnpm@10.1.0",
   "type": "module",
+  "private": true,
   "scripts": {
     "dev": "node --conditions=development --watch src/main.js",
     "lint": "standard --fix",
