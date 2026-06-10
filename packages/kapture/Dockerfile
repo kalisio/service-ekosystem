@@ -8,33 +8,27 @@
 ARG NODE_VERSION=20
 ARG DEBIAN_VERSION=bookworm
 
-# Keep Puppeteer's Chromium inside the app tree so it survives the multi-stage copy
-ARG PUPPETEER_CACHE_DIR=/app/.cache/puppeteer
-
 FROM node:${NODE_VERSION}-${DEBIAN_VERSION}-slim AS builder
-
-ARG PUPPETEER_CACHE_DIR
-ENV PUPPETEER_CACHE_DIR=${PUPPETEER_CACHE_DIR}
 
 WORKDIR /app
 
 RUN corepack enable && corepack prepare pnpm@10.1.0 --activate
 
+# The runtime image provides Chrome via apt, so skip Puppeteer's Chromium download
+ENV PUPPETEER_SKIP_DOWNLOAD=true
+
 COPY pnpm-workspace.yaml pnpm-lock.yaml package.json ./
 COPY packages/kapture/package.json ./packages/kapture/
 
-# Do NOT use --ignore-scripts: Puppeteer's postinstall must download Chromium
-RUN pnpm install --frozen-lockfile --filter @kalisio/kapture --prod
+RUN pnpm install --frozen-lockfile --ignore-scripts --filter @kalisio/kapture --prod
 
 COPY packages/kapture/src ./packages/kapture/src
 
 FROM node:${NODE_VERSION}-${DEBIAN_VERSION}-slim
 LABEL maintainer="Kalisio <contact@kalisio.xyz>"
 
-ARG PUPPETEER_CACHE_DIR
-ENV PUPPETEER_CACHE_DIR=${PUPPETEER_CACHE_DIR}
-
-# System libraries required to run Chromium/Puppeteer (+ fonts and a headless X server)
+# Install Google Chrome — provides the browser and all its system libraries —
+# plus fonts and a headless X server for Puppeteer
 RUN export DEBIAN_FRONTEND=noninteractive \
   && apt-get update \
   && apt-get install -y wget gnupg \
@@ -56,6 +50,10 @@ RUN export DEBIAN_FRONTEND=noninteractive \
     libxext-dev \
     --no-install-recommends \
   && rm -rf /var/lib/apt/lists/*
+
+# Use the system Chrome installed above instead of a Puppeteer-managed browser
+ENV PUPPETEER_SKIP_DOWNLOAD=true
+ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome-stable
 
 COPY --from=builder --chown=node:node /app /app
 
