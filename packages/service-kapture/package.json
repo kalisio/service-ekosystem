@@ -44,12 +44,8 @@
     "winston-daily-rotate-file": "catalog:"
   },
   "devDependencies": {
-    "@vitest/coverage-v8": "catalog:",
-    "cross-env": "catalog:",
     "pixelmatch": "catalog:",
-    "pngjs": "catalog:",
-    "standard": "catalog:",
-    "vitest": "catalog:"
+    "pngjs": "catalog:"
   },
   "engines": {
     "node": ">=20"
