@@ -16,11 +16,14 @@ NODE_VER=20
 MONGO_VER="7"
 CI_STEP_NAME="Run tests"
 RUN_SONAR=false
-while getopts "n:sr:" option; do
+while getopts "m:n:sr:" option; do
     case $option in
+        m) # defines mongo version
+            MONGO_VER=$OPTARG
+            ;;
         n) # defines node version
             NODE_VER=$OPTARG
-             ;;
+            ;;
         s) # publish code coverage
             RUN_SONAR=true
             ;;
@@ -34,6 +37,7 @@ while getopts "n:sr:" option; do
     esac
 done
 
+
 ## Init workspace
 ##
 
@@ -42,4 +46,39 @@ done
 ## Run tests
 ##
 
-run_lib_tests "$ROOT_DIR" "$RUN_SONAR" "$NODE_VER" "$MONGO_VER"
+#run_lib_tests "$ROOT_DIR" "$RUN_SONAR" "$NODE_VER" "$MONGO_VER"
+
+## Run tests
+##
+
+init_lib_infos "$ROOT_DIR"
+
+LIB=$(get_lib_name)
+VERSION=$(get_lib_version)
+
+echo "About to run tests for $LIB v$VERSION..."
+
+## Start mongo
+##
+
+if [ -n "$MONGO_VER" ]; then
+    begin_group "Starting mongo $MONGO_VER ..."
+
+    use_mongo "$MONGO_VER"
+    k-mongo
+
+    end_group "Starting mongo $MONGO_VER ..."
+fi
+
+## Run tests
+##
+
+use_node "$NODE_VER"
+pnpm test
+
+
+## Run SonarQube analysis and publish code quality & coverage reports
+##
+if [ "$RUN_SONAR" = true ]; then
+    cd "$ROOT_DIR" && sonar-scanner
+fi
