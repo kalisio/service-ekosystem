@@ -72,8 +72,8 @@ describe(`suite:${suite}`, () => {
     const res = await capture(body, 'invalid')
     expect(res.status).toBe(422)
     const resMessage = await res.json()
-    expect(resMessage.message === 'Invdalid "GeoJSON" format')
-    expect(resMessage.errors.length).toBe(2)
+    expect(resMessage.message).toBe('Invalid "GeoJSON"')
+    expect(resMessage.errors.length).toBe(1)
   })
 
   it('handle invalid width body', async () => {

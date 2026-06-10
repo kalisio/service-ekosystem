@@ -49,6 +49,7 @@ Thumbs.db
 coverage/
 .nyc_output/
 jest-*.json
+run/
 
 # Husky hooks
 .husky/_

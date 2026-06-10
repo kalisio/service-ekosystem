@@ -3,24 +3,9 @@
   "description": "Capture Kano Snapshots as a Service",
   "version": "1.6.0",
   "type": "module",
-  "exports": {
-    ".": {
-      "development": "./src/index.js",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs"
-    }
-  },
-  "files": [
-    "dist"
-  ],
-  "standard": {
-    "ignore": [
-      "dist/**"
-    ]
-  },
+  "private": true,
   "scripts": {
-    "build": "vite build",
-    "postbuild": "publint",
+    "dev": "node --watch src/bin.js",
     "lint": "standard --fix",
     "test": "vitest run --coverage"
   },
@@ -28,7 +13,8 @@
     "kalisio"
   ],
   "author": {
-    "name": "KALISIO <contact@kalisio.com>",
+    "name": "Kalisio",
+    "email": "contact@kalisio.com",
     "url": "https://github.com/kalisio"
   },
   "contributors": [],
@@ -42,17 +28,30 @@
     "url": "https://github.com/kalisio/services-ekosystem/issues"
   },
   "homepage": "https://github.com/kalisio/services-ekosystem/tree/master/packages/kapture",
-  "dependencies": {},
-  "devDependencies": {},
+  "dependencies": {
+    "@kalisio/common-geospatial": "catalog:",
+    "cors": "catalog:",
+    "debug": "catalog:",
+    "express": "catalog:",
+    "lodash": "catalog:",
+    "lodash-es": "catalog:",
+    "mathjs": "catalog:",
+    "moment": "catalog:",
+    "puppeteer": "catalog:",
+    "sanitize-html": "catalog:",
+    "sift": "catalog:",
+    "winston": "catalog:",
+    "winston-daily-rotate-file": "catalog:"
+  },
+  "devDependencies": {
+    "@vitest/coverage-v8": "catalog:",
+    "cross-env": "catalog:",
+    "pixelmatch": "catalog:",
+    "pngjs": "catalog:",
+    "standard": "catalog:",
+    "vitest": "catalog:"
+  },
   "engines": {
     "node": ">=20"
-  },
-  "publishConfig": {
-    "exports": {
-      ".": {
-        "import": "./dist/index.mjs",
-        "require": "./dist/index.cjs"
-      }
-    }
   }
 }

@@ -1,6 +1,6 @@
 import makeDebug from 'debug'
 import _ from 'lodash'
-import geojsonhint from '@mapbox/geojsonhint'
+import { validateGeoJson as validateGeoJsonStructure } from '@kalisio/common-geospatial'
 
 const debug = makeDebug('kapture:utils:geojson')
 
@@ -20,10 +20,20 @@ export function validateGeoJson (content) {
       delete content.crs
     }
   }
-  // lint the geosjon file
-  const messages = geojsonhint.hint(content)
-  // filter the messages to find the errors
-  const errors = _.filter(messages, message => { return _.get(message, 'level') !== 'message' })
-  debug('validateGeoJson: lint errors', errors)
+  // validate the geojson structure
+  // NOTE: @kalisio/common-geospatial@0.5.0 throws when validating a FeatureCollection
+  // that contains an invalid feature (statistics aggregation bug), so we validate each
+  // feature individually — the per-feature path is unaffected — and aggregate the errors.
+  if (content.type === 'FeatureCollection' && _.isArray(content.features) && content.features.length > 0) {
+    const errors = _.flatMap(content.features, (feature, index) => {
+      return validateGeoJsonStructure(feature).errors.map(error => {
+        return { ...error, path: `/features/${index}${error.path || ''}` }
+      })
+    })
+    debug('validateGeoJson: validation errors', errors)
+    return errors
+  }
+  const { errors } = validateGeoJsonStructure(content)
+  debug('validateGeoJson: validation errors', errors)
   return errors
 }
