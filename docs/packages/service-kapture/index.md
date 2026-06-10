@@ -22,15 +22,15 @@ Install with your preferred package manager:
 ::: code-group
 
 ```bash [pnpm]
-pnpm add @kalisio/kapture
+pnpm add @kalisio/service-kapture
 ```
 
 ```bash [npm]
-npm install @kalisio/kapture
+npm install @kalisio/service-kapture
 ```
 
 ```bash [yarn]
-yarn add @kalisio/kapture
+yarn add @kalisio/service-kapture
 ```
 
 :::

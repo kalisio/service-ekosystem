@@ -1,5 +1,5 @@
 {
-  "name": "@kalisio/kapture",
+  "name": "@kalisio/service-kapture",
   "description": "Capture Kano Snapshots as a Service",
   "version": "1.6.0",
   "type": "module",
@@ -22,12 +22,12 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/kalisio/services-ekosystem.git",
-    "directory": "packages/kapture"
+    "directory": "packages/service-kapture"
   },
   "bugs": {
     "url": "https://github.com/kalisio/services-ekosystem/issues"
   },
-  "homepage": "https://github.com/kalisio/services-ekosystem/tree/master/packages/kapture",
+  "homepage": "https://github.com/kalisio/services-ekosystem/tree/master/packages/service-kapture",
   "dependencies": {
     "@kalisio/common-geospatial": "catalog:",
     "cors": "catalog:",

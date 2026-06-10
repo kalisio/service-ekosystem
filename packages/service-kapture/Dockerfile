@@ -1,5 +1,5 @@
 # Build from the monorepo root:
-#   docker build -f packages/kapture/Dockerfile -t kalisio/kapture .
+#   docker build -f packages/service-kapture/Dockerfile -t kalisio/kapture .
 #
 # Puppeteer notes (see kalisio/kapture):
 #   - https://github.com/puppeteer/puppeteer/blob/main/docs/troubleshooting.md#running-puppeteer-in-docker
@@ -18,11 +18,11 @@ RUN corepack enable && corepack prepare pnpm@10.1.0 --activate
 ENV PUPPETEER_SKIP_DOWNLOAD=true
 
 COPY pnpm-workspace.yaml pnpm-lock.yaml package.json ./
-COPY packages/kapture/package.json ./packages/kapture/
+COPY packages/service-kapture/package.json ./packages/service-kapture/
 
-RUN pnpm install --frozen-lockfile --ignore-scripts --filter @kalisio/kapture --prod
+RUN pnpm install --frozen-lockfile --ignore-scripts --filter @kalisio/service-kapture --prod
 
-COPY packages/kapture/src ./packages/kapture/src
+COPY packages/service-kapture/src ./packages/service-kapture/src
 
 FROM node:${NODE_VERSION}-${DEBIAN_VERSION}-slim
 LABEL maintainer="Kalisio <contact@kalisio.xyz>"
@@ -58,7 +58,7 @@ ENV PUPPETEER_EXECUTABLE_PATH=/usr/bin/google-chrome-stable
 COPY --from=builder --chown=node:node /app /app
 
 USER node
-WORKDIR /app/packages/kapture
+WORKDIR /app/packages/service-kapture
 EXPOSE 3000
 
 CMD ["node", "src/bin.js"]
