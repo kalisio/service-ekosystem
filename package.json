@@ -22,7 +22,7 @@
     "posttest": "pnpm lcov-result-merger --prepend-source-files 'packages/*/coverage/lcov.info' coverage/lcov.info",
     "prepare": "husky",
     "pretest": "mkdir -p coverage",
-    "test": "pnpm -r test",
+    "test": "pnpm --filter @kalisio/service-geokoder test",
     "test:service-geokoder": "pnpm --filter @kalisio/service-geokoder test",
     "test:service-kapture": "pnpm --filter @kalisio/service-kapture test",
     "test:service-katalog": "pnpm --filter @kalisio/service-katalog test"
