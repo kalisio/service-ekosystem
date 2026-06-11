@@ -52,34 +52,4 @@ export APP_NAME=$APP_NAME
 ## Run tests
 ##
 
-init_lib_infos "$ROOT_DIR"
-
-LIB=$(get_lib_name)
-VERSION=$(get_lib_version)
-
-echo "About to run tests for $LIB v$VERSION..."
-
-## Start mongo
-##
-
-if [ -n "$MONGO_VER" ]; then
-    begin_group "Starting mongo $MONGO_VER ..."
-
-    use_mongo "$MONGO_VER"
-    k-mongo
-
-    end_group "Starting mongo $MONGO_VER ..."
-fi
-
-## Run tests
-##
-
-use_node "$NODE_VER"
-pnpm test
-
-
-## Run SonarQube analysis and publish code quality & coverage reports
-##
-if [ "$RUN_SONAR" = true ]; then
-    cd "$ROOT_DIR" && sonar-scanner
-fi
+run_lib_tests "$ROOT_DIR" "$RUN_SONAR" "$NODE_VER" "$MONGO_VER"
