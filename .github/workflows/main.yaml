@@ -1,6 +1,10 @@
 name: ci
 on:
   push:
+    # Run on every branch push (same as before)
+    branches: ['**']
+    # Also run on changeset release tags: @<scope>/<package>@<version> (e.g. @kalisio/service-kapture@1.6.0)
+    tags: ['@*/*@*']
   workflow_dispatch:
     inputs:
       run_tests:
@@ -18,13 +22,22 @@ on:
         default: false
         required: false
         type: boolean
+      build_services:
+        description: "Build services"
+        default: false
+        required: false
+        type: boolean
+      build_services_input:
+        description: "Services to build, space-separated package names. Leave empty for auto-detection."
+        required: false
+        default: ""
 
 jobs:
   run_tests:
     name: Run tests
     if: ${{
       github.event_name == 'workflow_dispatch' && inputs.run_tests ||
-      github.event_name == 'push' && !contains(github.event.head_commit.message, 'skip tests')
+      github.event_name == 'push' && github.ref_type == 'branch' && !contains(github.event.head_commit.message, 'skip tests')
       }}
     runs-on: ubuntu-22.04
     services:
@@ -61,7 +74,7 @@ jobs:
     name: Additional tests
     if: ${{
       github.event_name == 'workflow_dispatch' && inputs.additional_tests ||
-      github.event_name == 'push' && contains(github.event.head_commit.message, 'additional tests')
+      github.event_name == 'push' && github.ref_type == 'branch' && contains(github.event.head_commit.message, 'additional tests')
       }}
     runs-on: ubuntu-22.04
     services:
@@ -94,7 +107,7 @@ jobs:
     name: Build doc
     if: ${{
       github.event_name == 'workflow_dispatch' && inputs.build_docs ||
-      github.event_name == 'push' && contains(github.event.head_commit.message, 'doc')
+      github.event_name == 'push' && github.ref_type == 'branch' && contains(github.event.head_commit.message, 'doc')
       }}
     runs-on: ubuntu-22.04
     steps:
@@ -112,3 +125,93 @@ jobs:
         env:
           SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
         run: bash ./scripts/build_docs.sh -p -r ${{ github.job }}
+
+  detect_services:
+    name: Detect services
+    if: ${{
+      github.event_name == 'workflow_dispatch' && inputs.build_services ||
+      github.event_name == 'push' && github.ref_type == 'branch' && !contains(github.event.head_commit.message, 'skip services')
+      }}
+    runs-on: ubuntu-22.04
+    outputs:
+      matrix:       ${{ steps.compute.outputs.matrix }}
+      has_services: ${{ steps.compute.outputs.has_services }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          submodules: true
+      - name: Detect services
+        id: compute
+        env:
+          GITHUB_EVENT_NAME:   ${{ github.event_name }}
+          GITHUB_EVENT_BEFORE: ${{ github.event.before }}
+          GITHUB_EVENT_AFTER:  ${{ github.event.after }}
+          INPUT_SERVICES:      ${{ github.event.inputs.build_services_input }}
+        run: bash ./scripts/detect_services.sh
+
+  build_services:
+    needs: detect_services
+    if: needs.detect_services.outputs.has_services == 'true'
+    strategy:
+      fail-fast: false
+      matrix:
+        include: ${{ fromJSON(needs.detect_services.outputs.matrix) }}
+    name: Build service (${{ matrix.package }})
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Init runner
+        run: bash ./scripts/init_runner.sh ${{ github.job }}
+      - name: Setup workspace
+        env:
+          KALISIO_GITHUB_URL: ${{ secrets.KALISIO_GITHUB_URL }}
+        run: bash ./scripts/setup_workspace.sh
+      - name: Build service
+        env:
+          SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
+        run: bash ./scripts/build_service.sh -j ${{ matrix.package }} -p -r "${{ github.job }} ${{ matrix.package }}"
+
+  detect_release:
+    name: Detect release
+    if: ${{ github.event_name == 'push' && github.ref_type == 'tag' }}
+    runs-on: ubuntu-22.04
+    outputs:
+      target:  ${{ steps.compute.outputs.target }}
+      package: ${{ steps.compute.outputs.package }}
+      version: ${{ steps.compute.outputs.version }}
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Detect release
+        id: compute
+        env:
+          GITHUB_REF_NAME: ${{ github.ref_name }}
+        run: bash ./scripts/detect_release.sh
+
+  release_services:
+    needs: detect_release
+    if: needs.detect_release.outputs.target == 'service'
+    name: Release service (${{ needs.detect_release.outputs.package }} ${{ needs.detect_release.outputs.version }})
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          submodules: true
+      - name: Init runner
+        run: bash ./scripts/init_runner.sh build_services
+      - name: Setup workspace
+        env:
+          KALISIO_GITHUB_URL: ${{ secrets.KALISIO_GITHUB_URL }}
+        run: bash ./scripts/setup_workspace.sh
+      - name: Build & publish service
+        env:
+          SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
+        run: bash ./scripts/build_service.sh -j ${{ needs.detect_release.outputs.package }} -p -r release_services

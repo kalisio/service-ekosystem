@@ -42,11 +42,12 @@ done
 ##
 
 . "$WORKSPACE_DIR/development/workspaces/services/services.sh" service-ekosystem
+. "$WORKSPACE_DIR/development/workspaces/services/services.sh" service-kapture
 
-## Run tests
-##
-
-#run_lib_tests "$ROOT_DIR" "$RUN_SONAR" "$NODE_VER" "$MONGO_VER"
+# Need to switch from default Kano config which is local dev env
+export APP_URL=$APP_DEV_URL
+export APP_JWT=$APP_DEV_JWT
+export APP_NAME=$APP_NAME
 
 ## Run tests
 ##
