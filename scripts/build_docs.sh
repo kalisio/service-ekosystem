@@ -37,5 +37,5 @@ done
 ##
 
 use_node "$NODE_VER"
-build_docs "$ROOT_DIR" "kalisio/services-ekosystem" "$PUBLISH"
+build_docs "$ROOT_DIR" "kalisio/service-ekosystem" "$PUBLISH"
 

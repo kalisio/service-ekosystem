@@ -41,7 +41,7 @@ done
 ## Init workspace
 ##
 
-. "$WORKSPACE_DIR/development/workspaces/services/services.sh" services-ekosystem
+. "$WORKSPACE_DIR/development/workspaces/services/services.sh" service-ekosystem
 
 ## Run tests
 ##

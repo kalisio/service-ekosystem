@@ -1,5 +1,5 @@
 {
-  "name": "services-ekosystem",
+  "name": "service-ekosystem",
   "description": "A suite of cloud services for geospatial platforms",
   "type": "module",
   "packageManager": "pnpm@10.1.0",
@@ -38,12 +38,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git://github.com/kalisio/services-ekosystem.git"
+    "url": "git://github.com/kalisio/service-ekosystem.git"
   },
   "bugs": {
-    "url": "https://github.com/kalisio/services-ekosystem/issues"
+    "url": "https://github.com/kalisio/service-ekosystem/issues"
   },
-  "homepage": "git://github.com/kalisio/services-ekosystem#readme",
+  "homepage": "git://github.com/kalisio/service-ekosystem#readme",
   "devDependencies": {
     "@changesets/cli": "catalog:",
     "@vitest/coverage-v8": "catalog:",

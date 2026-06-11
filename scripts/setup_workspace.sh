@@ -48,7 +48,7 @@ if [ "$CI" != true ]; then
     WORKSPACE_DIR="$1"
 
     # Clone project in the workspace
-    git_shallow_clone "$KALISIO_GITHUB_URL/kalisio/services-ekosystem.git" "$WORKSPACE_DIR/services-ekosystem" "$WORKSPACE_REF"
+    git_shallow_clone "$KALISIO_GITHUB_URL/kalisio/service-ekosystem.git" "$WORKSPACE_DIR/service-ekosystem" "$WORKSPACE_REF"
 
     # unset KALISIO_DEVELOPMENT_DIR because we want kli to clone everything in $WORKSPACE_DIR
     unset KALISIO_DEVELOPMENT_DIR
@@ -61,9 +61,9 @@ setup_lib_workspace "$WORKSPACE_DIR" "$KALISIO_GITHUB_URL/kalisio/development.gi
 if [ "$WORKSPACE_KIND" != "nokli" ]; then
     # On master branch we use kli, on other branches / tags we just install
     if [ "$WORKSPACE_REF" = "master" ]; then
-        run_kli "$WORKSPACE_DIR" "$WORKSPACE_NODE" "$WORKSPACE_DIR/development/workspaces/services/services-ekosystem/dev/services-ekosystem.js" "$WORKSPACE_KIND"
+        run_kli "$WORKSPACE_DIR" "$WORKSPACE_NODE" "$WORKSPACE_DIR/development/workspaces/services/service-ekosystem/dev/service-ekosystem.js" "$WORKSPACE_KIND"
     else
-        cd "$WORKSPACE_DIR/services-ekosystem" && nvm exec "$WORKSPACE_NODE" pnpm install && cd ~-
+        cd "$WORKSPACE_DIR/service-ekosystem" && nvm exec "$WORKSPACE_NODE" pnpm install && cd ~-
     fi
 fi
 

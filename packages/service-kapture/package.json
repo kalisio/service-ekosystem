@@ -21,13 +21,13 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kalisio/services-ekosystem.git",
+    "url": "git+https://github.com/kalisio/service-ekosystem.git",
     "directory": "packages/service-kapture"
   },
   "bugs": {
-    "url": "https://github.com/kalisio/services-ekosystem/issues"
+    "url": "https://github.com/kalisio/service-ekosystem/issues"
   },
-  "homepage": "https://github.com/kalisio/services-ekosystem/tree/master/packages/service-kapture",
+  "homepage": "https://github.com/kalisio/service-ekosystem/tree/master/packages/service-kapture",
   "dependencies": {
     "@kalisio/common-geospatial": "catalog:",
     "cors": "catalog:",
