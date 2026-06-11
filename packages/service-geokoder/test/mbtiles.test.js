@@ -60,7 +60,7 @@ describe('geokoder:mbtiles', () => {
   }, 10000)
 
   afterAll(async () => {
-    await app.teardown()
+    await new Promise((resolve, reject) => server.close(err => err ? reject(err) : resolve()))
     const logsDir = path.join(__dirname, 'logs')
     for (const file of fs.readdirSync(logsDir)) {
       fs.rmSync(path.join(logsDir, file), { recursive: true, force: true })

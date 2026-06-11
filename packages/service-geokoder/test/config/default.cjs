@@ -1,4 +1,4 @@
-const path = require('path')
+const path = require('node:path')
 const isDocker = require('is-docker')
 
 // Use default service config
