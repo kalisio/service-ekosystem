@@ -9,6 +9,11 @@ WORKSPACE_DIR="$(dirname "$ROOT_DIR")"
 
 . "$THIS_DIR/kash/kash.sh"
 
+
+slack_report() {
+    slack_ci_report "$ROOT_DIR" "$CI_STEP_NAME" "$KASH_EXIT_CODE" "$SLACK_WEBHOOK_SERVICES"
+}
+
 ## Parse options
 ##
 
@@ -36,7 +41,7 @@ while getopts "j:d:n:pr:" option; do
         r) # report outcome to slack
             CI_STEP_NAME=$OPTARG
             load_env_files "$WORKSPACE_DIR/development/common/SLACK_WEBHOOK_SERVICES.enc.env"
-            trap 'slack_ci_report "$ROOT_DIR" "$CI_STEP_NAME" "$?" "$SLACK_WEBHOOK_SERVICES"' EXIT
+            add_function_to_trap slack_report
             ;;
         *)
             ;;
@@ -67,7 +72,6 @@ NAME=${NAME#*/}
 echo "About to build $NAME v$VERSION ..."
 
 load_env_files "$WORKSPACE_DIR/development/common/kalisio_dockerhub.enc.env"
-load_value_files "$WORKSPACE_DIR/development/common/KALISIO_DOCKERHUB_PASSWORD.enc.value"
 
 ## Build container
 ##
@@ -84,7 +88,8 @@ IMAGE_TAG="$IMAGE_SHORT_TAG-node$NODE_VER-$DEBIAN_VER"
 
 begin_group "Building container $IMAGE_NAME:$IMAGE_TAG ..."
 
-docker login --username "$KALISIO_DOCKERHUB_USERNAME" --password-stdin "$KALISIO_DOCKERHUB_URL" < "$KALISIO_DOCKERHUB_PASSWORD"
+decrypt_stdout "$WORKSPACE_DIR/development/common/KALISIO_DOCKERHUB_PASSWORD.enc.value" | docker login --username "$KALISIO_DOCKERHUB_USERNAME" --password-stdin "$KALISIO_DOCKERHUB_URL"
+
 # Build context is the monorepo root, see packages/$PACKAGE/Dockerfile
 DOCKER_BUILDKIT=1 docker build \
     --build-arg NODE_VERSION="$NODE_VER" \
