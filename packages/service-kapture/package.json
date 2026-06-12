@@ -29,6 +29,7 @@
   },
   "homepage": "https://github.com/kalisio/service-ekosystem/tree/master/packages/service-kapture",
   "dependencies": {
+    "@kalisio/common-core": "catalog:",
     "@kalisio/common-geospatial": "catalog:",
     "cors": "catalog:",
     "debug": "catalog:",

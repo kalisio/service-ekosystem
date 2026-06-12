@@ -11,7 +11,6 @@ export default mergeConfig(baseConfig, defineConfig({
     name: 'service-geokoder',
     env: {
       NODE_CONFIG_DIR: './test/config'
-    },
-    maxWorkers: 1
+    }
   }
 }))

@@ -41,6 +41,7 @@
     "@feathersjs/express": "catalog:",
     "@feathersjs/errors": "catalog:",
     "@feathersjs/feathers": "catalog:",
+    "@kalisio/common-core": "catalog:",
     "@kalisio/feathers-distributed": "catalog:",
     "@kalisio/kdk-core-api": "link:../../../kdk-ekosystem/packages/kdk-core-api",
     "@kalisio/kdk-map-api": "link:../../../kdk-ekosystem/packages/kdk-map-api",

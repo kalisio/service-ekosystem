@@ -4,6 +4,10 @@ const isDocker = require('is-docker')
 // Use default service config
 const config = require(path.join(__dirname, '../..', 'config/default.cjs'))
 
+// Override apiUrl
+config.port = Math.floor(Math.random() * (8460 - 8450 + 1)) + 8450
+config.apiUrl = `http://localhost:${config.port}/api`
+console.log(config.apiUrl)
 // Simply changes outputs so we don't pollute logs, etc.
 config.logs.DailyRotateFile.dirname = path.join(__dirname, '..', 'logs')
 // Use cote defaults to speedup tests
