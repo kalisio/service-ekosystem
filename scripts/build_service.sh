@@ -72,7 +72,8 @@ load_value_files "$WORKSPACE_DIR/development/common/KALISIO_DOCKERHUB_PASSWORD.e
 ## Build container
 ##
 
-IMAGE_NAME="$KALISIO_DOCKERHUB_URL/kalisio/$NAME"
+# Docker image keeps the legacy standalone repo name, e.g. service-kapture -> kapture
+IMAGE_NAME="$KALISIO_DOCKERHUB_URL/kalisio/${NAME#service-}"
 IMAGE_SHORT_TAG=latest
 
 if [[ -n "$GIT_TAG" ]]; then
