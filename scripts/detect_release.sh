@@ -64,7 +64,7 @@ if [[ ! -d "$PKG_DIR" ]]; then
 fi
 
 #  Cross-check package.json.version against tag.
-PKG_VERSION=$(jq -r '.version' "$PKG_DIR/package.json")
+PKG_VERSION=$(get_json_value "$PKG_DIR/package.json" "version")
 if [[ "$PKG_VERSION" != "$TAG_VERSION" ]]; then
     echo "-> Error: tag version '$TAG_VERSION' does not match $PKG_NAME/package.json version '$PKG_VERSION'" >&2
     exit 1
