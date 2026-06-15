@@ -1,15 +1,15 @@
 ---
-title: katalog
+title: service-katalog
 description: Catalog service for KDK-based applications
 ---
 
-# Katalog
+# service-katalog
 
 _Catalog service for KDK-based applications._
 
 ## Overview
 
-**katalog** is a [Feathers](https://feathersjs.com/) microservice — built on top of the
+**service-katalog** is a [Feathers](https://feathersjs.com/) microservice — built on top of the
 [**kdk-ekosystem**](https://github.com/kalisio/kdk-ekosystem) packages
 ([`@kalisio/kdk-core-api`](https://github.com/kalisio/kdk-ekosystem/tree/master/packages/kdk-core-api)
 for the base application and
@@ -23,7 +23,7 @@ KDK-based applications. It centralizes the definition of:
 - **Sublegends** — additional legend entries attached to the catalog.
 
 Instead of each application embedding its own hard-coded list of layers, the layers are
-described once as data in `katalog` and exposed through a single `catalog` service. The
+described once as data in `service-katalog` and exposed through a single `catalog` service. The
 service is published over [`@kalisio/feathers-distributed`](https://github.com/kalisio/feathers-distributed),
 so any other service or application sharing the same distribution **key** can discover and
 query the catalog remotely, without a direct HTTP coupling.
@@ -34,7 +34,7 @@ startup.
 
 ```mermaid
 flowchart LR
-  subgraph katalog["katalog service"]
+  subgraph service-katalog["service-katalog"]
     direction TB
     cfg["config/*.cjs<br/>layers · categories · sublegends"]
     svc["catalog service<br/>(@kalisio/kdk-map-api)"]
@@ -58,11 +58,11 @@ flowchart LR
 
 | File | Responsibility |
 | --- | --- |
-| [`src/main.js`](https://github.com/kalisio/services-ekosystem/blob/master/packages/katalog/src/main.js) | Entry point — creates the server and calls `run()`. |
-| [`src/server.js`](https://github.com/kalisio/services-ekosystem/blob/master/packages/katalog/src/server.js) | `Server` class: builds the KDK app, configures distribution, loads the catalog and starts listening. |
-| [`src/layers.js`](https://github.com/kalisio/services-ekosystem/blob/master/packages/katalog/src/layers.js) | `loadLayers` / `loadCategories` / `loadSublegends` — glob and evaluate the `config/**/*.cjs` files. |
-| [`src/services/index.js`](https://github.com/kalisio/services-ekosystem/blob/master/packages/katalog/src/services/index.js) | Registers the `catalog` service from `@kalisio/kdk-map-api`. |
-| [`src/logger.js`](https://github.com/kalisio/services-ekosystem/blob/master/packages/katalog/src/logger.js) | Winston logger configuration. |
+| [`src/main.js`](https://github.com/kalisio/service-ekosystem/blob/master/packages/service-katalog/src/main.js) | Entry point — creates the server and calls `run()`. |
+| [`src/server.js`](https://github.com/kalisio/service-ekosystem/blob/master/packages/service-katalog/src/server.js) | `Server` class: builds the KDK app, configures distribution, loads the catalog and starts listening. |
+| [`src/layers.js`](https://github.com/kalisio/service-ekosystem/blob/master/packages/service-katalog/src/layers.js) | `loadLayers` / `loadCategories` / `loadSublegends` — glob and evaluate the `config/**/*.cjs` files. |
+| [`src/services/index.js`](https://github.com/kalisio/service-ekosystem/blob/master/packages/service-katalog/src/services/index.js) | Registers the `catalog` service from `@kalisio/kdk-map-api`. |
+| [`src/logger.js`](https://github.com/kalisio/service-ekosystem/blob/master/packages/service-katalog/src/logger.js) | Winston logger configuration. |
 
 ### Startup flow
 
@@ -94,7 +94,7 @@ sequenceDiagram
 ### Configuration files
 
 All catalog content is described as plain CommonJS modules under
-[`config/`](https://github.com/kalisio/services-ekosystem/tree/master/packages/katalog/config),
+[`config/`](https://github.com/kalisio/service-ekosystem/tree/master/packages/service-katalog/config),
 each exporting a function that returns an array of definitions:
 
 ```
@@ -159,7 +159,7 @@ pnpm install
 ### Run
 
 ```bash
-# from packages/katalog
+# from packages/service-katalog
 pnpm dev      # start in watch mode (node --watch src/main.js)
 pnpm build    # produce the dist/ bundle with Vite
 ```
@@ -170,7 +170,7 @@ By default the service listens on **port 8187** and connects to
 ## Configuration
 
 The service is configured through [`@feathersjs/configuration`](https://feathersjs.com/api/configuration.html),
-i.e. [`config/default.cjs`](https://github.com/kalisio/services-ekosystem/blob/master/packages/katalog/config/default.cjs)
+i.e. [`config/default.cjs`](https://github.com/kalisio/service-ekosystem/blob/master/packages/service-katalog/config/default.cjs)
 overridden by environment variables.
 
 ### Application settings
@@ -185,7 +185,7 @@ overridden by environment variables.
 
 ### Feathers Distributed
 
-`katalog` publishes its services on the distribution bus so remote consumers can use them
+`service-katalog` publishes its services on the distribution bus so remote consumers can use them
 without a direct HTTP call. The relevant block of `config/default.cjs`:
 
 ```js
@@ -204,14 +204,14 @@ distribution: {
 
 Three options control distribution:
 
-- **`key`** — this application's *own* identity. Every service `katalog` publishes is
+- **`key`** — this application's *own* identity. Every service `service-katalog` publishes is
   tagged with this key (`'katalog'`).
-- **`services`** — a predicate selecting which *local* services to publish. `katalog`
+- **`services`** — a predicate selecting which *local* services to publish. `service-katalog`
   publishes all of them (`() => true`).
 - **`remoteServices`** — a predicate (used by consumers) selecting which *remote*
   services to consume.
 
-A consumer discovers `katalog` by matching the **producer's** key in its `remoteServices`
+A consumer discovers `service-katalog` by matching the **producer's** key in its `remoteServices`
 predicate — the consumer's own `key` is just its own identity and does **not** need to
 equal `'katalog'`:
 
@@ -221,7 +221,7 @@ import distribution from '@kalisio/feathers-distributed'
 consumer.configure(distribution({
   key: 'my-app',                                      // the consumer's own identity (arbitrary)
   services: () => false,                              // this consumer publishes nothing
-  remoteServices: (service) => service.key === 'katalog'  // consume katalog's services
+  remoteServices: (service) => service.key === 'katalog'  // consume service-katalog's services
 }))
 
 // once discovered, the catalog is available as a normal Feathers service
@@ -266,26 +266,26 @@ project.
 ## Testing
 
 Tests are written with [Vitest](https://vitest.dev/) and require a reachable MongoDB
-instance (see [`config/test.json`](https://github.com/kalisio/services-ekosystem/blob/master/packages/katalog/config/test.json)).
+instance (see [`config/test.json`](https://github.com/kalisio/service-ekosystem/blob/master/packages/service-katalog/config/test.json)).
 
 ```bash
-# from packages/katalog
+# from packages/service-katalog
 pnpm test     # vitest run --coverage
 ```
 
 Two suites are provided:
 
-- [`test/app.test.js`](https://github.com/kalisio/services-ekosystem/blob/master/packages/katalog/test/app.test.js) —
+- [`test/app.test.js`](https://github.com/kalisio/service-ekosystem/blob/master/packages/service-katalog/test/app.test.js) —
   boots the server and checks that unknown routes return a 404 JSON error and that the
   `catalog` service is populated with layers on startup.
-- [`test/distribution.test.js`](https://github.com/kalisio/services-ekosystem/blob/master/packages/katalog/test/distribution.test.js) —
+- [`test/distribution.test.js`](https://github.com/kalisio/service-ekosystem/blob/master/packages/service-katalog/test/distribution.test.js) —
   spins up a remote consumer and verifies service discovery over `feathers-distributed`,
   layer/category/sublegend queries, full CRUD via distribution, and that a consumer with
   the wrong key cannot discover the services.
 
 ## License
 
-Licensed under the [MIT license](https://github.com/kalisio/services-ekosystem/blob/master/packages/katalog/LICENSE.md).
+Licensed under the [MIT license](https://github.com/kalisio/service-ekosystem/blob/master/packages/service-katalog/LICENSE.md).
 
 Copyright (c) 2026-present [Kalisio](https://kalisio.com)
 
