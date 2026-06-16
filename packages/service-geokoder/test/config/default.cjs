@@ -5,7 +5,7 @@ const isDocker = require('is-docker')
 const config = require(path.join(__dirname, '../..', 'config/default.cjs'))
 
 // Override apiUrl
-config.port = Math.floor(Math.random() * (8460 - 8450 + 1)) + 8450
+config.port = Math.floor(Math.random() * (8480 - 8450 + 1)) + 8450
 config.apiUrl = `http://localhost:${config.port}/api`
 console.log(config.apiUrl)
 // Simply changes outputs so we don't pollute logs, etc.
