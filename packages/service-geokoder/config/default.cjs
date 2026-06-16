@@ -1,18 +1,17 @@
 const _ = require('lodash')
-const path = require('path')
+const path = require('node:path')
 const glob = require('glob')
 const winston = require('winston')
 // const express = require('@feathersjs/express')
 const commonHooks = require('feathers-hooks-common')
-const commonCore = require('@kalisio/common-core')
 
 let host, port, apiPath, apiUrl
 if (process.env.API_URL) {
   apiUrl = process.env.API_URL
-  const result = commonCore.url.parse(apiUrl, Number(process.env.PORT) || 8080)
-  host = result.host
-  port = result.port
-  apiPath = result.path
+  const url = new URL(apiUrl)
+  host = url.hostname
+  port = url.port
+  apiPath = url.pathname
 } else {
   host = process.env.HOSTNAME || 'localhost'
   port = Number(process.env.PORT) || 8080
