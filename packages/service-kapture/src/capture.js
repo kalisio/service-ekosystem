@@ -43,13 +43,11 @@ export async function capture (parameters) {
   })
   // Process the page language
   debug('configure the page language')
-  await page.evaluateOnNewDocument((parameters) => {
+  await page.evaluateOnNewDocument((lang) => {
     Object.defineProperty(navigator, 'language', {
-      get: function () {
-        return _.get(parameters, 'lang', 'en-US')
-      }
+      get: function () { return lang }
     })
-  }, parameters)
+  }, parameters.lang || 'en-US')
   // Process the page viewport
   debug('configure the page viewport')
   try {
