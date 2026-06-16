@@ -55,4 +55,4 @@ export APP_NAME=$APP_NAME
 ## Run tests
 ##
 
-run_lib_tests "$ROOT_DIR" "$RUN_SONAR" "$NODE_VER" "$MONGO_VER"
+run_lib_tests "$ROOT_DIR" "$RUN_SONAR" "$NODE_VER" "$MONGO_VER" "true"
