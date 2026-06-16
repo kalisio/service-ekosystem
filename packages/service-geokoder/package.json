@@ -1,7 +1,8 @@
 {
   "name": "@kalisio/service-geokoder",
   "description": "Lightweight geocoder service providing forward and reverse geocoding",
-  "version": "0.0.0",
+  "version": "1.5.0",
+  "packageManager": "pnpm@10.1.0",
   "type": "module",
   "private": true,
   "scripts": {
