@@ -13,8 +13,8 @@ const sortedPackageSidebar = Object.fromEntries(
 
 export default withMermaid(
   defineConfig({
-    base: '/services-ekosystem/',
-    title: 'services-ekosystem',
+    base: '/service-ekosystem/',
+    title: 'service-ekosystem',
     description: 'A suite of cloud services for geospatial platforms',
     ignoreDeadLinks: true,
     head: [
