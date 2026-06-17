@@ -78,7 +78,7 @@ load_env_files "$WORKSPACE_DIR/development/common/kalisio_dockerhub.enc.env"
 
 # Docker image keeps the legacy standalone repo name, e.g. service-kapture -> kapture
 IMAGE_NAME="$KALISIO_DOCKERHUB_URL/kalisio/${NAME#service-}"
-IMAGE_SHORT_TAG=latest
+IMAGE_SHORT_TAG=dev
 
 if [[ -n "$GIT_TAG" ]]; then
     IMAGE_SHORT_TAG=$VERSION
