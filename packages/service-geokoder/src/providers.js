@@ -7,8 +7,7 @@ import {
 
 export const Providers = {
   async initialize (app) {
-    this.app = app
-    this.providers = []
+    app.providers = []
     const results = await Promise.allSettled([
       createKanoProvider(app),
       createNodeGeocoderProvider(app),
@@ -17,14 +16,13 @@ export const Providers = {
     ])
     results.forEach((result) => {
       if (result.status !== 'fulfilled') {
-        this.app.logger.error(result.reason.toString())
+        app.logger.error(result.reason.toString())
         return
       }
-
-      if (result.value) { this.providers.push(result.value) }
+      if (result.value) { app.providers.push(result.value) }
     })
   },
-  get () {
-    return this.providers
+  get (app) {
+    return app.providers
   }
 }

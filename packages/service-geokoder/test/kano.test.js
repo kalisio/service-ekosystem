@@ -82,7 +82,7 @@ describe('geokoder:kano', () => {
   }, 5000)
 
   it('initialize the geokoder service', async () => {
-    server = await createServer()
+    server = await createServer({ port: 8452, apiUrl: 'http://localhost:8452/api' })
     expect(server).toBeDefined()
     app = server.app
     expect(app).toBeDefined()

@@ -31,7 +31,7 @@ describe('geokoder:node-geocoder', () => {
   })
 
   it('initialize the service', async () => {
-    server = await createServer()
+    server = await createServer({ port: 8454, apiUrl: 'http://localhost:8454/api' })
     expect(server).toBeDefined()
     app = server.app
     expect(app).toBeDefined()

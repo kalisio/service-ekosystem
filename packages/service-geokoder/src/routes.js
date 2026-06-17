@@ -35,7 +35,7 @@ export default function (app) {
   app.get(`${apiPath}/capabilities/:operation`, async (req, res, next) => {
     const operation = _.get(req, 'params.operation')
     const options = { operation }
-    const all = Providers.get().filter(provider => typeof provider[operation] === 'function').map(provider => provider.capabilities(options))
+    const all = Providers.get(app).filter(provider => typeof provider[operation] === 'function').map(provider => provider.capabilities(options))
 
     const response = {
       geocoders: [],
@@ -77,7 +77,7 @@ export default function (app) {
     else if (_.has(paginate, 'default.forward')) options.limit = _.get(paginate, 'default.forward')
     if (_.has(paginate, 'max.forward') && options.limit) options.limit = Math.min(options.limit, _.get(paginate, 'max.forward'))
 
-    const all = Providers.get().filter(provider => typeof provider.forward === 'function').map(provider => provider.forward(options))
+    const all = Providers.get(app).filter(provider => typeof provider.forward === 'function').map(provider => provider.forward(options))
 
     const response = []
     const results = await Promise.allSettled(all)
@@ -126,7 +126,7 @@ export default function (app) {
       else if (_.has(paginate, 'default.reverse')) options.limit = _.get(paginate, 'default.reverse')
       if (_.has(paginate, 'max.reverse') && options.limit) options.limit = Math.min(options.limit, _.get(paginate, 'max.reverse'))
 
-      const all = Providers.get().filter(provider => typeof provider.reverse === 'function').map(provider => provider.reverse(options))
+      const all = Providers.get(app).filter(provider => typeof provider.reverse === 'function').map(provider => provider.reverse(options))
 
       const response = []
       const results = await Promise.allSettled(all)

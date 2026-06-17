@@ -19,10 +19,15 @@ feathers.setDebug(makeDebug)
 
 const debug = makeDebug('geokoder:server')
 
-export async function createServer () {
+export async function createServer (configOverride = {}) {
   const app = express(feathers())
 
+  // Configure the app
   app.configure(configuration())
+  Object.keys(configOverride).forEach(key => {
+    app.set(key, configOverride[key])
+  })
+
   // Get distributed services
   app.configure(distribution(app.get('distribution')))
 
@@ -38,15 +43,15 @@ export async function createServer () {
   app.configure(middlewares)
 
   // Logger
-  const config = app.get('logs')
-  const logPath = _.get(config, 'DailyRotateFile.dirname')
+  const logConfig = app.get('logs')
+  const logPath = _.get(logConfig, 'DailyRotateFile.dirname')
   // This will ensure the log directory does exist
   fs.ensureDirSync(logPath)
   app.logger = winston.createLogger({
     level: (process.env.NODE_ENV === 'development' ? 'verbose' : 'info'),
     transports: [
-      new winston.transports.Console(_.get(config, 'Console')),
-      new winston.transports.DailyRotateFile(_.get(config, 'DailyRotateFile'))
+      new winston.transports.Console(_.get(logConfig, 'Console')),
+      new winston.transports.DailyRotateFile(_.get(logConfig, 'DailyRotateFile'))
     ]
   })
   // Top-level error handler
@@ -72,7 +77,7 @@ export async function createServer () {
   server.app.logger.info('Server started listening')
 
   await Providers.initialize(app)
-  debug('Providers initialized', _.map(Providers.get(), 'name'))
+  debug('Providers initialized', _.map(Providers.get(app), 'name'))
 
   return server
 }

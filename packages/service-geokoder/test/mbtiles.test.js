@@ -22,7 +22,7 @@ describe('geokoder:mbtiles', () => {
   })
 
   it('initialize the service', async () => {
-    server = await createServer()
+    server = await createServer({ port: 8453, apiUrl: 'http://localhost:8453/api' })
     expect(server).toBeDefined()
     app = server.app
     expect(app).toBeDefined()
@@ -50,7 +50,6 @@ describe('geokoder:mbtiles', () => {
     for (const location of locations) {
       const response = await fetch(`${apiUrl}/reverse?lat=${location.lat}&lon=${location.lon}&distance=${location.distance}&sources=${location.sources}`)
       const body = await response.json()
-      console.log(body)
       expect(body.length).toBe(location.results.length)
       body.forEach((feature, index) => {
         const name = _.get(feature, 'properties.nom', _.get(feature, 'properties.NOM', ''))

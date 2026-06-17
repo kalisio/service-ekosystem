@@ -14,7 +14,10 @@ export async function createGeokoderProvider (app) {
   _.keys(config).forEach(async (key) => {
     // NOTE: we make the config a plain object (see. https://github.com/node-config/node-config/wiki/Using-Config-Utilities#toobjectconfig)
     // We do this because node native fetch doesn't like having it's 'headers' parameter with some methods on it (get, has, ...)
-    const conf = config.util.toObject(config[key])
+    // const conf = config.util.toObject(config[key])
+    const conf = typeof config[key].toObject === 'function'
+      ? config.util.toObject(config[key])
+      : config[key]
 
     debug(`new proxy: ${key} @ ${conf.url}`)
     proxies.push({
