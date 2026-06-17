@@ -27,9 +27,10 @@ FROM node:${NODE_VERSION}-${DEBIAN_VERSION}-slim
 LABEL maintainer="Kalisio <contact@kalisio.xyz>"
 
 COPY --from=builder --chown=node:node /app /app
+RUN ln -s /app/packages/service-katalog /katalog
 
 USER node
-WORKDIR /app/packages/service-katalog
+WORKDIR /katalog
 EXPOSE 8080
 
 CMD ["node", "src/main.js"]

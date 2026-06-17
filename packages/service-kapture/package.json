@@ -6,7 +6,7 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "build": "DOCKER_BUILDKIT=1 docker build -t service-kapture:${TAG:-latest} -f ./Dockerfile ../..",
+    "build": "DOCKER_BUILDKIT=1 docker build -t kalisio/service-kapture:${TAG:-dev} -f ./Dockerfile ../..",
     "dev": "node --watch src/bin.js",
     "lint": "standard --fix",
     "test": "bash -c 'source ../../../development/workspaces/services/services.sh service-kapture && vitest run --coverage'"

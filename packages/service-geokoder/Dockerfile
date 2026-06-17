@@ -30,9 +30,10 @@ FROM node:${NODE_VERSION}-${DEBIAN_VERSION}-slim
 LABEL maintainer="Kalisio <contact@kalisio.xyz>"
 
 COPY --from=builder --chown=node:node /app /app
+RUN ln -s /app/packages/service-geokoder /geokoder
 
 USER node
-WORKDIR /app/packages/service-geokoder
+WORKDIR /geokoder
 EXPOSE 8080
 
 CMD ["node", "src/main.js"]
