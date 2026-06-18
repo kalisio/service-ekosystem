@@ -122,7 +122,10 @@ export async function createMBTilesProvider (app) {
         })
         const features = geoJson.features.map(feature => {
           const source = `${dataset.name}:${_.get(feature, 'properties.tilequery.layer')}`
-          return Object.assign({ source }, { feature: _.omit(feature, ['properties.tilequery']) })
+          const normalizedFeature = _.omit(feature, ['properties.tilequery'])
+          const featureLabelFn = config[dataset.name]?.featureLabel
+          if (featureLabelFn) normalizedFeature.properties.formattedLabel = featureLabelFn(normalizedFeature)
+          return Object.assign({ source }, { feature: normalizedFeature })
         })
         responses = responses.concat(features)
         debug(`${dataset.name}: retrieved ${features.length} features from dataset`)

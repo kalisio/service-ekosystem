@@ -155,9 +155,11 @@ export async function createNodeGeocoderProvider (app) {
           if (entry.provider === 'opendatafrance') {
             // https://adresse.data.gouv.fr/api-doc/adresse
             const props = _.omit(entry, ['latitude', 'longitude', 'provider'])
+            props.formattedLabel = [entry.streetNumber, entry.streetName, entry.city, entry.country].filter(Boolean).join(' ')
             norm.feature = { type: 'Feature', properties: props, geometry: { type: 'Point', coordinates: [entry.longitude, entry.latitude] } }
           } else if (entry.provider === 'openstreetmap') {
             const props = _.omit(entry, ['latitude', 'longitude', 'provider'])
+            props.formattedLabel = entry.formattedAddress
             norm.feature = { type: 'Feature', properties: props, geometry: { type: 'Point', coordinates: [entry.longitude, entry.latitude] } }
           } else {
             debug(`Don't know how to normalize results from provider '${entry.provider}'`)

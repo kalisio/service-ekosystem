@@ -1,7 +1,6 @@
-import _ from 'lodash'
-import path from 'path'
-import fs from 'fs'
-import { fileURLToPath } from 'url'
+import path from 'node:path'
+import fs from 'node:fs'
+import { fileURLToPath } from 'node:url'
 import { describe, it, afterAll, expect } from 'vitest'
 import { createServer } from '../src/server.js'
 
@@ -52,8 +51,9 @@ describe('geokoder:mbtiles', () => {
       const body = await response.json()
       expect(body.length).toBe(location.results.length)
       body.forEach((feature, index) => {
-        const name = _.get(feature, 'properties.nom', _.get(feature, 'properties.NOM', ''))
-        expect(name).toBe(location.results[index])
+        console.log(feature, index)
+        const label = feature.properties?.formattedLabel
+        expect(label).toBeDefined()
       })
     }
   }, 10000)

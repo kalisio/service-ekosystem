@@ -172,9 +172,13 @@ export async function createKanoProvider (app) {
         const features = result.value.features
         debug(`Retrieved ${features.length} features from source ${source.name}`)
         for (const feature of features) {
+          const formattedLabel = source.keys
+            .map(key => _.get(feature, key))
+            .filter(Boolean)
+            .join(' ')
+          if (formattedLabel) _.set(feature, 'properties.formattedLabel', formattedLabel)
           response.push({
             source: source.name,
-            // omit internal _id prop
             feature: _.omit(feature, ['_id'])
           })
         }
