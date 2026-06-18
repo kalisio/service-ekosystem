@@ -10,7 +10,7 @@ if (process.env.API_URL) {
   apiUrl = process.env.API_URL
   const url = new URL(apiUrl)
   host = url.hostname
-  port = url.port
+  port = url.port || 8080
   apiPath = url.pathname
 } else {
   host = process.env.HOSTNAME || 'localhost'
