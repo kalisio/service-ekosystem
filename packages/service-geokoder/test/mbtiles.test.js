@@ -50,8 +50,7 @@ describe('geokoder:mbtiles', () => {
       const response = await fetch(`${apiUrl}/reverse?lat=${location.lat}&lon=${location.lon}&distance=${location.distance}&sources=${location.sources}`)
       const body = await response.json()
       expect(body.length).toBe(location.results.length)
-      body.forEach((feature, index) => {
-        console.log(feature, index)
+      body.forEach((feature) => {
         const label = feature.properties?.formattedLabel
         expect(label).toBeDefined()
       })
