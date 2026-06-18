@@ -19,6 +19,8 @@ if (process.env.API_URL) {
   apiUrl = `http://${host}:${port}${apiPath}`
 }
 
+console.log(host, port, apiPath, apiUrl)
+
 const i18n = {}
 glob.sync(path.join(__dirname, 'i18n/**/*.cjs')).forEach(i18nFile => {
   _.merge(i18n, require(i18nFile))
