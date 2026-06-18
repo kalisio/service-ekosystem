@@ -5,21 +5,10 @@ const winston = require('winston')
 // const express = require('@feathersjs/express')
 const commonHooks = require('feathers-hooks-common')
 
-let host, port, apiPath, apiUrl
-if (process.env.API_URL) {
-  apiUrl = process.env.API_URL
-  const url = new URL(apiUrl)
-  host = url.hostname
-  port = url.port || 8080
-  apiPath = url.pathname
-} else {
-  host = process.env.HOSTNAME || 'localhost'
-  port = Number(process.env.PORT) || 8080
-  apiPath = process.env.API_PATH || '/api'
-  apiUrl = `http://${host}:${port}${apiPath}`
-}
-
-console.log(host, port, apiPath, apiUrl)
+const host = process.env.HOSTNAME || 'localhost'
+const port = process.env.PORT || 8080
+const apiPath = process.env.API_PREFIX || '/api'
+const apiUrl = process.env.API_URL || `http://${host}:${port}${apiPath}`
 
 const i18n = {}
 glob.sync(path.join(__dirname, 'i18n/**/*.cjs')).forEach(i18nFile => {
