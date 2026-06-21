@@ -25,7 +25,8 @@ describe('geokoder:geokoder', () => {
   const locations = [
     { lat: 45.15493, lon: 3.20801, sources: 'remote:opendatafrance', results: [] },
     { lat: 43.29961, lon: 1.93729, sources: 'remote:openstreetmap', results: [result] },
-    { lat: 43.29961, lon: 1.93729, sources: 'remote:open*', results: [result, result] }
+    { lat: 43.29961, lon: 1.93729, sources: 'remote:open*', results: [result, result] },
+    { lat: 43.2119, lon: 2.3531, sources: 'remote:carcassonne:*', results: [{ formattedLabel: 'Aude' }, { formattedLabel: 'Carcassonne' }] }
   ]
 
   it('is ES module compatible', () => {
@@ -54,18 +55,28 @@ describe('geokoder:geokoder', () => {
 
   it('geokoder proxy sources appear in capabilities', async () => {
     const apiUrl = app.get('apiUrl')
-
+    // Forward capabilities
     let response = await fetch(`${apiUrl}/capabilities/forward`)
     let body = await response.json()
+    console.log(body)
     expect(body.geocoders).toBeDefined()
     expect(body.geocoders.includes('remote:openstreetmap')).toBe(true)
     expect(body.geocoders.includes('remote:opendatafrance')).toBe(true)
-
+    expect(body.geocoders.includes('remote:epci:epci50m')).toBe(false)
+    expect(body.geocoders.includes('remote:mairies:mairies')).toBe(false)
+    expect(body.geocoders.includes('remote:carcassonne:commune')).toBe(false)
+    expect(body.geocoders.includes('remote:carcassonne:departement')).toBe(false)
+    // Reverse capabilities
     response = await fetch(`${apiUrl}/capabilities/reverse`)
     body = await response.json()
+    console.log(body)
     expect(body.geocoders).toBeDefined()
     expect(body.geocoders.includes('remote:openstreetmap')).toBe(true)
     expect(body.geocoders.includes('remote:opendatafrance')).toBe(true)
+    expect(body.geocoders.includes('remote:epci:epci50m')).toBe(true)
+    expect(body.geocoders.includes('remote:mairies:mairies')).toBe(true)
+    expect(body.geocoders.includes('remote:carcassonne:commune')).toBe(true)
+    expect(body.geocoders.includes('remote:carcassonne:departement')).toBe(true)
   }, 10000)
 
   it('forward geocoding through geokoder proxy', async () => {

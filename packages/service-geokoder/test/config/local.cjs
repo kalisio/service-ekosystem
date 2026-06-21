@@ -19,19 +19,17 @@ module.exports = {
       mairies: {
         filepath: path.join(__dirname, '../data/mairies-z12.mbtiles'),
         layers: ['mairies'],
-        featureLabel: (feature) => feature.properties?.nom
+        featureLabel: (feature) => feature.properties.nom
       },
       epci: {
         filepath: path.join(__dirname, '../data/epci-50m-z10.mbtiles'),
         layers: ['epci50m'],
-        featureLabel: (feature) => feature.properties?.nom
+        featureLabel: (feature) => feature.properties.nom
       },
       carcassonne: {
         filepath: path.join(__dirname, '../data/admin-express-carcassonne-z0-z14.mbtiles'),
         layers: ['commune', 'departement'],
-        featureLabel: (feature) => {
-          return `${feature.properties?.NOM} (${feature.properties?.INSEE_COM})`
-        }
+        featureLabel: (feature) => feature.properties.NOM
       }
     }
   }

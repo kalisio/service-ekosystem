@@ -57,11 +57,13 @@ export async function createGeokoderProvider (app) {
     name: 'Geokoder',
 
     async capabilities ({ operation }) {
+      debug('[Capabilities] operation:', operation)
       const sources = await getSources(operation)
       return sources.map((source) => source.name)
     },
 
-    async forward ({ search, filter, limit, viewbox }) {
+    async forward ({ search, filter, viewbox, limit }) {
+      debug('[Forward] query parameters:', search, viewbox, limit)
       const sources = await getSources('forward')
       const matchingSources = filterSources(sources, filter)
 
@@ -83,7 +85,10 @@ export async function createGeokoderProvider (app) {
       const allReqs = []
       for (const proxyName in groupedQueries) {
         const query = groupedQueries[proxyName]
-        const promise = fetch(`${query.proxy.url}/forward?q=${search}&sources=*(${query.filter})${viewboxParam}${limitParam}`, { headers: query.proxy.headers })
+        const proxyQuery = `${query.proxy.url}/forward?q=${search}&sources=*(${query.filter})${viewboxParam}${limitParam}`
+        const proxyHeaders = query.proxy.headers
+        debug('[Forward] proxy query:', proxyQuery)
+        const promise = fetch(proxyQuery, { headers: proxyHeaders })
           .then((response) => {
             if (response.ok) { return response.json() }
             throw new Error(`Forward query failed on proxy ${proxyName} : fetch status is ${response.status}`)
@@ -107,7 +112,8 @@ export async function createGeokoderProvider (app) {
     },
 
     async reverse ({ lat, lon, filter, distance, limit }) {
-      const sources = await getSources('forward')
+      debug('[Reverse] query parameters:', lat, lon, filter, distance, limit)
+      const sources = await getSources('reverse')
       const matchingSources = filterSources(sources, filter)
 
       // group queries by proxy
@@ -128,7 +134,10 @@ export async function createGeokoderProvider (app) {
       const allReqs = []
       for (const proxyName in groupedQueries) {
         const query = groupedQueries[proxyName]
-        const promise = fetch(`${query.proxy.url}/reverse?lat=${lat}&lon=${lon}&sources=*(${query.filter})${distanceParam}${limitParam}`, { headers: query.proxy.headers })
+        const proxyQuery = `${query.proxy.url}/reverse?lat=${lat}&lon=${lon}&sources=*(${query.filter})${distanceParam}${limitParam}`
+        const proxyHeaders = query.proxy.headers
+        debug('[Reverse] proxy query:', proxyQuery)
+        const promise = fetch(proxyQuery, { headers: proxyHeaders })
           .then((response) => {
             if (response.ok) { return response.json() }
             throw new Error(`Reverse query failed on proxy ${proxyName} : fetch status is ${response.status}`)
