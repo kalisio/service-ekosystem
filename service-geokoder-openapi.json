@@ -1,0 +1,472 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "service-geokoder",
+    "description": "Multi-provider geocoding API (forward/reverse)",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/api/healthcheck": {
+      "get": {
+        "summary": "Service health check",
+        "operationId": "healthcheck",
+        "responses": {
+          "200": {
+            "description": "Service is up",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "name",
+                    "version"
+                  ],
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "example": "geokoder"
+                    },
+                    "version": {
+                      "type": "string",
+                      "example": "1.2.0"
+                    },
+                    "buildNumber": {
+                      "type": "string",
+                      "example": "42"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/capabilities/{operation}": {
+      "get": {
+        "summary": "List available geocoding sources for a given operation",
+        "operationId": "capabilities",
+        "parameters": [
+          {
+            "name": "operation",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "forward",
+                "reverse"
+              ]
+            },
+            "description": "Geocoding operation"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Available sources and i18n labels",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "geocoders",
+                    "i18n"
+                  ],
+                  "properties": {
+                    "geocoders": {
+                      "type": "array",
+                      "items": {
+                        "type": "string"
+                      },
+                      "example": [
+                        "openstreetmap",
+                        "opendatafrance",
+                        "mairies:mairies",
+                        "upstream:openstreetmap"
+                      ]
+                    },
+                    "i18n": {
+                      "type": "object",
+                      "description": "Localized labels keyed by locale then namespace",
+                      "example": {
+                        "fr": {
+                          "Geocoders": {
+                            "openstreetmap": "OpenStreetMap"
+                          }
+                        },
+                        "en": {
+                          "Geocoders": {
+                            "openstreetmap": "OpenStreetMap"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/forward": {
+      "get": {
+        "summary": "Forward geocoding — address/place name to coordinates",
+        "operationId": "forward",
+        "parameters": [
+          {
+            "name": "q",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Search query (address, place name, etc.)",
+            "example": "80 Chemin des Tournesols, 11400 Castelnaudary"
+          },
+          {
+            "name": "sources",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "*"
+            },
+            "description": "Minimatch filter on source names. Supports wildcards (`*`, `open*`) and glob alternation (`{openstreetmap,opendatafrance}`).\n",
+            "example": "open*"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "description": "Maximum number of results (capped by server paginate.max.forward)",
+            "example": 5
+          },
+          {
+            "name": "viewbox",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Bounding box filter as `lon1,lat1,lon2,lat2` (decimal degrees). Results outside the box are discarded.\n",
+            "example": "1.891365,43.283502,2.010069,43.340896"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of GeoJSON Features sorted by relevance score",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ForwardFeature"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/reverse": {
+      "get": {
+        "summary": "Reverse geocoding — coordinates to address/place name",
+        "operationId": "reverse",
+        "parameters": [
+          {
+            "name": "lat",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "format": "float"
+            },
+            "description": "Latitude (decimal degrees)",
+            "example": 43.2119
+          },
+          {
+            "name": "lon",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "format": "float"
+            },
+            "description": "Longitude (decimal degrees)",
+            "example": 2.3531
+          },
+          {
+            "name": "sources",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "default": "*"
+            },
+            "description": "Minimatch filter on source names. Supports wildcards and glob alternation.\n",
+            "example": "mairies:mairies"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "description": "Maximum number of results (capped by server paginate.max.reverse)",
+            "example": 5
+          },
+          {
+            "name": "distance",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "number",
+              "format": "float"
+            },
+            "description": "Search radius in meters (provider-dependent)",
+            "example": 500
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Array of GeoJSON Features sorted by distance",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ReverseFeature"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid lat/lon parameters",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/BadRequest"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "GeokoderForward": {
+        "type": "object",
+        "required": [
+          "source"
+        ],
+        "properties": {
+          "source": {
+            "type": "string",
+            "description": "Source identifier that produced this result",
+            "example": "opendatafrance"
+          },
+          "match": {
+            "type": "string",
+            "description": "The matched text fragment",
+            "example": "Chemin des Tournesols"
+          },
+          "matchProp": {
+            "type": "string",
+            "description": "The feature property that was matched",
+            "example": "label"
+          }
+        }
+      },
+      "GeokoderReverse": {
+        "type": "object",
+        "required": [
+          "source"
+        ],
+        "properties": {
+          "source": {
+            "type": "string",
+            "description": "Source identifier that produced this result",
+            "example": "mairies:mairies"
+          }
+        }
+      },
+      "ForwardFeature": {
+        "type": "object",
+        "required": [
+          "type",
+          "geometry",
+          "properties",
+          "geokoder"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "Feature"
+            ]
+          },
+          "geometry": {
+            "type": "object",
+            "required": [
+              "type",
+              "coordinates"
+            ],
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "Point"
+                ]
+              },
+              "coordinates": {
+                "type": "array",
+                "items": {
+                  "type": "number"
+                },
+                "minItems": 2,
+                "maxItems": 2,
+                "description": "[longitude, latitude]",
+                "example": [
+                  1.9373,
+                  43.2996
+                ]
+              }
+            }
+          },
+          "properties": {
+            "type": "object",
+            "description": "Provider-dependent address fields",
+            "properties": {
+              "formattedAddress": {
+                "type": "string",
+                "example": "80 Chemin des Tournesols, 11400 Castelnaudary"
+              },
+              "streetNumber": {
+                "type": "string",
+                "example": "80"
+              },
+              "streetName": {
+                "type": "string",
+                "example": "Chemin des Tournesols"
+              },
+              "city": {
+                "type": "string",
+                "example": "Castelnaudary"
+              },
+              "country": {
+                "type": "string",
+                "example": "France"
+              }
+            }
+          },
+          "geokoder": {
+            "$ref": "#/components/schemas/GeokoderForward"
+          }
+        }
+      },
+      "ReverseFeature": {
+        "type": "object",
+        "required": [
+          "type",
+          "geometry",
+          "properties",
+          "geokoder"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": [
+              "Feature"
+            ]
+          },
+          "geometry": {
+            "type": "object",
+            "required": [
+              "type",
+              "coordinates"
+            ],
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "Point"
+                ]
+              },
+              "coordinates": {
+                "type": "array",
+                "items": {
+                  "type": "number"
+                },
+                "minItems": 2,
+                "maxItems": 2,
+                "description": "[longitude, latitude]",
+                "example": [
+                  2.3531,
+                  43.2119
+                ]
+              }
+            }
+          },
+          "properties": {
+            "type": "object",
+            "description": "Provider-dependent address fields",
+            "properties": {
+              "streetNumber": {
+                "type": "string",
+                "example": "80"
+              },
+              "streetName": {
+                "type": "string",
+                "example": "Chemin des Tournesols"
+              },
+              "city": {
+                "type": "string",
+                "example": "Castelnaudary"
+              },
+              "country": {
+                "type": "string",
+                "example": "France"
+              },
+              "formattedLabel": {
+                "type": "string",
+                "description": "Human-readable label built by the provider (MBTiles, in progress for others)",
+                "example": "Carcassonne"
+              }
+            }
+          },
+          "geokoder": {
+            "$ref": "#/components/schemas/GeokoderReverse"
+          }
+        }
+      },
+      "BadRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "BadRequest"
+          },
+          "message": {
+            "type": "string",
+            "example": "Reverse geocoding expect decimal numbers for longitude and latitude"
+          },
+          "code": {
+            "type": "integer",
+            "example": 400
+          }
+        }
+      }
+    }
+  }
+}
