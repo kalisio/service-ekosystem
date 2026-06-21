@@ -1,4 +1,4 @@
-# service-geokoder — Developer Notes
+# service-geokoder
 
 ## General Architecture
 
@@ -49,7 +49,9 @@ export async function createProviders(app) { ... }
 - Config: `{ opendatafrance: true, openstreetmap: true }`
 - Wraps `node-geocoder`
 - Forward results: have `formattedAddress`, `streetName`, `city`, `country`, etc.
-- Reverse results: have `streetName`, `streetNumber`, `city`, `country` but **no** systematic `formattedAddress`
+- Reverse results: `formattedLabel` built as:
+  - `opendatafrance`: `[streetNumber, streetName, city, country].filter(Boolean).join(' ')`
+  - `openstreetmap`: `entry.formattedAddress`
 
 ### Kano
 - Config: `{ catalogFilter, services: { 'service-name': { featureLabel, baseQuery } } }`
@@ -57,11 +59,14 @@ export async function createProviders(app) { ... }
 - `featureLabel`: array of lodash paths to properties (e.g. `['properties.name']`)
 - Fallback: `properties.name`
 - Uses `feathers-distributed` to discover remote services
+- Reverse results: `formattedLabel` built from `source.keys` — first non-null value joined with spaces, set on `properties.formattedLabel`
 
 ### MBTiles
-- Config: `{ layerName: { filepath, layers: [...] } }`
+- Config: `{ layerName: { filepath, layers: [...], featureLabel? } }`
 - Geocoding against local `.mbtiles` files
-- Planned: support for a `featureLabel(feature)` function in config to build the reverse label
+- **Only supports reverse** — does not appear in `capabilities/forward`
+- Each layer is exposed as a separate source: `layerName:layerName` (e.g. `mairies:mairies`)
+- Reverse results: `formattedLabel` set on `properties.formattedLabel` via the `featureLabel(feature)` function from config
 
 ### Geokoder (proxy)
 - Config: `{ proxyName: { url, filter?, headers? } }`
@@ -69,6 +74,29 @@ export async function createProviders(app) { ... }
 - The key name becomes the source prefix: `{ upstream: { url: '...' } }` → sources `upstream:openstreetmap`
 - **Important**: uses `_.cloneDeep` to read config (not `config.util.toObject`) because in tests the config is a plain object without node-config methods
 - Filter construction for upstream requests: single source → `sourceName`, multiple → `{source1,source2}` (minimatch glob)
+- Reverse results: forwards `formattedLabel` as returned by the upstream instance
+- **Pitfall**: `getSources` must be called with the correct operation (`'forward'` or `'reverse'`) — passing `'forward'` in the reverse handler causes reverse-only sources (e.g. MBTiles) to be silently excluded
+
+---
+
+## formattedLabel
+
+All providers set `properties.formattedLabel` on reverse results. It is propagated as-is in `routes.js`:
+
+```js
+normalized.geokoder = {
+  source: entry.source
+}
+// formattedLabel lives in entry.feature.properties, already set by the provider
+```
+
+| Provider | Strategy |
+|---|---|
+| NodeGeocoder/opendatafrance | `[streetNumber, streetName, city, country].filter(Boolean).join(' ')` |
+| NodeGeocoder/openstreetmap | `entry.formattedAddress` |
+| Kano | First non-null value across `source.keys`, joined with spaces |
+| MBTiles | `featureLabel(feature)` function from config |
+| Geokoder | Forwarded from upstream |
 
 ---
 
@@ -100,26 +128,13 @@ filterSources(sources, filter) // filters an array
 ### GET `/reverse`
 - Params: `lat`, `lon`, `sources`, `limit`, `distance`
 - Returns an array of GeoJSON Features with `geokoder: { source }`
-- **In progress**: adding `geokoder.formattedLabel` built by each provider
+- `properties.formattedLabel` is set by each provider
 
 ---
 
-## formattedLabel (in progress)
+## API Reference
 
-Goal: each provider builds `formattedLabel` in its reverse entries, propagated in `routes.js` via:
-
-```js
-normalized.geokoder = {
-  source: entry.source,
-  formattedLabel: entry.formattedLabel
-}
-```
-
-Strategy per provider:
-- **NodeGeocoder**: hardcoded — `[streetNumber, streetName, city, country].filter(Boolean).join(' ')`
-- **Kano**: uses `source.keys` (already available) — first non-null path
-- **MBTiles**: optional `featureLabel(feature)` function in config, otherwise fallback to `properties.nom`
-- **Geokoder**: forwards the `formattedLabel` returned by the upstream instance
+See `service-geokoder-openapi.yaml` for the full OpenAPI 3.0 spec.
 
 ---
 
@@ -131,3 +146,4 @@ Strategy per provider:
 - Server 8451 receives its config via `configOverride`: `{ port: 8451, providers: { Geokoder: { remote: { url: 'http://localhost:8450/api' } } } }`
 - **Pitfall**: both servers run in the same process — `Providers` must be bound to `app` and not to the singleton to avoid conflicts
 - Some tests depend on external APIs (opendatafrance, openstreetmap) → potentially unstable results
+- MBTiles sources are exposed as `layerName:layerName` (e.g. `remote:mairies:mairies` through the proxy) — use this form in `sources` filter params and capability assertions
