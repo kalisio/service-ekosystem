@@ -1,0 +1,37 @@
+{
+  "name": "@kalisio/service-k2",
+  "description": "3D terrain server for Cesium tiles",
+  "version": "0.0.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "DOCKER_BUILDKIT=1 docker build -t service-k2:${TAG:-latest} -f ./Dockerfile ../..",
+    "dev": "node --watch src/main.js",
+    "lint": "standard --fix",
+    "test": "vitest run --coverage"
+  },
+  "keywords": [
+    "kalisio"
+  ],
+  "author": {
+    "name": "Kalisio",
+    "email": "contact@kalisio.com",
+    "url": "https://github.com/kalisio"
+  },
+  "contributors": [],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kalisio/service-ekosystem.git",
+    "directory": "packages/service-k2"
+  },
+  "bugs": {
+    "url": "https://github.com/kalisio/service-ekosystem/issues"
+  },
+  "homepage": "https://github.com/kalisio/service-ekosystem/tree/master/packages/service-k2",
+  "dependencies": {},
+  "devDependencies": {},
+  "engines": {
+    "node": ">=20"
+  }
+}

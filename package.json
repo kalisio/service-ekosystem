@@ -17,6 +17,7 @@
     "inspect": "pnpm knip",
     "lint": "pnpm -r lint",
     "lint:service-geokoder": "pnpm --filter @kalisio/service-geokoder lint",
+    "lint:service-k2": "pnpm --filter @kalisio/service-k2 lint",
     "lint:service-kapture": "pnpm --filter @kalisio/service-kapture lint",
     "lint:service-katalog": "pnpm --filter @kalisio/service-katalog lint",
     "posttest": "pnpm lcov-result-merger --prepend-source-files 'packages/*/coverage/lcov.info' coverage/lcov.info",
@@ -24,6 +25,7 @@
     "pretest": "mkdir -p coverage",
     "test": "pnpm -r --workspace-concurrency=1 test",
     "test:service-geokoder": "pnpm --filter @kalisio/service-geokoder test",
+    "test:service-k2": "pnpm --filter @kalisio/service-k2 test",
     "test:service-kapture": "pnpm --filter @kalisio/service-kapture test",
     "test:service-katalog": "pnpm --filter @kalisio/service-katalog test"
   },
@@ -59,7 +61,7 @@
   },
   "metaCatalog": {
     "version": "0.10.0",
-    "syncedAt": "2026-06-12T12:49:05.478Z"
+    "syncedAt": "2026-06-25T13:48:19.729Z"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
