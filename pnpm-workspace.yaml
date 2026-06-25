@@ -46,6 +46,7 @@ catalog:
   "@kalisio/feathers-webpush": ~1.0.1
   "@kalisio/kdk": ~2.7.0
   "@logtape/logtape": ~0.7.0
+  "@mapbox/geojsonhint": ~3.3.0
   "@mapbox/mbtiles": ~0.12.1
   "@mapbox/vtquery": ~0.6.0
   "@pdfme/common": ~6.1.2
@@ -57,6 +58,7 @@ catalog:
   "@quasar/quasar-app-extension-testing-unit-vitest": ~1.2.4
   "@quasar/vite-plugin": ~1.11.0
   "@thumbmarkjs/thumbmarkjs": ~1.7.5
+  "@turf/along": ~7.3.5
   "@turf/area": ~7.3.5
   "@turf/bbox": ~7.3.5
   "@turf/boolean-clockwise": ~7.3.5
@@ -69,6 +71,7 @@ catalog:
   "@turf/intersect": ~7.3.5
   "@turf/invariant": ~7.3.5
   "@turf/kinks": ~7.3.5
+  "@turf/length": ~7.3.5
   "@turf/meta": ~7.3.5
   "@turf/point-to-line-distance": ~7.3.5
   "@turf/point-to-polygon-distance": ~7.3.5

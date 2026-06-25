@@ -2,6 +2,9 @@
   "name": "@kalisio/service-k2",
   "description": "3D terrain server for Cesium tiles",
   "version": "0.0.0",
+  "packageManager": "pnpm@10.1.0",
+  "main": "index.js",
+  "bin": "index.js",
   "type": "module",
   "private": true,
   "scripts": {
@@ -11,7 +14,9 @@
     "test": "vitest run --coverage"
   },
   "keywords": [
-    "kalisio"
+    "kalisio",
+    "kargo",
+    "cesium"
   ],
   "author": {
     "name": "Kalisio",
@@ -29,7 +34,20 @@
     "url": "https://github.com/kalisio/service-ekosystem/issues"
   },
   "homepage": "https://github.com/kalisio/service-ekosystem/tree/master/packages/service-k2",
-  "dependencies": {},
+  "dependencies": {
+    "@mapbox/geojsonhint": "catalog:",
+    "@mapbox/mbtiles": "catalog:",
+    "@turf/along": "catalog:",
+    "@turf/helpers": "catalog:",
+    "@turf/length": "catalog:",
+    "@turf/meta": "catalog:",
+    "compression": "catalog:",
+    "cors": "catalog:",
+    "debug": "catalog:",
+    "express": "catalog:",
+    "geotiff": "catalog:",
+    "lodash": "catalog:"
+  },
   "devDependencies": {},
   "engines": {
     "node": ">=20"
