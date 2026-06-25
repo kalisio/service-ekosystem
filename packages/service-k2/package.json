@@ -35,7 +35,7 @@
   },
   "homepage": "https://github.com/kalisio/service-ekosystem/tree/master/packages/service-k2",
   "dependencies": {
-    "@mapbox/geojsonhint": "catalog:",
+    "@kalisio/common-core": "catalog:",
     "@mapbox/mbtiles": "catalog:",
     "@turf/along": "catalog:",
     "@turf/helpers": "catalog:",
@@ -48,7 +48,6 @@
     "geotiff": "catalog:",
     "lodash": "catalog:"
   },
-  "devDependencies": {},
   "engines": {
     "node": ">=20"
   }
