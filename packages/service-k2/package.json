@@ -33,7 +33,6 @@
   },
   "homepage": "https://github.com/kalisio/service-ekosystem/tree/master/packages/service-k2",
   "dependencies": {
-    "@kalisio/common-core": "catalog:",
     "@kalisio/common-geospatial": "catalog:",
     "@mapbox/mbtiles": "catalog:",
     "@turf/along": "catalog:",
