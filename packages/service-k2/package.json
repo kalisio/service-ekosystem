@@ -3,8 +3,6 @@
   "description": "3D terrain server for Cesium tiles",
   "version": "0.0.0",
   "packageManager": "pnpm@10.1.0",
-  "main": "index.js",
-  "bin": "index.js",
   "type": "module",
   "private": true,
   "scripts": {
@@ -36,6 +34,7 @@
   "homepage": "https://github.com/kalisio/service-ekosystem/tree/master/packages/service-k2",
   "dependencies": {
     "@kalisio/common-core": "catalog:",
+    "@kalisio/common-geospatial": "catalog:",
     "@mapbox/mbtiles": "catalog:",
     "@turf/along": "catalog:",
     "@turf/helpers": "catalog:",
