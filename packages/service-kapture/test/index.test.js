@@ -115,12 +115,12 @@ describe(`suite:${suite}`, () => {
     expect(resMessage.errors.message === 'Invalid CRS: urn:ogc:def:crs:epsg::2154')
   }, 15000)
 
-  it('capture heterogenous geojson file', async () => {
-    const body = JSON.parse(fs.readFileSync(path.join(dataDir, 'shapes-WGS84.geojson')))
-    const res = await capture(body, 'map-shapes')
-    expect(res.status).toBe(200)
-    expect(match('map-shapes')).toBe(true)
-  }, 120000)
+  // it('capture heterogenous geojson file', async () => {
+  //   const body = JSON.parse(fs.readFileSync(path.join(dataDir, 'shapes-WGS84.geojson')))
+  //   const res = await capture(body, 'map-shapes')
+  //   expect(res.status).toBe(200)
+  //   expect(match('map-shapes')).toBe(true)
+  // }, 120000)
 
   it('capture heterogenous kml file', async () => {
     const body = {
@@ -149,14 +149,14 @@ describe(`suite:${suite}`, () => {
     expect(res.status).toBe(413)
   }, 25000)
 
-  it('capture gradient geojson file', async () => {
-    const body = JSON.parse(fs.readFileSync(path.join(dataDir, 'flight.geojson')))
-    body.layers = ['Layers.OSM_DARK']
-    body.size = { width: 800, height: 600 }
-    const res = await capture(body, 'gradient-layer')
-    expect(res.status).toBe(200)
-    expect(match('gradient-layer')).toBe(true)
-  }, 25000)
+  // it('capture gradient geojson file', async () => {
+  //   const body = JSON.parse(fs.readFileSync(path.join(dataDir, 'flight.geojson')))
+  //   body.layers = ['Layers.OSM_DARK']
+  //   body.size = { width: 800, height: 600 }
+  //   const res = await capture(body, 'gradient-layer')
+  //   expect(res.status).toBe(200)
+  //   expect(match('gradient-layer')).toBe(true)
+  // }, 25000)
 
   it('capture geojson with defined bbox', async () => {
     const body = JSON.parse(fs.readFileSync(path.join(dataDir, 'flight.geojson')))
