@@ -9,7 +9,19 @@ _3D terrain server for Cesium tiles_
 
 ## Overview
 
-_TODO_
+**service-k2** is a lightweight service that exposes different endpoints related to terrain data:
+
+- a **3D terrain tiles** endpoint that lets you access quantized meshes stored in MBTiles for [Cesium](https://cesium.com/),
+- an **elevation** endpoint that lets you compute the elevation of the terrain under a linear geographical element.
+
+![3D Tiles](./k2-3D-tiles.png)
+
+![Elevation computation](./k2-elevation.png)
+
+The service can serve either:
+
+- a single terrain file, specified through the `TERRAIN_FILEPATH` environment variable,
+- multiple terrain files from a folder, specified through the `TERRAIN_FOLDER` environment variable — every `*.mbtiles` file in the folder is then served under a path derived from its basename.
 
 ## Installation
 
@@ -30,3 +42,76 @@ yarn add @kalisio/service-k2
 ```
 
 :::
+
+## Configuration
+
+Here are the environment variables you can use to customize the service:
+
+| Variable           | Description                                                      | Defaults                   |
+|--------------------|-----------------------------------------------------------------|----------------------------|
+| `PORT`             | The port to be used when exposing the service                   | `8080`                     |
+| `BODY_LIMIT`       | The size limit of the request body                              | `100kb`                    |
+| `TERRAIN_FILEPATH` | Path to a single terrain `.mbtiles` file (single-file mode)     | `/mbtiles/terrain.mbtiles` |
+| `TERRAIN_FOLDER`   | Path to a folder of `*.mbtiles` terrain files (multi-file mode) | -                          |
+
+
+
+## API
+
+The HTTP API exposed by **service-k2** is documented on the [API reference](./service-k2-openapi) page.
+
+
+
+## Testing
+
+The test suite uses [Vitest](https://vitest.dev/) and exercises the elevation computation against a bundled DEM through GDAL. It is skipped automatically when GDAL is not installed.
+
+To run the tests, use the `test` script:
+
+```bash
+pnpm test
+```
+
+## Converting GeoTIFF to MBTiles
+
+1. Run a [cesium-terrain-builder-docker](https://github.com/tum-gis/cesium-terrain-builder-docker) container with a volume mounted on the folder with your GeoTIFF files:
+
+```bash
+docker run -it --name ctb -v "./path/to/geotiff/:/data" tumgis/ctb-quantized-mesh
+```
+
+2. Build a virtual dataset with all of the GeoTIFF files:
+
+```bash
+gdalbuildvrt dataset.vrt /data/*.tif
+```
+
+3. Reproject data to EPSG:4326:
+
+```bash
+gdalwarp -s_srs EPSG:2154 -t_srs EPSG:4326 dataset.vrt dataset-EPSG4326.vrt
+```
+
+4. Build overview images:
+
+```bash
+gdaladdo -r average dataset-EPSG4326.vrt 2 4 8 16
+```
+
+5. Generate quantized meshes with [cesium-terrain-builder-docker](https://github.com/tum-gis/cesium-terrain-builder-docker?tab=readme-ov-file#create-cesium-terrain-files):
+
+```bash
+ctb-tile -f Mesh -C -N -o /target/path/for/generated/quantized/meshes/ dataset-EPSG4326.vrt
+```
+
+6. Generate `layer.json`:
+
+```bash
+ctb-tile -f Mesh -C -N -l -o /target/path/for/generated/quantized/meshes/ dataset-EPSG4326.vrt
+```
+
+7. Outside of the container, get the [`quantized_mesh2mbtiles.py`](https://github.com/kalisio/service-ekosystem/blob/master/packages/service-k2/tools/quantized_mesh2mbtiles.py) script from this project, and generate the MBTiles file from the quantized meshes:
+
+```bash
+python quantized_mesh2mbtiles.py /path/to/quantized/meshes/ terrain.mbtiles
+```

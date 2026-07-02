@@ -21,7 +21,10 @@
     "moment": "catalog:",
     "quasar": "catalog:",
     "vitepress": "catalog:",
-    "vitepress-plugin-mermaid": "catalog:",
-    "vitepress-theme-kalisio": "catalog:"
+    "vitepress-plugin-mermaid": "catalog:"
+  },
+  "devDependencies": {
+    "vitepress-openapi": "^0.2.0",
+    "vitepress-theme-kalisio": "github:kalisio/vitepress-theme-kalisio"
   }
 }
