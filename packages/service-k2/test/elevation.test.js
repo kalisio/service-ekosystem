@@ -81,6 +81,7 @@ describe.skipIf(!hasGdal)('k2:elevation', () => {
   it('returns an empty collection for a degenerate (zero-length) line', async () => {
     const profile = lineString([[0.65, 43.0], [0.65, 43.0]])
     const result = await elevation(profile, { demOverride, resolution: 1000 })
+
     expect(result.type).toBe('FeatureCollection')
     expect(result.features).toHaveLength(0)
   }, 60000)
