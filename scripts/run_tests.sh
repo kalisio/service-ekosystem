@@ -67,6 +67,21 @@ detect_target_ref() {
         TARGET_REF=""
     fi
 
+    # Highlight which packages the filter will actually select (changed since
+    # the ref + their dependents). Everything here goes to stderr because this
+    # function's stdout is the return channel captured by the caller.
+    if [ -n "$TARGET_REF" ]; then
+        local SELECTED
+        SELECTED=$( (cd "$ROOT_DIR" && pnpm --filter="...[${TARGET_REF}]" exec node -p "require('./package.json').name") 2>/dev/null || true)
+        begin_group "Packages selected for testing (changed since $TARGET_REF)" >&2
+        if [ -z "$SELECTED" ]; then
+            echo "  (none — no package changed since $TARGET_REF)" >&2
+        else
+            echo "$SELECTED" | sed 's/^/  - /' >&2
+        fi
+        end_group "Packages selected for testing (changed since $TARGET_REF)" >&2
+    fi
+
     echo "$TARGET_REF"
 }
 
@@ -114,13 +129,15 @@ run_lib_tests() {
     TARGET_REF=$(detect_target_ref)
 
     if [ -z "$TARGET_REF" ]; then
+        # detect_target_ref already logged the selection scope to stderr.
         begin_group "Running tests for all packages ..."
         pnpm -r --workspace-concurrency=1 run test
         end_group "Running tests for all packages ..."
     else
-        begin_group "Running tests for packages changed since $TARGET_REF ..."
+        # detect_target_ref already logged the selected packages to stderr.
+        begin_group "Running tests for changed packages ..."
         pnpm --filter="...[${TARGET_REF}]" --workspace-concurrency=1 run test
-        end_group "Running tests for packages changed since $TARGET_REF ..."
+        end_group "Running tests for changed packages ..."
     fi
 
     cd ~-

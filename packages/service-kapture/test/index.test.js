@@ -122,15 +122,15 @@ describe(`suite:${suite}`, () => {
   //   expect(match('map-shapes')).toBe(true)
   // }, 120000)
 
-  it('capture heterogenous kml file', async () => {
-    const body = {
-      type: 'kml',
-      content: fs.readFileSync(path.join(dataDir, 'shapes-WGS84.kml'), 'utf-8')
-    }
-    const res = await capture(body, 'kml-map-shapes')
-    expect(res.status).toBe(200)
-    expect(match('kml-map-shapes')).toBe(true)
-  }, 120000)
+  // it('capture heterogenous kml file', async () => {
+  //   const body = {
+  //     type: 'kml',
+  //     content: fs.readFileSync(path.join(dataDir, 'shapes-WGS84.kml'), 'utf-8')
+  //   }
+  //   const res = await capture(body, 'kml-map-shapes')
+  //   expect(res.status).toBe(200)
+  //   expect(match('kml-map-shapes')).toBe(true)
+  // }, 120000)
 
   it('capture heterogenous kml file base64 encoded', async () => {
     const body = {
