@@ -176,6 +176,12 @@ while getopts "m:n:sr:" option; do
 done
 
 
+## Init workspace
+##
+# Required because it contains the Sonar host URL.
+. "$WORKSPACE_DIR/development/workspaces/services/services.sh" service-ekosystem
+
+
 ## Run tests
 ##
 

@@ -145,7 +145,6 @@ describe('Distribution tests', () => {
       remoteServices: (service) => service.key === 'other-key',
       middlewares: { after: express.errorHandler() }
     }))
-
     await new Promise(resolve => setTimeout(resolve, 5000))
     expect(() => wrongConsumer.service('catalog')).toThrow()
     await finalize(wrongConsumer)
