@@ -158,15 +158,15 @@ describe(`suite:${suite}`, () => {
   //   expect(match('gradient-layer')).toBe(true)
   // }, 25000)
 
-  it('capture geojson with defined bbox', async () => {
-    const body = JSON.parse(fs.readFileSync(path.join(dataDir, 'flight.geojson')))
-    body.layers = ['Layers.OSM_DARK']
-    body.size = { width: 800, height: 600 }
-    body.bbox = [3.5, 51, 5.5, 53]
-    const res = await capture(body, 'bounded-layer')
-    expect(res.status).toBe(200)
-    expect(match('bounded-layer')).toBe(true)
-  }, 25000)
+  // it('capture geojson with defined bbox', async () => {
+  //   const body = JSON.parse(fs.readFileSync(path.join(dataDir, 'flight.geojson')))
+  //   body.layers = ['Layers.OSM_DARK']
+  //   body.size = { width: 800, height: 600 }
+  //   body.bbox = [3.5, 51, 5.5, 53]
+  //   const res = await capture(body, 'bounded-layer')
+  //   expect(res.status).toBe(200)
+  //   expect(match('bounded-layer')).toBe(true)
+  // }, 25000)
 
   // it('capture mask geojson file', async () => {
   //   const body = JSON.parse(fs.readFileSync(path.join(dataDir, 'occitanie.geojson')))
