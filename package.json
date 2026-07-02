@@ -23,7 +23,7 @@
     "posttest": "pnpm lcov-result-merger --prepend-source-files 'packages/*/coverage/lcov.info' coverage/lcov.info",
     "prepare": "husky",
     "pretest": "mkdir -p coverage",
-    "test": "pnpm -r --workspace-concurrency=1 test",
+    "test": "bash -c 'source ../../../development/workspaces/services/services.sh service-ekosystem && pnpm -r --workspace-concurrency=1 test'",
     "test:service-geokoder": "pnpm --filter @kalisio/service-geokoder test",
     "test:service-k2": "pnpm --filter @kalisio/service-k2 test",
     "test:service-kapture": "pnpm --filter @kalisio/service-kapture test",

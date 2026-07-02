@@ -54,6 +54,7 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
         with:
+          fetch-depth: 0
           submodules: true
       - name: Init runner
         run: bash ./scripts/init_runner.sh ${{ github.job }}
@@ -64,6 +65,7 @@ jobs:
       - name: Run tests
         env:
           SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
+          GITHUB_EVENT_BEFORE: ${{ github.event.before }}
         run: bash ./scripts/run_tests.sh -s -r ${{ github.job }}
 
   additional_tests:
@@ -91,6 +93,7 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v4
         with:
+          fetch-depth: 0
           submodules: true
       - name: Init runner
         run: bash ./scripts/init_runner.sh ${{ github.job }}
@@ -101,6 +104,7 @@ jobs:
       - name: Run tests
         env:
           SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
+          GITHUB_EVENT_BEFORE: ${{ github.event.before }}
         run: bash ./scripts/run_tests.sh -n ${{ matrix.node }}
 
   build_docs:
