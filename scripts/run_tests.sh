@@ -60,17 +60,15 @@ run_lib_tests() {
         end_group "Installing dependencies ..."
     fi
 
+    # All packages, or only those changed since the target ref
+    local FILTER="-r"
+    [ -n "$TARGET_REF" ] && FILTER="--filter=...[${TARGET_REF}]"
+
     # --if-present: only run the "test" script in packages that define one,
     # skipping the others (eg. examples, docs) without failing.
-    if [ -z "$TARGET_REF" ]; then
-        begin_group "Running tests for all packages ..."
-        pnpm -r --workspace-concurrency=1 run --if-present test
-        end_group "Running tests for all packages ..."
-    else
-        begin_group "Running tests for changed packages ..."
-        pnpm --filter="...[${TARGET_REF}]" --workspace-concurrency=1 run --if-present test
-        end_group "Running tests for changed packages ..."
-    fi
+    begin_group "Running tests ..."
+    pnpm "$FILTER" --workspace-concurrency=1 run --if-present test
+    end_group "Running tests ..."
 
     cd ~-
 
