@@ -8,11 +8,6 @@
 # These helpers only log (no begin_group/end_group — grouping is the caller's
 # job). Requires kash's $CI_ID, plus git and pnpm.
 
-if [[ -n "${CI_COMMON_LOADED:-}" ]]; then
-    return 0 2>/dev/null || exit 0
-fi
-CI_COMMON_LOADED=1
-
 ## Detect the ref/SHA to diff against to know which packages changed.
 ##
 ## Relies on kash's $CI_ID (github / gitlab / travis / empty) instead of
