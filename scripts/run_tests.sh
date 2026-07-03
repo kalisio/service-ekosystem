@@ -70,7 +70,7 @@ fi
 if [ -z "$TARGET_REF" ]; then
     echo "-> Packages to test: all"
 else
-    CHANGED_PACKAGES=$(changed_files "$TARGET_REF" | sed -n 's#^packages/\([^/]*\)/.*#\1#p' | sort -u | paste -sd' ')
+    CHANGED_PACKAGES=$(changed_package_names "$TARGET_REF" | paste -sd' ')
     echo "-> Packages to test: ${CHANGED_PACKAGES:-(none)}"
 fi
 

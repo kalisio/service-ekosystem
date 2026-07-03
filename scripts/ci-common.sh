@@ -125,11 +125,10 @@ changed_files() {
     git -C "$ROOT_DIR" diff --name-only "$1" 2>/dev/null || true
 }
 
-# List the package directory names changed since the ref (+ their dependents).
+# List the directory names of the packages changed since the ref.
 # Arg1: the target ref
-changed_package_dirs() {
-    (cd "$ROOT_DIR" && pnpm --filter="...[$1]" exec pwd) 2>/dev/null \
-        | while IFS= read -r DIR; do [ -n "$DIR" ] && basename "$DIR"; done
+changed_package_names() {
+    changed_files "$1" | sed -n 's#^packages/\([^/]*\)/.*#\1#p' | sort -u
 }
 
 # Return 0 if any file changed since the ref triggers a full rebuild.
@@ -155,7 +154,7 @@ has_full_rebuild_trigger() {
 #   2. otherwise          -> packages changed since the target ref, falling back
 #                            to all packages when a shared path changed or no
 #                            diff base could be resolved.
-## Uses globals: INPUT_PACKAGES (env), NODE_VER
+## Uses globals: INPUT_PACKAGES (env)
 select_packages_to_build() {
     local PREFIX="$1"
     shift
@@ -172,8 +171,6 @@ select_packages_to_build() {
             _add_package "$TOKEN"
         done
     else
-        use_node "$NODE_VER" >&2
-        ensure_pnpm >&2
         local TARGET_REF
         TARGET_REF=$(detect_target_ref)
 
@@ -184,7 +181,7 @@ select_packages_to_build() {
             while IFS= read -r PKG; do
                 [ -n "$PKG" ] || continue
                 _is_buildable_package "$PKG" "$PREFIX" && _add_package "$PKG"
-            done <<< "$(changed_package_dirs "$TARGET_REF")"
+            done <<< "$(changed_package_names "$TARGET_REF")"
         fi
     fi
 
