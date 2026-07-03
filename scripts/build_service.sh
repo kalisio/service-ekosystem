@@ -10,16 +10,15 @@ WORKSPACE_DIR="$(dirname "$ROOT_DIR")"
 . "$THIS_DIR/kash/kash.sh"
 . "$THIS_DIR/ci-common.sh"
 
+slack_report() {
+    slack_ci_report "$ROOT_DIR" "$CI_STEP_NAME" "$KASH_EXIT_CODE" "$SLACK_WEBHOOK_SERVICES"
+}
+
 ## Monorepo configuration
 ##
 
 PACKAGE_PREFIX="service-"
 EXTRA_FULL_REBUILD_PATHS=()
-
-
-slack_report() {
-    slack_ci_report "$ROOT_DIR" "$CI_STEP_NAME" "$KASH_EXIT_CODE" "$SLACK_WEBHOOK_SERVICES"
-}
 
 ## Parse options
 ##
@@ -51,47 +50,61 @@ while getopts "d:n:pr:" option; do
     esac
 done
 
-## Resolve the packages to build
+## Determine which packages need to be built
 ##
 
-PACKAGES=()
-PACKAGES_LIST=$(select_packages_to_build)
-[ -n "$PACKAGES_LIST" ] && mapfile -t PACKAGES <<< "$PACKAGES_LIST"
+begin_group "Determining packages to build ..."
 
+PACKAGES=()
+PACKAGES_LIST=$(select_packages_to_build "$PACKAGE_PREFIX" "${EXTRA_FULL_REBUILD_PATHS[@]}")
+
+# Resolve the list of packages to build
+if [ -n "$PACKAGES_LIST" ]; then
+    mapfile -t PACKAGES <<< "$PACKAGES_LIST"
+fi
+
+# Nothing to build → exit successfully
 if [ ${#PACKAGES[@]} -eq 0 ]; then
     echo "-> No package to build."
+    end_group "Determining packages to build ..."
     exit 0
 fi
 
 echo "-> Packages to build: ${PACKAGES[*]}"
+end_group "Determining packages to build ..."
 
-## Build (and optionally publish) each resolved package, one by one
+## Build each package
 ##
 
 load_env_files "$WORKSPACE_DIR/development/common/kalisio_dockerhub.enc.env"
 decrypt_stdout "$WORKSPACE_DIR/development/common/KALISIO_DOCKERHUB_PASSWORD.enc.value" | docker login --username "$KALISIO_DOCKERHUB_USERNAME" --password-stdin "$KALISIO_DOCKERHUB_URL"
 
 for PKG in "${PACKAGES[@]}"; do
+    # Init workspace
     init_lib_infos "$ROOT_DIR/packages/$PKG"
-    # Use the monorepo's tag/branch rather than the package subdirectory's
-    LIB_INFOS[2]=$(get_git_tag "$ROOT_DIR")
-    LIB_INFOS[3]=$(get_git_branch "$ROOT_DIR")
 
     NAME=$(get_lib_name)
     VERSION=$(get_lib_version)
     GIT_TAG=$(get_lib_tag)
-    NAME=${NAME#*/} # strip @scope/
 
-    # Image keeps the legacy standalone repo name, ie. the package name without
-    # its monorepo prefix (eg. service-kapture -> kapture)
+    # Strip @kalisio part
+    NAME=${NAME#*/}
+
+    LIB_INFOS[2]=$(get_git_tag "$ROOT_DIR")
+    LIB_INFOS[3]=$(get_git_branch "$ROOT_DIR")
+
+    # Build container
     IMAGE_NAME="$KALISIO_DOCKERHUB_URL/kalisio/${NAME#"$PACKAGE_PREFIX"}"
     IMAGE_SHORT_TAG=dev
-    [ -n "$GIT_TAG" ] && IMAGE_SHORT_TAG=$VERSION
+
+    if [[ -n "$GIT_TAG" ]]; then
+        IMAGE_SHORT_TAG=$VERSION
+    fi
+
     IMAGE_TAG="$IMAGE_SHORT_TAG-node$NODE_VER-$DEBIAN_VER"
 
     begin_group "Building container $IMAGE_NAME:$IMAGE_TAG ..."
-
-    # Build context is the monorepo root, see packages/$PKG/Dockerfile
+    
     DOCKER_BUILDKIT=1 docker build \
         --build-arg NODE_VERSION="$NODE_VER" \
         --build-arg DEBIAN_VERSION="$DEBIAN_VER" \

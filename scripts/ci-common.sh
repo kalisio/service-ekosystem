@@ -2,12 +2,11 @@
 # Shared CI helpers for the monorepo scripts (run_tests.sh, build_service.sh).
 #
 # Sourced *after* kash.sh. Assumes the sourcing script defines $ROOT_DIR (repo
-# root) and, when calling select_packages_to_build, the following globals:
-#   - PACKAGE_PREFIX            prefix of the buildable packages
-#   - EXTRA_FULL_REBUILD_PATHS  extra path globs forcing a full rebuild (array)
-#   - NODE_VER                  node version to activate for pnpm
-#   - INPUT_PACKAGES            optional explicit package list (env)
-# Requires kash's begin_group/end_group/$CI_ID, plus git and pnpm.
+# root). Package-specific config (prefix, extra full-rebuild paths) is passed as
+# arguments to the helpers; select_packages_to_build also reads $NODE_VER and
+# the optional $INPUT_PACKAGES env override.
+# These helpers only log (no begin_group/end_group — grouping is the caller's
+# job). Requires kash's $CI_ID, plus git and pnpm.
 
 if [[ -n "${CI_COMMON_LOADED:-}" ]]; then
     return 0 2>/dev/null || exit 0
@@ -76,13 +75,12 @@ detect_target_ref() {
     if [ -n "$TARGET_REF" ]; then
         local SELECTED
         SELECTED=$( (cd "$ROOT_DIR" && pnpm --filter="...[${TARGET_REF}]" exec node -p "require('./package.json').name") 2>/dev/null || true)
-        begin_group "Packages changed since $TARGET_REF" >&2
+        echo "-> Packages changed since $TARGET_REF:" >&2
         if [ -z "$SELECTED" ]; then
-            echo "  (none)" >&2
+            echo "   (none)" >&2
         else
-            echo "$SELECTED" | sed 's/^/  - /' >&2
+            echo "$SELECTED" | sed 's/^/   - /' >&2
         fi
-        end_group "Packages changed since $TARGET_REF" >&2
     fi
 
     echo "$TARGET_REF"
@@ -142,22 +140,25 @@ _add_all_packages() {
 
 # Resolve the packages to build and print them on stdout, one per line.
 # All logs go to stderr: stdout is the return channel.
+# Arg1:  the package prefix
+# Arg2+: extra path globs forcing a full rebuild (optional)
 # Resolution order:
 #   1. INPUT_PACKAGES set -> exactly those (manual dispatch / release)
 #   2. otherwise          -> packages changed since the target ref, falling back
 #                            to all packages when a shared path changed or no
 #                            diff base could be resolved.
-## Uses globals: INPUT_PACKAGES, PACKAGE_PREFIX, EXTRA_FULL_REBUILD_PATHS, NODE_VER
+## Uses globals: INPUT_PACKAGES (env), NODE_VER
 select_packages_to_build() {
+    local PREFIX="$1"
+    shift
+    local EXTRA_PATHS=("$@")
     local PACKAGES=()
-
-    begin_group "Resolving packages to build ..." >&2
 
     if [ -n "${INPUT_PACKAGES:-}" ]; then
         echo "-> Package(s) requested explicitly: $INPUT_PACKAGES" >&2
         local TOKEN
         for TOKEN in $INPUT_PACKAGES; do
-            if ! _is_buildable_package "$TOKEN" "$PACKAGE_PREFIX"; then
+            if ! _is_buildable_package "$TOKEN" "$PREFIX"; then
                 echo "-> Error: package '$TOKEN' not found or has no Dockerfile" >&2
                 return 1
             fi
@@ -171,13 +172,13 @@ select_packages_to_build() {
 
         if [ -z "$TARGET_REF" ]; then
             echo "-> No usable diff base -> building all packages" >&2
-            _add_all_packages "$PACKAGE_PREFIX"
+            _add_all_packages "$PREFIX"
         else
             local CHANGED FILE FULL=false
             CHANGED=$(git -C "$ROOT_DIR" diff --name-only "$TARGET_REF" 2>/dev/null || true)
             while IFS= read -r FILE; do
                 [ -n "$FILE" ] || continue
-                if _triggers_full_rebuild "$FILE" "${EXTRA_FULL_REBUILD_PATHS[@]}"; then
+                if _triggers_full_rebuild "$FILE" "${EXTRA_PATHS[@]}"; then
                     echo "-> Shared path changed ($FILE) -> building all packages" >&2
                     FULL=true
                     break
@@ -185,20 +186,18 @@ select_packages_to_build() {
             done <<< "$CHANGED"
 
             if [ "$FULL" = true ]; then
-                _add_all_packages "$PACKAGE_PREFIX"
+                _add_all_packages "$PREFIX"
             else
                 local SELECTED DIR PKG
                 SELECTED=$( (cd "$ROOT_DIR" && pnpm --filter="...[${TARGET_REF}]" exec pwd) 2>/dev/null || true)
                 while IFS= read -r DIR; do
                     [ -n "$DIR" ] || continue
                     PKG=$(basename "$DIR")
-                    _is_buildable_package "$PKG" "$PACKAGE_PREFIX" && _add_package "$PKG"
+                    _is_buildable_package "$PKG" "$PREFIX" && _add_package "$PKG"
                 done <<< "$SELECTED"
             fi
         fi
     fi
-
-    end_group "Resolving packages to build ..." >&2
 
     # Return the resolved packages, one per line
     [ ${#PACKAGES[@]} -gt 0 ] && printf '%s\n' "${PACKAGES[@]}"

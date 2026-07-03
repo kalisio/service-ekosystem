@@ -9,6 +9,7 @@ WORKSPACE_DIR="$(dirname "$ROOT_DIR")"
 
 . "$THIS_DIR/kash/kash.sh"
 . "$THIS_DIR/ci-common.sh"
+
 slack_report() {
     slack_ci_report "$ROOT_DIR" "$CI_STEP_NAME" "$KASH_EXIT_CODE" "$SLACK_WEBHOOK_SERVICES"
 }
@@ -56,15 +57,17 @@ run_lib_tests() {
     local TARGET_REF
     TARGET_REF=$(detect_target_ref)
 
+    # --if-present: only run the "test" script in packages that define one,
+    # skipping the others (eg. examples, docs) without failing.
     if [ -z "$TARGET_REF" ]; then
         # detect_target_ref already logged the selection scope to stderr.
         begin_group "Running tests for all packages ..."
-        pnpm -r --workspace-concurrency=1 run test
+        pnpm -r --workspace-concurrency=1 run --if-present test
         end_group "Running tests for all packages ..."
     else
         # detect_target_ref already logged the selected packages to stderr.
         begin_group "Running tests for changed packages ..."
-        pnpm --filter="...[${TARGET_REF}]" --workspace-concurrency=1 run test
+        pnpm --filter="...[${TARGET_REF}]" --workspace-concurrency=1 run --if-present test
         end_group "Running tests for changed packages ..."
     fi
 
