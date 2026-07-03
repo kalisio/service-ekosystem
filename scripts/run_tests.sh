@@ -19,64 +19,6 @@ slack_report() {
 
 EXTRA_FULL_REBUILD_PATHS=()
 
-## Override kash's generic run_lib_tests: this repo is a pnpm workspace, so
-## instead of testing the whole tree we only test the packages selected by the
-## caller via the target ref, falling back to a full run when the ref is empty.
-## Expected arguments:
-## 1. Root directory
-## 2. whether to run SonarQube analysis and publish code quality & coverage results
-## 3. node version to be used
-## 4. mongo version to be used if required by tests
-## 5. whether to skip 'pnpm install' (defaults to false)
-## 6. target ref to diff against (empty -> test every package)
-run_lib_tests() {
-    local LOCAL_ROOT_DIR="$1"
-    local RUN_SONAR="$2"
-    local NODE_VER="$3"
-    local MONGO_VER="$4"
-    local SKIP_INSTALL="${5:-false}"
-    local TARGET_REF="${6:-}"
-
-    init_lib_infos "$LOCAL_ROOT_DIR"
-
-    local LIB
-    LIB=$(get_lib_name)
-    echo "About to run tests for $LIB ..."
-
-    if [ -n "$MONGO_VER" ]; then
-        begin_group "Starting mongo $MONGO_VER ..."
-        use_mongo "$MONGO_VER"
-        k-mongo
-        end_group "Starting mongo $MONGO_VER ..."
-    fi
-
-    use_node "$NODE_VER"
-    ensure_pnpm
-    cd "$LOCAL_ROOT_DIR"
-
-    if [ "$SKIP_INSTALL" != "true" ]; then
-        begin_group "Installing dependencies ..."
-        pnpm install
-        end_group "Installing dependencies ..."
-    fi
-
-    # All packages, or only those changed since the target ref
-    local FILTER="-r"
-    [ -n "$TARGET_REF" ] && FILTER="--filter=...[${TARGET_REF}]"
-
-    # --if-present: only run the "test" script in packages that define one,
-    # skipping the others (eg. examples, docs) without failing.
-    begin_group "Running tests ..."
-    pnpm "$FILTER" --workspace-concurrency=1 run --if-present test
-    end_group "Running tests ..."
-
-    cd ~-
-
-    if [ "$RUN_SONAR" = true ]; then
-        cd "$LOCAL_ROOT_DIR" && sonar-scanner
-    fi
-}
-
 ## Parse options
 ##
 
