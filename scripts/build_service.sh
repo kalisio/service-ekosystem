@@ -8,6 +8,13 @@ ROOT_DIR=$(dirname "$THIS_DIR")
 WORKSPACE_DIR="$(dirname "$ROOT_DIR")"
 
 . "$THIS_DIR/kash/kash.sh"
+. "$THIS_DIR/ci-common.sh"
+
+## Monorepo configuration
+##
+
+PACKAGE_PREFIX="service-"
+EXTRA_FULL_REBUILD_PATHS=()
 
 
 slack_report() {
@@ -21,14 +28,10 @@ DEFAULT_NODE_VER=20
 DEFAULT_DEBIAN_VER=bookworm
 NODE_VER=$DEFAULT_NODE_VER
 DEBIAN_VER=$DEFAULT_DEBIAN_VER
-PACKAGE=""
 PUBLISH=false
-CI_STEP_NAME="Build service"
-while getopts "j:d:n:pr:" option; do
+CI_STEP_NAME="Build package"
+while getopts "d:n:pr:" option; do
     case $option in
-        j) # service package directory name under packages/
-            PACKAGE=$OPTARG
-            ;;
         d) # defines debian version
             DEBIAN_VER=$OPTARG
             ;;
@@ -48,64 +51,63 @@ while getopts "j:d:n:pr:" option; do
     esac
 done
 
-if [ -z "$PACKAGE" ]; then
-    echo "Usage: $0 -j <package> [-n <node>] [-d <debian>] [-p] [-r <step>]" >&2
-    exit 1
-fi
-
-## Init workspace
+## Resolve the packages to build
 ##
 
-init_lib_infos "$ROOT_DIR/packages/$PACKAGE"
+PACKAGES=()
+PACKAGES_LIST=$(select_packages_to_build)
+[ -n "$PACKAGES_LIST" ] && mapfile -t PACKAGES <<< "$PACKAGES_LIST"
 
-# Use the monorepo's tag/branch rather than the package subdirectory's
-LIB_INFOS[2]=$(get_git_tag "$ROOT_DIR")
-LIB_INFOS[3]=$(get_git_branch "$ROOT_DIR")
+if [ ${#PACKAGES[@]} -eq 0 ]; then
+    echo "-> No package to build."
+    exit 0
+fi
 
-NAME=$(get_lib_name)
-VERSION=$(get_lib_version)
-GIT_TAG=$(get_lib_tag)
+echo "-> Packages to build: ${PACKAGES[*]}"
 
-# Strip @kalisio/ prefix
-NAME=${NAME#*/}
-
-echo "About to build $NAME v$VERSION ..."
+## Build (and optionally publish) each resolved package, one by one
+##
 
 load_env_files "$WORKSPACE_DIR/development/common/kalisio_dockerhub.enc.env"
-
-## Build container
-##
-
-# Docker image keeps the legacy standalone repo name, e.g. service-kapture -> kapture
-IMAGE_NAME="$KALISIO_DOCKERHUB_URL/kalisio/${NAME#service-}"
-IMAGE_SHORT_TAG=dev
-
-if [[ -n "$GIT_TAG" ]]; then
-    IMAGE_SHORT_TAG=$VERSION
-fi
-
-IMAGE_TAG="$IMAGE_SHORT_TAG-node$NODE_VER-$DEBIAN_VER"
-
-begin_group "Building container $IMAGE_NAME:$IMAGE_TAG ..."
-
 decrypt_stdout "$WORKSPACE_DIR/development/common/KALISIO_DOCKERHUB_PASSWORD.enc.value" | docker login --username "$KALISIO_DOCKERHUB_USERNAME" --password-stdin "$KALISIO_DOCKERHUB_URL"
 
-# Build context is the monorepo root, see packages/$PACKAGE/Dockerfile
-DOCKER_BUILDKIT=1 docker build \
-    --build-arg NODE_VERSION="$NODE_VER" \
-    --build-arg DEBIAN_VERSION="$DEBIAN_VER" \
-    -f "packages/$PACKAGE/Dockerfile" \
-    -t "$IMAGE_NAME:$IMAGE_TAG" \
-    "$ROOT_DIR"
+for PKG in "${PACKAGES[@]}"; do
+    init_lib_infos "$ROOT_DIR/packages/$PKG"
+    # Use the monorepo's tag/branch rather than the package subdirectory's
+    LIB_INFOS[2]=$(get_git_tag "$ROOT_DIR")
+    LIB_INFOS[3]=$(get_git_branch "$ROOT_DIR")
 
-if [ "$PUBLISH" = true ]; then
-    docker push "$IMAGE_NAME:$IMAGE_TAG"
-    if [ "$NODE_VER" = "$DEFAULT_NODE_VER" ] && [ "$DEBIAN_VER" = "$DEFAULT_DEBIAN_VER" ]; then
-        docker tag "$IMAGE_NAME:$IMAGE_TAG" "$IMAGE_NAME:$IMAGE_SHORT_TAG"
-        docker push "$IMAGE_NAME:$IMAGE_SHORT_TAG"
+    NAME=$(get_lib_name)
+    VERSION=$(get_lib_version)
+    GIT_TAG=$(get_lib_tag)
+    NAME=${NAME#*/} # strip @scope/
+
+    # Image keeps the legacy standalone repo name, ie. the package name without
+    # its monorepo prefix (eg. service-kapture -> kapture)
+    IMAGE_NAME="$KALISIO_DOCKERHUB_URL/kalisio/${NAME#"$PACKAGE_PREFIX"}"
+    IMAGE_SHORT_TAG=dev
+    [ -n "$GIT_TAG" ] && IMAGE_SHORT_TAG=$VERSION
+    IMAGE_TAG="$IMAGE_SHORT_TAG-node$NODE_VER-$DEBIAN_VER"
+
+    begin_group "Building container $IMAGE_NAME:$IMAGE_TAG ..."
+
+    # Build context is the monorepo root, see packages/$PKG/Dockerfile
+    DOCKER_BUILDKIT=1 docker build \
+        --build-arg NODE_VERSION="$NODE_VER" \
+        --build-arg DEBIAN_VERSION="$DEBIAN_VER" \
+        -f "packages/$PKG/Dockerfile" \
+        -t "$IMAGE_NAME:$IMAGE_TAG" \
+        "$ROOT_DIR"
+
+    if [ "$PUBLISH" = true ]; then
+        docker push "$IMAGE_NAME:$IMAGE_TAG"
+        if [ "$NODE_VER" = "$DEFAULT_NODE_VER" ] && [ "$DEBIAN_VER" = "$DEFAULT_DEBIAN_VER" ]; then
+            docker tag "$IMAGE_NAME:$IMAGE_TAG" "$IMAGE_NAME:$IMAGE_SHORT_TAG"
+            docker push "$IMAGE_NAME:$IMAGE_SHORT_TAG"
+        fi
     fi
-fi
+
+    end_group "Building container $IMAGE_NAME:$IMAGE_TAG ..."
+done
 
 docker logout "$KALISIO_DOCKERHUB_URL"
-
-end_group "Building container $IMAGE_NAME:$IMAGE_TAG ..."

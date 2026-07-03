@@ -130,44 +130,18 @@ jobs:
           SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
         run: bash ./scripts/build_docs.sh -p -r ${{ github.job }}
 
-  detect_services:
-    name: Detect services
+  build_services:
+    name: Build services
     if: ${{
       github.event_name == 'workflow_dispatch' && inputs.build_services ||
       github.event_name == 'push' && github.ref_type == 'branch' && !contains(github.event.head_commit.message, 'skip services')
       }}
     runs-on: ubuntu-22.04
-    outputs:
-      matrix:       ${{ steps.compute.outputs.matrix }}
-      has_services: ${{ steps.compute.outputs.has_services }}
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          submodules: true
-      - name: Detect services
-        id: compute
-        env:
-          GITHUB_EVENT_NAME:   ${{ github.event_name }}
-          GITHUB_EVENT_BEFORE: ${{ github.event.before }}
-          GITHUB_EVENT_AFTER:  ${{ github.event.after }}
-          INPUT_SERVICES:      ${{ github.event.inputs.build_services_input }}
-        run: bash ./scripts/detect_services.sh
-
-  build_services:
-    needs: detect_services
-    if: needs.detect_services.outputs.has_services == 'true'
-    strategy:
-      fail-fast: false
-      matrix:
-        include: ${{ fromJSON(needs.detect_services.outputs.matrix) }}
-    name: Build service (${{ matrix.package }})
-    runs-on: ubuntu-22.04
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v4
-        with:
           submodules: true
       - name: Init runner
         run: bash ./scripts/init_runner.sh ${{ github.job }}
@@ -175,10 +149,12 @@ jobs:
         env:
           KALISIO_GITHUB_URL: ${{ secrets.KALISIO_GITHUB_URL }}
         run: bash ./scripts/setup_workspace.sh
-      - name: Build service
+      - name: Build services
         env:
-          SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
-        run: bash ./scripts/build_service.sh -j ${{ matrix.package }} -p -r "${{ github.job }} ${{ matrix.package }}"
+          SOPS_AGE_KEY:        ${{ secrets.SOPS_AGE_KEY }}
+          GITHUB_EVENT_BEFORE: ${{ github.event.before }}
+          INPUT_PACKAGES:      ${{ github.event.inputs.build_services_input }}
+        run: bash ./scripts/build_service.sh -p -r ${{ github.job }}
 
   detect_release:
     name: Detect release
@@ -217,5 +193,6 @@ jobs:
         run: bash ./scripts/setup_workspace.sh
       - name: Build & publish service
         env:
-          SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
-        run: bash ./scripts/build_service.sh -j ${{ needs.detect_release.outputs.package }} -p -r release_services
+          SOPS_AGE_KEY:   ${{ secrets.SOPS_AGE_KEY }}
+          INPUT_PACKAGES: ${{ needs.detect_release.outputs.package }}
+        run: bash ./scripts/build_service.sh -p -r release_services

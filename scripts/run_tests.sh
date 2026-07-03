@@ -8,81 +8,9 @@ ROOT_DIR=$(dirname "$THIS_DIR")
 WORKSPACE_DIR="$(dirname "$ROOT_DIR")"
 
 . "$THIS_DIR/kash/kash.sh"
+. "$THIS_DIR/ci-common.sh"
 slack_report() {
     slack_ci_report "$ROOT_DIR" "$CI_STEP_NAME" "$KASH_EXIT_CODE" "$SLACK_WEBHOOK_SERVICES"
-}
-
-## Detect the ref/SHA to diff against to know which packages changed.
-##
-## Relies on kash's $CI_ID (github / gitlab / travis / empty) instead of
-## probing raw env vars directly, so it keeps working whichever CI system
-## fronts this repo.
-## Echoes the ref on stdout, or an empty string when no usable diff base
-## could be resolved (caller should then fall back to running everything).
-detect_target_ref() {
-    local ZERO_SHA="0000000000000000000000000000000000000000"
-    local TARGET_REF=""
-
-    case "$CI_ID" in
-        github)
-            if [ -n "${GITHUB_BASE_REF:-}" ]; then
-                # Pull request: diff against the base branch
-                TARGET_REF="origin/${GITHUB_BASE_REF}"
-            elif [ -n "${GITHUB_EVENT_BEFORE:-}" ] && [ "${GITHUB_EVENT_BEFORE}" != "$ZERO_SHA" ]; then
-                # Push: diff against the commit before the push
-                TARGET_REF="${GITHUB_EVENT_BEFORE}"
-            fi
-            ;;
-        gitlab)
-            if [ -n "${CI_MERGE_REQUEST_TARGET_BRANCH_NAME:-}" ]; then
-                TARGET_REF="origin/${CI_MERGE_REQUEST_TARGET_BRANCH_NAME}"
-            elif [ -n "${CI_COMMIT_BEFORE_SHA:-}" ] && [ "${CI_COMMIT_BEFORE_SHA}" != "$ZERO_SHA" ]; then
-                TARGET_REF="${CI_COMMIT_BEFORE_SHA}"
-            fi
-            ;;
-        "")
-            # Local run (no known CI): diff against the default branch so
-            # devs still get filtering when iterating on a feature branch.
-            TARGET_REF="origin/master"
-            ;;
-        *)
-            # Unhandled CI system (eg. travis): fall back to a full run
-            ;;
-    esac
-
-    if [ -z "$TARGET_REF" ]; then
-        echo ""
-        return 0
-    fi
-
-    # Branch refs need fetching if missing locally; commit SHAs are only
-    # usable if the checkout fetched enough history to contain them.
-    if [[ "$TARGET_REF" == origin/* ]]; then
-        local BARE_REF="${TARGET_REF#origin/}"
-        if ! git -C "$ROOT_DIR" rev-parse --verify --quiet "$TARGET_REF" > /dev/null; then
-            # Route to stderr: this function's stdout is captured by the caller
-            git -C "$ROOT_DIR" fetch --quiet origin "$BARE_REF" >&2 || TARGET_REF=""
-        fi
-    elif ! git -C "$ROOT_DIR" rev-parse --verify --quiet "$TARGET_REF" > /dev/null 2>&1; then
-        TARGET_REF=""
-    fi
-
-    # Highlight which packages the filter will actually select (changed since
-    # the ref + their dependents). Everything here goes to stderr because this
-    # function's stdout is the return channel captured by the caller.
-    if [ -n "$TARGET_REF" ]; then
-        local SELECTED
-        SELECTED=$( (cd "$ROOT_DIR" && pnpm --filter="...[${TARGET_REF}]" exec node -p "require('./package.json').name") 2>/dev/null || true)
-        begin_group "Packages selected for testing (changed since $TARGET_REF)" >&2
-        if [ -z "$SELECTED" ]; then
-            echo "  (none — no package changed since $TARGET_REF)" >&2
-        else
-            echo "$SELECTED" | sed 's/^/  - /' >&2
-        fi
-        end_group "Packages selected for testing (changed since $TARGET_REF)" >&2
-    fi
-
-    echo "$TARGET_REF"
 }
 
 ## Override kash's generic run_lib_tests: this repo is a pnpm workspace, so
