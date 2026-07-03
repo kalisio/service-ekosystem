@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Shared CI helpers for the monorepo scripts (run_tests.sh, build_service.sh).
+# Shared CI helpers for the monorepo scripts (run_tests.sh, build_package.sh).
 #
 # Sourced *after* kash.sh. Assumes the sourcing script defines $ROOT_DIR (repo
 # root). Package-specific config (prefix, extra full-rebuild paths) is passed as
@@ -124,6 +124,33 @@ _add_all_packages() {
     done
 }
 
+# List the files changed since the given ref.
+# Arg1: the target ref
+changed_files() {
+    git -C "$ROOT_DIR" diff --name-only "$1" 2>/dev/null || true
+}
+
+# List the package directory names changed since the ref (+ their dependents).
+# Arg1: the target ref
+changed_package_dirs() {
+    (cd "$ROOT_DIR" && pnpm --filter="...[$1]" exec pwd) 2>/dev/null \
+        | while IFS= read -r DIR; do [ -n "$DIR" ] && basename "$DIR"; done
+}
+
+# Return 0 if any file changed since the ref triggers a full rebuild.
+# Arg1:  the target ref
+# Arg2+: extra glob patterns forcing a full rebuild (optional)
+has_full_rebuild_trigger() {
+    local TARGET_REF="$1"
+    shift
+    local FILE
+    while IFS= read -r FILE; do
+        [ -n "$FILE" ] || continue
+        _triggers_full_rebuild "$FILE" "$@" && return 0
+    done <<< "$(changed_files "$TARGET_REF")"
+    return 1
+}
+
 # Resolve the packages to build and print them on stdout, one per line.
 # All logs go to stderr: stdout is the return channel.
 # Arg1:  the package prefix
@@ -155,30 +182,14 @@ select_packages_to_build() {
         local TARGET_REF
         TARGET_REF=$(detect_target_ref)
 
-        if [ -z "$TARGET_REF" ]; then
+        if [ -z "$TARGET_REF" ] || has_full_rebuild_trigger "$TARGET_REF" "${EXTRA_PATHS[@]}"; then
             _add_all_packages "$PREFIX"
         else
-            local CHANGED FILE FULL=false
-            CHANGED=$(git -C "$ROOT_DIR" diff --name-only "$TARGET_REF" 2>/dev/null || true)
-            while IFS= read -r FILE; do
-                [ -n "$FILE" ] || continue
-                if _triggers_full_rebuild "$FILE" "${EXTRA_PATHS[@]}"; then
-                    FULL=true
-                    break
-                fi
-            done <<< "$CHANGED"
-
-            if [ "$FULL" = true ]; then
-                _add_all_packages "$PREFIX"
-            else
-                local SELECTED DIR PKG
-                SELECTED=$( (cd "$ROOT_DIR" && pnpm --filter="...[${TARGET_REF}]" exec pwd) 2>/dev/null || true)
-                while IFS= read -r DIR; do
-                    [ -n "$DIR" ] || continue
-                    PKG=$(basename "$DIR")
-                    _is_buildable_package "$PKG" "$PREFIX" && _add_package "$PKG"
-                done <<< "$SELECTED"
-            fi
+            local PKG
+            while IFS= read -r PKG; do
+                [ -n "$PKG" ] || continue
+                _is_buildable_package "$PKG" "$PREFIX" && _add_package "$PKG"
+            done <<< "$(changed_package_dirs "$TARGET_REF")"
         fi
     fi
 

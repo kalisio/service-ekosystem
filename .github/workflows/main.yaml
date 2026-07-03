@@ -154,7 +154,7 @@ jobs:
           SOPS_AGE_KEY:        ${{ secrets.SOPS_AGE_KEY }}
           GITHUB_EVENT_BEFORE: ${{ github.event.before }}
           INPUT_PACKAGES:      ${{ github.event.inputs.build_services_input }}
-        run: bash ./scripts/build_service.sh -p -r ${{ github.job }}
+        run: bash ./scripts/build_package.sh -p -r ${{ github.job }}
 
   detect_release:
     name: Detect release
@@ -195,4 +195,4 @@ jobs:
         env:
           SOPS_AGE_KEY:   ${{ secrets.SOPS_AGE_KEY }}
           INPUT_PACKAGES: ${{ needs.detect_release.outputs.package }}
-        run: bash ./scripts/build_service.sh -p -r release_services
+        run: bash ./scripts/build_package.sh -p -r release_services

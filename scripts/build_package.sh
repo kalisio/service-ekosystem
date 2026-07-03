@@ -55,24 +55,19 @@ done
 
 begin_group "Determining packages to build ..."
 
-PACKAGES=()
+# Get the packages to build
 PACKAGES_LIST=$(select_packages_to_build "$PACKAGE_PREFIX" "${EXTRA_FULL_REBUILD_PATHS[@]}")
 
-# Resolve the list of packages to build
-if [ -n "$PACKAGES_LIST" ]; then
-    mapfile -t PACKAGES <<< "$PACKAGES_LIST"
-fi
-
-# Nothing to build → exit successfully
-if [ ${#PACKAGES[@]} -eq 0 ]; then
-    echo "-> No package to build."
-    end_group "Determining packages to build ..."
-    exit 0
-fi
-
-echo "-> Packages to build: ${PACKAGES[*]}"
+# Log the packages that will be built
+PACKAGES_LOG=$(echo "$PACKAGES_LIST" | paste -sd' ')
+echo "-> Packages to build: ${PACKAGES_LOG:-(none)}"
 
 end_group "Determining packages to build ..."
+
+# Resolve into an array; nothing to build -> done
+PACKAGES=()
+[ -n "$PACKAGES_LIST" ] && mapfile -t PACKAGES <<< "$PACKAGES_LIST"
+[ ${#PACKAGES[@]} -eq 0 ] && exit 0
 
 ## Build each package
 ##

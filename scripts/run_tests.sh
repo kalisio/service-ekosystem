@@ -120,26 +120,19 @@ done
 
 begin_group "Determining packages to test ..."
 
-use_node "$NODE_VER"
-ensure_pnpm
-cd "$ROOT_DIR"
-
-# Ref to diff against; empty means "test every package"
+# Get target ref
 TARGET_REF=$(detect_target_ref)
-
-# Mirror the build cascade: a shared/root change runs the tests of all packages
-if [ -n "$TARGET_REF" ]; then
-    while IFS= read -r FILE; do
-        [ -n "$FILE" ] || continue
-        if _triggers_full_rebuild "$FILE" "${EXTRA_FULL_REBUILD_PATHS[@]}"; then
-            echo "-> Shared path changed ($FILE) -> testing all packages"
-            TARGET_REF=""
-            break
-        fi
-    done <<< "$(git -C "$ROOT_DIR" diff --name-only "$TARGET_REF" 2>/dev/null || true)"
+if [ -n "$TARGET_REF" ] && has_full_rebuild_trigger "$TARGET_REF" "${EXTRA_FULL_REBUILD_PATHS[@]}"; then
+    TARGET_REF=""
 fi
 
-cd ~-
+# Log the packages that will be tested
+if [ -z "$TARGET_REF" ]; then
+    echo "-> Packages to test: all"
+else
+    CHANGED_PACKAGES=$(changed_files "$TARGET_REF" | sed -n 's#^packages/\([^/]*\)/.*#\1#p' | sort -u | paste -sd' ')
+    echo "-> Packages to test: ${CHANGED_PACKAGES:-(none)}"
+fi
 
 end_group "Determining packages to test ..."
 

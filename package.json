@@ -1,6 +1,6 @@
 {
   "name": "service-ekosystem",
-  "description": "A suite of cloud services for geospatial platforms ",
+  "description": "A suite of cloud services for geospatial platforms",
   "type": "module",
   "packageManager": "pnpm@10.1.0",
   "scripts": {
