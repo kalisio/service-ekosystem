@@ -56,3 +56,6 @@ run/
 
 # Vitepress cache
 docs/.vitepress/cache/
+
+# Local terrain data 
+*.mbtiles
