@@ -69,20 +69,6 @@ detect_target_ref() {
         TARGET_REF=""
     fi
 
-    # Highlight which packages the filter will select (changed since the ref
-    # + their dependents). Everything goes to stderr because this function's
-    # stdout is the return channel captured by the caller.
-    if [ -n "$TARGET_REF" ]; then
-        local SELECTED
-        SELECTED=$( (cd "$ROOT_DIR" && pnpm --filter="...[${TARGET_REF}]" exec node -p "require('./package.json').name") 2>/dev/null || true)
-        echo "-> Packages changed since $TARGET_REF:" >&2
-        if [ -z "$SELECTED" ]; then
-            echo "   (none)" >&2
-        else
-            echo "$SELECTED" | sed 's/^/   - /' >&2
-        fi
-    fi
-
     echo "$TARGET_REF"
 }
 
@@ -155,7 +141,6 @@ select_packages_to_build() {
     local PACKAGES=()
 
     if [ -n "${INPUT_PACKAGES:-}" ]; then
-        echo "-> Package(s) requested explicitly: $INPUT_PACKAGES" >&2
         local TOKEN
         for TOKEN in $INPUT_PACKAGES; do
             if ! _is_buildable_package "$TOKEN" "$PREFIX"; then
@@ -171,7 +156,6 @@ select_packages_to_build() {
         TARGET_REF=$(detect_target_ref)
 
         if [ -z "$TARGET_REF" ]; then
-            echo "-> No usable diff base -> building all packages" >&2
             _add_all_packages "$PREFIX"
         else
             local CHANGED FILE FULL=false
@@ -179,7 +163,6 @@ select_packages_to_build() {
             while IFS= read -r FILE; do
                 [ -n "$FILE" ] || continue
                 if _triggers_full_rebuild "$FILE" "${EXTRA_PATHS[@]}"; then
-                    echo "-> Shared path changed ($FILE) -> building all packages" >&2
                     FULL=true
                     break
                 fi

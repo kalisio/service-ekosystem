@@ -71,6 +71,7 @@ if [ ${#PACKAGES[@]} -eq 0 ]; then
 fi
 
 echo "-> Packages to build: ${PACKAGES[*]}"
+
 end_group "Determining packages to build ..."
 
 ## Build each package
