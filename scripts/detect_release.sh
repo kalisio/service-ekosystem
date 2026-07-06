@@ -5,21 +5,14 @@ set -euo pipefail
 # Detect which service package is being released from a pushed git tag.
 #
 # Expected tag format (produced by `pnpm changeset publish`):
-#   @kalisio/service-<name>@X.Y.Z
+#   @kalisio/service-<name>@X.Y.Z       -> service release  (target=service)
 #
-# Strategy:
-#   1. Parse GITHUB_REF_NAME with the regex ^@([^/]+)/(service-[^/]+)@(.+)$
-#   2. Resolve the package directory under packages/
-#   3. Cross-check the parsed version against package.json.version (must match)
+# The tag is parsed/validated by resolve_release_package (ci-common.sh), which
+# also cross-checks the version against the package's package.json.
 #
 # Output:
 #   stderr         -> log messages
 #   GITHUB_OUTPUT  -> target, package, version
-#
-# Exits non-zero on:
-#   - tag that doesn't match the expected format '@<scope>/service-<name>@<version>'
-#   - unknown package (no matching directory under packages/)
-#   - mismatch between tag version and package.json.version
 #
 # Usage (dev mode):
 #   GITHUB_REF_NAME='@kalisio/service-kapture@1.6.0' bash ./scripts/detect_release.sh
@@ -29,11 +22,10 @@ set -euo pipefail
 
 THIS_FILE=$(readlink -f "${BASH_SOURCE[0]}")
 THIS_DIR=$(dirname "$THIS_FILE")
+ROOT_DIR=$(dirname "$THIS_DIR")
 
 . "$THIS_DIR/kash/kash.sh" >&2
-
-REPO_ROOT=$(git rev-parse --show-toplevel)
-PACKAGES_DIR="$REPO_ROOT/packages"
+. "$THIS_DIR/ci-common.sh"
 
 GITHUB_REF_NAME="${GITHUB_REF_NAME:-}"
 
@@ -44,38 +36,17 @@ fi
 
 begin_group "Detect release ($GITHUB_REF_NAME)" >&2
 
-#  Parse tag : @<scope>/<service-name>@<version>
-if [[ ! "$GITHUB_REF_NAME" =~ ^@([^/]+)/(service-[^/]+)@(.+)$ ]]; then
-    echo "-> Error: tag '$GITHUB_REF_NAME' does not match expected format '@<scope>/service-<name>@<version>'" >&2
-    exit 1
-fi
-
-SCOPE="${BASH_REMATCH[1]}"
-PKG_NAME="${BASH_REMATCH[2]}"
-TAG_VERSION="${BASH_REMATCH[3]}"
-
-echo "-> scope=$SCOPE package=$PKG_NAME version=$TAG_VERSION" >&2
-
-#  Resolve package directory.
-PKG_DIR="$PACKAGES_DIR/$PKG_NAME"
-if [[ ! -d "$PKG_DIR" ]]; then
-    echo "-> Error: package directory '$PKG_DIR' does not exist" >&2
-    exit 1
-fi
-
-#  Cross-check package.json.version against tag.
-PKG_VERSION=$(get_json_value "$PKG_DIR/package.json" "version")
-if [[ "$PKG_VERSION" != "$TAG_VERSION" ]]; then
-    echo "-> Error: tag version '$TAG_VERSION' does not match $PKG_NAME/package.json version '$PKG_VERSION'" >&2
-    exit 1
-fi
+# Parse + validate the tag (@<scope>/<package>@<version>) via ci-common
+# (set -e aborts here if resolve_release_package fails)
+RELEASE=$(resolve_release_package "$GITHUB_REF_NAME")
+read -r PKG_NAME TAG_VERSION <<< "$RELEASE"
 
 TARGET="service"
-echo "-> target=$TARGET package=$PKG_NAME version=$TAG_VERSION" >&2
+echo "-> Service release: $PKG_NAME v$TAG_VERSION" >&2
 
 end_group "Detect release ($GITHUB_REF_NAME)" >&2
 
-#  Write to GITHUB_OUTPUT when running in CI
+# Write to GITHUB_OUTPUT when running in CI
 if [[ "${CI:-false}" == "true" ]] && [[ -n "${GITHUB_OUTPUT:-}" ]]; then
     {
         echo "target=${TARGET}"

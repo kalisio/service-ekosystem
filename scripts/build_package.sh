@@ -76,47 +76,21 @@ load_env_files "$WORKSPACE_DIR/development/common/kalisio_dockerhub.enc.env"
 decrypt_stdout "$WORKSPACE_DIR/development/common/KALISIO_DOCKERHUB_PASSWORD.enc.value" | docker login --username "$KALISIO_DOCKERHUB_USERNAME" --password-stdin "$KALISIO_DOCKERHUB_URL"
 
 for PKG in "${PACKAGES[@]}"; do
-    # Init workspace
     init_lib_infos "$ROOT_DIR/packages/$PKG"
 
     NAME=$(get_lib_name)
     VERSION=$(get_lib_version)
     GIT_TAG=$(get_lib_tag)
 
-    # Strip @kalisio part
+    # Strip the @scope/ prefix, then the package prefix (service-foo -> foo)
     NAME=${NAME#*/}
-
-    LIB_INFOS[2]=$(get_git_tag "$ROOT_DIR")
-    LIB_INFOS[3]=$(get_git_branch "$ROOT_DIR")
-
-    # Build container
     IMAGE_NAME="$KALISIO_DOCKERHUB_URL/kalisio/${NAME#"$PACKAGE_PREFIX"}"
-    IMAGE_SHORT_TAG=dev
 
-    if [[ -n "$GIT_TAG" ]]; then
-        IMAGE_SHORT_TAG=$VERSION
-    fi
+    SHORT_TAG=dev
+    [ -n "$GIT_TAG" ] && SHORT_TAG=$VERSION
 
-    IMAGE_TAG="$IMAGE_SHORT_TAG-node$NODE_VER-$DEBIAN_VER"
-
-    begin_group "Building container $IMAGE_NAME:$IMAGE_TAG ..."
-    
-    DOCKER_BUILDKIT=1 docker build \
-        --build-arg NODE_VERSION="$NODE_VER" \
-        --build-arg DEBIAN_VERSION="$DEBIAN_VER" \
-        -f "packages/$PKG/Dockerfile" \
-        -t "$IMAGE_NAME:$IMAGE_TAG" \
-        "$ROOT_DIR"
-
-    if [ "$PUBLISH" = true ]; then
-        docker push "$IMAGE_NAME:$IMAGE_TAG"
-        if [ "$NODE_VER" = "$DEFAULT_NODE_VER" ] && [ "$DEBIAN_VER" = "$DEFAULT_DEBIAN_VER" ]; then
-            docker tag "$IMAGE_NAME:$IMAGE_TAG" "$IMAGE_NAME:$IMAGE_SHORT_TAG"
-            docker push "$IMAGE_NAME:$IMAGE_SHORT_TAG"
-        fi
-    fi
-
-    end_group "Building container $IMAGE_NAME:$IMAGE_TAG ..."
+    build_and_publish_image "$ROOT_DIR" "packages/$PKG/Dockerfile" "$IMAGE_NAME" "$SHORT_TAG" \
+        "$NODE_VER" "$DEBIAN_VER" "$DEFAULT_NODE_VER" "$DEFAULT_DEBIAN_VER" "$PUBLISH"
 done
 
 docker logout "$KALISIO_DOCKERHUB_URL"
