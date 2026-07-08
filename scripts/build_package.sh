@@ -2,6 +2,17 @@
 set -euo pipefail
 # set -x
 
+# Build (and optionally publish) the service Docker images.
+#
+# Two phases:
+#   1. build   -> `pnpm --filter=<...> run build`: each package's own `build`
+#                 script does the docker build, tagging <registry>/<ns>/<name>
+#                 with the $IMAGE_TAG / node / debian we export here.
+#   2. publish -> push every image this run just built (see publish_images).
+#
+# What gets built (pnpm filter) and how it's tagged is resolved by
+# resolve_build_filter_and_tag from the git ref, so it behaves the same on GitHub/GitLab.
+
 THIS_FILE=$(readlink -f "${BASH_SOURCE[0]}")
 THIS_DIR=$(dirname "$THIS_FILE")
 ROOT_DIR=$(dirname "$THIS_DIR")
@@ -18,6 +29,13 @@ slack_report() {
 ##
 
 PACKAGE_PREFIX="service-"
+# Docker Hub namespace the package `build` scripts tag their images under.
+IMAGE_NAMESPACE="kalisio"
+# Base tag for non-release (development) images: 'dev', or 'dev-<custom>' on a
+# branch other than master.
+DEV_TAG="dev"
+# Extra path globs that, when changed, force rebuilding every package (on top of
+# the built-in shared paths: lockfile, workspace config, scripts, workflows).
 EXTRA_FULL_REBUILD_PATHS=()
 
 ## Parse options
@@ -37,7 +55,7 @@ while getopts "d:n:pr:" option; do
         n) # defines node version
             NODE_VER=$OPTARG
             ;;
-        p) # publish image
+        p) # publish images to the registry
             PUBLISH=true
             ;;
         r) # report outcome to slack
@@ -50,47 +68,53 @@ while getopts "d:n:pr:" option; do
     esac
 done
 
-## Determine which packages need to be built
+## Determine what to build (pnpm filter) and how to tag it (short tag)
 ##
 
-begin_group "Determining packages to build ..."
+begin_group "Determining what to build ..."
 
-# Get the packages to build
-PACKAGES_LIST=$(select_packages_to_build "$PACKAGE_PREFIX" "${EXTRA_FULL_REBUILD_PATHS[@]}")
+FILTER_AND_TAG=$(resolve_build_filter_and_tag \
+    "$ROOT_DIR" "$PACKAGE_PREFIX" "$DEV_TAG" "${INPUT_PACKAGES:-}" \
+    "$(get_git_tag "$ROOT_DIR")" "$(get_git_branch "$ROOT_DIR")" \
+    "${EXTRA_FULL_REBUILD_PATHS[@]}")
+FILTER=${FILTER_AND_TAG%%$'\n'*}
+SHORT_TAG=${FILTER_AND_TAG##*$'\n'}
+IMAGE_TAG="$SHORT_TAG-node$NODE_VER-$DEBIAN_VER"
 
-# Log the packages that will be built
-PACKAGES_LOG=$(echo "$PACKAGES_LIST" | paste -sd' ')
-echo "-> Packages to build: ${PACKAGES_LOG:-(none)}"
+echo "-> Filter: $FILTER"
+echo "-> Image tag: $IMAGE_TAG"
 
-end_group "Determining packages to build ..."
+end_group "Determining what to build ..."
 
-# Resolve into an array; nothing to build -> done
-PACKAGES=()
-[ -n "$PACKAGES_LIST" ] && mapfile -t PACKAGES <<< "$PACKAGES_LIST"
-[ ${#PACKAGES[@]} -eq 0 ] && exit 0
-
-## Build each package
+## Build the images (each package's own `build` script)
 ##
+
+use_node "$NODE_VER"
 
 load_env_files "$WORKSPACE_DIR/development/common/kalisio_dockerhub.enc.env"
+
+export KALISIO_DOCKERHUB_URL
+export IMAGE_TAG
+export NODE_VERSION="$NODE_VER"
+export DEBIAN_VERSION="$DEBIAN_VER"
+
+begin_group "Building images ..."
+# Run every 'build*' script (build, build:<variant>, …) of each selected
+# package; pnpm exits 0 for packages that have none, so no --if-present needed.
+# shellcheck disable=SC2086
+pnpm $FILTER --workspace-concurrency=1 run "/^build/"
+end_group "Building images ..."
+
+## Publish the images that were actually built
+##
+
+[ "$PUBLISH" = true ] || exit 0
+
 decrypt_stdout "$WORKSPACE_DIR/development/common/KALISIO_DOCKERHUB_PASSWORD.enc.value" | docker login --username "$KALISIO_DOCKERHUB_USERNAME" --password-stdin "$KALISIO_DOCKERHUB_URL"
 
-for PKG in "${PACKAGES[@]}"; do
-    init_lib_infos "$ROOT_DIR/packages/$PKG"
-
-    NAME=$(get_lib_name)
-    VERSION=$(get_lib_version)
-    GIT_TAG=$(get_lib_tag)
-
-    # Strip the @scope/ prefix, then the package prefix (service-foo -> foo)
-    NAME=${NAME#*/}
-    IMAGE_NAME="$KALISIO_DOCKERHUB_URL/kalisio/${NAME#"$PACKAGE_PREFIX"}"
-
-    SHORT_TAG=dev
-    [ -n "$GIT_TAG" ] && SHORT_TAG=$VERSION
-
-    build_and_publish_image "$ROOT_DIR" "packages/$PKG/Dockerfile" "$IMAGE_NAME" "$SHORT_TAG" \
-        "$NODE_VER" "$DEBIAN_VER" "$DEFAULT_NODE_VER" "$DEFAULT_DEBIAN_VER" "$PUBLISH"
-done
+publish_images \
+    "$ROOT_DIR" "$PACKAGE_PREFIX" "$KALISIO_DOCKERHUB_URL" "$IMAGE_NAMESPACE" \
+    "$IMAGE_TAG" "$SHORT_TAG" \
+    "$NODE_VER" "$DEBIAN_VER" "$DEFAULT_NODE_VER" "$DEFAULT_DEBIAN_VER"
 
 docker logout "$KALISIO_DOCKERHUB_URL"

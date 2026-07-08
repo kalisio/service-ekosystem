@@ -48,21 +48,14 @@ while getopts "m:n:sr:" option; do
 done
 
 
-## Init workspace
-##
-
-# Required because it contains the Sonar host URL.
-. "$WORKSPACE_DIR/development/workspaces/services/services.sh" service-ekosystem
-
-
 ## Determine which packages need to be run test
 ##
 
 begin_group "Determining packages to test ..."
 
 # Get target ref
-TARGET_REF=$(detect_target_ref)
-if [ -n "$TARGET_REF" ] && has_full_rebuild_trigger "$TARGET_REF" "${EXTRA_FULL_REBUILD_PATHS[@]}"; then
+TARGET_REF=$(get_diff_base_ref "$ROOT_DIR")
+if [ -n "$TARGET_REF" ] && should_rebuild_all_packages "$ROOT_DIR" "$TARGET_REF" "${EXTRA_FULL_REBUILD_PATHS[@]}"; then
     TARGET_REF=""
 fi
 
@@ -70,7 +63,7 @@ fi
 if [ -z "$TARGET_REF" ]; then
     echo "-> Packages to test: all"
 else
-    CHANGED_PACKAGES=$(changed_package_names "$TARGET_REF" | paste -sd' ')
+    CHANGED_PACKAGES=$(get_changed_packages "$ROOT_DIR" "$TARGET_REF" | paste -sd' ')
     echo "-> Packages to test: ${CHANGED_PACKAGES:-(none)}"
 fi
 
@@ -80,4 +73,4 @@ end_group "Determining packages to test ..."
 ## Run tests
 ##
 
-run_lib_tests "$ROOT_DIR" "$RUN_SONAR" "$NODE_VER" "$MONGO_VER" "true" "$TARGET_REF"
+run_package_tests "$ROOT_DIR" "$RUN_SONAR" "$NODE_VER" "$MONGO_VER" "true" "$TARGET_REF"

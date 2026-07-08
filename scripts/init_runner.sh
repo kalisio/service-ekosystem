@@ -27,10 +27,6 @@ init_github_build_services() {
     install_reqs age sops nvm node20
 }
 
-init_github_release_services() {
-    install_reqs age sops
-}
-
 begin_group "Init $CI_ID for $JOB_ID"
 
 init_"${CI_ID}_${JOB_ID}"

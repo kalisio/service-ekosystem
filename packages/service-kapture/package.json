@@ -6,7 +6,7 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "build": "DOCKER_BUILDKIT=1 docker build -t kalisio/service-kapture:${TAG:-dev} -f ./Dockerfile ../..",
+    "build": "DOCKER_BUILDKIT=1 docker build -t ${KALISIO_DOCKERHUB_URL:-docker.io}/kalisio/kapture:${IMAGE_TAG:-dev} --build-arg NODE_VERSION=${NODE_VERSION:-20} --build-arg DEBIAN_VERSION=${DEBIAN_VERSION:-bookworm} -f ./Dockerfile ../..",
     "dev": "node --watch src/bin.js",
     "lint": "standard --fix",
     "test": "bash -c 'source ../../../development/workspaces/services/services.sh service-kapture && export APP_URL=$APP_DEV_URL && export APP_JWT=$APP_DEV_JWT && vitest run --coverage'"

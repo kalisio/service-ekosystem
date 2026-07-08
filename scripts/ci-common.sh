@@ -1,14 +1,13 @@
 #!/usr/bin/env bash
 # Shared CI helpers for the Kalisio monorepos (run_tests.sh, build_package.sh).
 #
-# This file is meant to be IDENTICAL across monorepos (service-ekosystem,
-# krawler-ekosystem, ...). It only holds generic, package-type-agnostic
-# primitives. Everything specific to a repo (how a buildable package/job is
-# identified, variants, the build itself) lives in that repo's build_package.sh.
+# Package/image selection is delegated to pnpm's own `--filter` (both tests and
+# builds); these helpers only resolve the diff base, decide what to build/tag and
+# publish the resulting images.
 #
-# Sourced *after* kash.sh. Assumes the sourcing script defines $ROOT_DIR (repo
-# root). These helpers only log to stderr (no begin_group/end_group — grouping
-# is the caller's job). Requires kash's $CI_ID, plus git (and pnpm for tests).
+# Sourced *after* kash.sh. Every helper takes the repo root explicitly (no
+# reliance on globals). Requires kash's $CI_ID and helpers
+# (get_custom_from_git_ref, use_*, …), plus git and pnpm.
 
 ## Detect the ref/SHA to diff against to know which packages changed.
 ##
@@ -18,7 +17,9 @@
 ## Echoes the ref on stdout, or an empty string when no usable diff base
 ## could be resolved (caller should then fall back to processing everything).
 ## All informational output goes to stderr: stdout is the return channel.
-detect_target_ref() {
+## Arg1: the repository root
+get_diff_base_ref() {
+    local REPO_DIR="$1"
     local ZERO_SHA="0000000000000000000000000000000000000000"
     local TARGET_REF=""
 
@@ -58,195 +59,162 @@ detect_target_ref() {
     # usable if the checkout fetched enough history to contain them.
     if [[ "$TARGET_REF" == origin/* ]]; then
         local BARE_REF="${TARGET_REF#origin/}"
-        if ! git -C "$ROOT_DIR" rev-parse --verify --quiet "$TARGET_REF" > /dev/null; then
+        if ! git -C "$REPO_DIR" rev-parse --verify --quiet "$TARGET_REF" > /dev/null; then
             # Route to stderr: this function's stdout is captured by the caller
-            git -C "$ROOT_DIR" fetch --quiet origin "$BARE_REF" >&2 || TARGET_REF=""
+            git -C "$REPO_DIR" fetch --quiet origin "$BARE_REF" >&2 || TARGET_REF=""
         fi
-    elif ! git -C "$ROOT_DIR" rev-parse --verify --quiet "$TARGET_REF" > /dev/null 2>&1; then
+    elif ! git -C "$REPO_DIR" rev-parse --verify --quiet "$TARGET_REF" > /dev/null 2>&1; then
         TARGET_REF=""
     fi
 
     echo "$TARGET_REF"
 }
 
-# List the files changed since the given ref.
-# Arg1: the target ref
-changed_files() {
-    git -C "$ROOT_DIR" diff --name-only "$1" 2>/dev/null || true
+# List the directory names of the packages changed since the given ref.
+# Arg1: the repository root  Arg2: the target ref
+get_changed_packages() {
+    git -C "$1" diff --name-only "$2" 2>/dev/null \
+        | sed -n 's#^packages/\([^/]*\)/.*#\1#p' | sort -u
 }
 
-# List the directory names of the packages changed since the ref.
-# Arg1: the target ref
-changed_package_names() {
-    changed_files "$1" | sed -n 's#^packages/\([^/]*\)/.*#\1#p' | sort -u
-}
-
-# Return 0 if changing the given file should rebuild every package. Covers the
-# built-in shared paths (workspace config, lockfile, CI scripts, workflows)
-# plus any extra glob patterns passed as additional arguments.
-# Arg1:  the changed file path
-# Arg2+: extra glob patterns to match against (optional)
-_triggers_full_rebuild() {
-    local FILE="$1"
-    shift
-    case "$FILE" in
-        pnpm-lock.yaml|pnpm-workspace.yaml|package.json) return 0 ;;
-        scripts/*)                                       return 0 ;;
-        .github/workflows/*)                             return 0 ;;
-    esac
-    local PATTERN
-    for PATTERN in "$@"; do
-        # shellcheck disable=SC2254
-        case "$FILE" in
-            $PATTERN) return 0 ;;
-        esac
-    done
-    return 1
-}
-
-# Return 0 if any file changed since the ref triggers a full rebuild.
-# Arg1:  the target ref
-# Arg2+: extra glob patterns forcing a full rebuild (optional)
-has_full_rebuild_trigger() {
-    local TARGET_REF="$1"
-    shift
-    local FILE
+# Return 0 if any file changed since the ref should force a full rebuild: shared
+# paths (lockfile, workspace config, root package.json, CI scripts & workflows)
+# or any of the extra glob patterns passed as additional arguments.
+# Arg1:  the repository root
+# Arg2:  the target ref
+# Arg3+: extra glob patterns forcing a full rebuild (optional)
+should_rebuild_all_packages() {
+    local REPO_DIR="$1"
+    local TARGET_REF="$2"
+    shift 2
+    local FILE PATTERN
     while IFS= read -r FILE; do
         [ -n "$FILE" ] || continue
-        _triggers_full_rebuild "$FILE" "$@" && return 0
-    done <<< "$(changed_files "$TARGET_REF")"
+        case "$FILE" in
+            pnpm-lock.yaml|pnpm-workspace.yaml|package.json) return 0 ;;
+            scripts/*|.github/workflows/*)                   return 0 ;;
+        esac
+        for PATTERN in "$@"; do
+            # shellcheck disable=SC2254
+            case "$FILE" in
+                $PATTERN) return 0 ;;
+            esac
+        done
+    done < <(git -C "$REPO_DIR" diff --name-only "$TARGET_REF" 2>/dev/null)
     return 1
 }
 
-# Append a value to the caller's PACKAGES array, avoiding duplicates.
-_add_package() {
-    local PKG="$1" E
-    for E in "${PACKAGES[@]:-}"; do [[ "$E" == "$PKG" ]] && return; done
-    PACKAGES+=("$PKG")
-}
+# Resolve, from the git context, WHICH packages to build (a pnpm --filter
+# expression) and the short image tag. Echoes two lines: the filter, then the
+# short tag. Logs to stderr and returns 1 on an invalid release tag / package.
+#
+# Cases (priority order):
+#   INPUT non-empty   -> exactly those packages           (manual dispatch)
+#   release tag       -> that one package, tag = <version> (@<scope>/<prefix>x@ver)
+#   branch != master  -> changed packages,  tag = <dev>-<custom>
+#   master (default)  -> changed packages,  tag = <dev>
+#
+# Args:
+#   1. ROOT_DIR              2. package prefix (eg. service-)
+#   3. base dev tag (eg. dev)
+#   4. INPUT packages (space-separated dir names, may be empty)
+#   5. GIT_TAG               6. GIT_BRANCH
+#   7+ extra globs forcing a full rebuild (optional)
+resolve_build_filter_and_tag() {
+    local ROOT="$1"
+    local PREFIX="$2"
+    local DEV_TAG="$3"
+    local INPUT="$4"
+    local GIT_TAG="$5"
+    local GIT_BRANCH="$6"
+    shift 6
+    local FILTER=""
+    local SHORT_TAG="$DEV_TAG"
 
-# A package is buildable if it lives under packages/<prefix>* and ships a
-# dockerfile (case-insensitive: Dockerfile, dockerfile, or dockerfile.<variant>).
-# Arg1: the package directory name  Arg2: the package prefix
-_is_buildable_package() {
-    local PKG="$1" PREFIX="$2" DF
-    [[ "$PKG" == "${PREFIX}"* ]] || return 1
-    for DF in "$ROOT_DIR/packages/$PKG"/[Dd]ockerfile*; do
-        [ -e "$DF" ] && return 0
-    done
-    return 1
-}
-
-# Append every buildable package of the monorepo to the caller's PACKAGES array.
-# Arg1: the package prefix
-_add_all_packages() {
-    local PREFIX="$1" D PKG
-    for D in "$ROOT_DIR"/packages/"${PREFIX}"*/; do
-        [ -d "$D" ] || continue
-        PKG=$(basename "$D")
-        _is_buildable_package "$PKG" "$PREFIX" && _add_package "$PKG"
-    done
-}
-
-# Resolve the buildable packages and print them on stdout, one per line.
-# Arg1:  the package prefix
-# Arg2+: extra path globs forcing a full rebuild (optional)
-# Resolution order:
-#   1. INPUT_PACKAGES set -> exactly those (manual dispatch / release)
-#   2. otherwise          -> packages changed since the target ref, falling back
-#                            to all packages on a shared change or no diff base.
-select_packages_to_build() {
-    local PREFIX="$1"
-    shift
-    local EXTRA_PATHS=("$@")
-    local PACKAGES=()
-
-    if [ -n "${INPUT_PACKAGES:-}" ]; then
-        local TOKEN
-        for TOKEN in $INPUT_PACKAGES; do
-            if ! _is_buildable_package "$TOKEN" "$PREFIX"; then
-                echo "-> Error: package '$TOKEN' not found or not buildable" >&2
+    if [ -n "$INPUT" ]; then
+        local PKG
+        for PKG in $INPUT; do
+            if [ ! -d "$ROOT/packages/$PKG" ]; then
+                echo "-> Error: package '$PKG' not found" >&2
                 return 1
             fi
-            _add_package "$TOKEN"
+            FILTER="$FILTER --filter=./packages/$PKG"
         done
+    elif [ -n "$GIT_TAG" ]; then
+        if [[ ! "$GIT_TAG" =~ ^@([^/]+)/(${PREFIX}[^/@]+)@(.+)$ ]]; then
+            echo "-> Error: tag '$GIT_TAG' does not match '@<scope>/${PREFIX}<name>@<version>'" >&2
+            return 1
+        fi
+        local PKG="${BASH_REMATCH[2]}" VER="${BASH_REMATCH[3]}" PKG_VER
+        PKG_VER=$(jq -r '.version' "$ROOT/packages/$PKG/package.json" 2>/dev/null || echo "")
+        if [ "$PKG_VER" != "$VER" ]; then
+            echo "-> Error: tag version '$VER' does not match packages/$PKG/package.json version '$PKG_VER'" >&2
+            return 1
+        fi
+        FILTER="--filter=./packages/$PKG"
+        SHORT_TAG="$VER"
     else
         local TARGET_REF
-        TARGET_REF=$(detect_target_ref)
-        if [ -z "$TARGET_REF" ] || has_full_rebuild_trigger "$TARGET_REF" "${EXTRA_PATHS[@]}"; then
-            _add_all_packages "$PREFIX"
+        TARGET_REF=$(get_diff_base_ref "$ROOT")
+        if [ -z "$TARGET_REF" ] || should_rebuild_all_packages "$ROOT" "$TARGET_REF" "$@"; then
+            FILTER="-r"
         else
-            local PKG
-            while IFS= read -r PKG; do
-                [ -n "$PKG" ] || continue
-                _is_buildable_package "$PKG" "$PREFIX" && _add_package "$PKG"
-            done <<< "$(changed_package_names "$TARGET_REF")"
+            FILTER="--filter=...[${TARGET_REF}]"
         fi
     fi
 
-    [ ${#PACKAGES[@]} -gt 0 ] && printf '%s\n' "${PACKAGES[@]}"
-    return 0
+    # Non-release builds: 'dev', or 'dev-<custom>' on any branch but master.
+    if [ -z "$GIT_TAG" ] && [ -n "$GIT_BRANCH" ] && [ "$GIT_BRANCH" != "master" ]; then
+        local CUSTOM
+        CUSTOM=$(get_custom_from_git_ref "$GIT_BRANCH")
+        [ -z "$CUSTOM" ] && CUSTOM="${GIT_BRANCH//\//-}"
+        SHORT_TAG="$DEV_TAG-$CUSTOM"
+    fi
+
+    printf '%s\n%s\n' "$FILTER" "$SHORT_TAG"
 }
 
-# Parse a Changesets release tag "@<scope>/<package>@<version>", verify the
-# package exists under packages/ and that its package.json version matches the
-# tag. Echoes "<package> <version>" on stdout; logs errors to stderr, returns 1.
-# Uses global: $ROOT_DIR
-resolve_release_package() {
-    local REF_NAME="$1"
-    if [[ ! "$REF_NAME" =~ ^@([^/]+)/(.+)@(.+)$ ]]; then
-        echo "-> Error: tag '$REF_NAME' does not match '@<scope>/<package>@<version>'" >&2
-        return 1
-    fi
-    local PKG="${BASH_REMATCH[2]}" VER="${BASH_REMATCH[3]}"
-    if [ ! -d "$ROOT_DIR/packages/$PKG" ]; then
-        echo "-> Error: package directory 'packages/$PKG' does not exist" >&2
-        return 1
-    fi
-    local PKG_VER
-    PKG_VER=$(jq -r '.version' "$ROOT_DIR/packages/$PKG/package.json")
-    if [ "$PKG_VER" != "$VER" ]; then
-        echo "-> Error: tag version '$VER' does not match packages/$PKG/package.json version '$PKG_VER'" >&2
-        return 1
-    fi
-    echo "$PKG $VER"
-}
-
-# Build a Docker image (passing NODE_VERSION/DEBIAN_VERSION build-args) and,
-# when publishing, push it and alias it to its short tag (dev / version) — but
-# only for the default node/debian combo, so the short tag always points at the
-# canonical build. The caller is responsible for `docker login` beforehand.
+# Push the images this run just built. For each package under packages/<prefix>*,
+# if its <namespace>/<name>:<IMAGE_TAG> image exists locally (ie. it was built),
+# push it — plus the short-tag alias on the default node/debian combo. Assumes
+# the caller is already `docker login`-ed.
 # Args:
-#   1. build context directory
-#   2. dockerfile path
-#   3. image name without tag (eg. <registry>/kalisio/foo)
-#   4. short tag (eg. dev or 1.2.3)
-#   5. node version           6. debian version
-#   7. default node version   8. default debian version
-#   9. publish (true/false)
-build_and_publish_image() {
-    local CONTEXT="$1" DOCKERFILE="$2" IMAGE_NAME="$3" SHORT_TAG="$4"
-    local NODE_VER="$5" DEBIAN_VER="$6" DEF_NODE="$7" DEF_DEBIAN="$8" PUBLISH="$9"
-    local IMAGE_TAG="$SHORT_TAG-node$NODE_VER-$DEBIAN_VER"
+#   1. ROOT_DIR       2. package prefix        3. registry URL
+#   4. image namespace (eg. kalisio)
+#   5. IMAGE_TAG      6. SHORT_TAG
+#   7. node version   8. debian version
+#   9. default node   10. default debian
+publish_images() {
+    local ROOT="$1"
+    local PREFIX="$2"
+    local REGISTRY="$3"
+    local NAMESPACE="$4"
+    local IMAGE_TAG="$5"
+    local SHORT_TAG="$6"
+    local NODE_VER="$7"
+    local DEBIAN_VER="$8"
+    local DEF_NODE="$9"
+    local DEF_DEBIAN="${10}"
+    local D PKG IMAGE_NAME
+    for D in "$ROOT"/packages/"$PREFIX"*/; do
+        [ -d "$D" ] || continue
+        PKG=$(basename "$D")
+        IMAGE_NAME="$REGISTRY/$NAMESPACE/${PKG#"$PREFIX"}"
 
-    begin_group "Building container $IMAGE_NAME:$IMAGE_TAG ..."
-    DOCKER_BUILDKIT=1 docker build \
-        --build-arg NODE_VERSION="$NODE_VER" \
-        --build-arg DEBIAN_VERSION="$DEBIAN_VER" \
-        -f "$DOCKERFILE" \
-        -t "$IMAGE_NAME:$IMAGE_TAG" \
-        "$CONTEXT"
-    if [ "$PUBLISH" = true ]; then
+        # Only publish images that this run actually built.
+        docker image inspect "$IMAGE_NAME:$IMAGE_TAG" > /dev/null 2>&1 || continue
+
+        begin_group "Publishing $IMAGE_NAME:$IMAGE_TAG ..."
         docker push "$IMAGE_NAME:$IMAGE_TAG"
         if [ "$NODE_VER" = "$DEF_NODE" ] && [ "$DEBIAN_VER" = "$DEF_DEBIAN" ]; then
             docker tag "$IMAGE_NAME:$IMAGE_TAG" "$IMAGE_NAME:$SHORT_TAG"
             docker push "$IMAGE_NAME:$SHORT_TAG"
         fi
-    fi
-    end_group "Building container $IMAGE_NAME:$IMAGE_TAG ..."
+        end_group "Publishing $IMAGE_NAME:$IMAGE_TAG ..."
+    done
 }
 
-## Override kash's generic run_lib_tests: these repos are pnpm workspaces, so
+## Override kash's generic run_package_tests: these repos are pnpm workspaces, so
 ## instead of testing the whole tree we only test the packages selected by the
 ## caller via the target ref, falling back to a full run when the ref is empty.
 ## Expected arguments:
@@ -256,7 +224,7 @@ build_and_publish_image() {
 ## 4. mongo version to be used if required by tests
 ## 5. whether to skip 'pnpm install' (defaults to false)
 ## 6. target ref to diff against (empty -> test every package)
-run_lib_tests() {
+run_package_tests() {
     local LOCAL_ROOT_DIR="$1"
     local RUN_SONAR="$2"
     local NODE_VER="$3"

@@ -6,7 +6,7 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "build": "DOCKER_BUILDKIT=1 docker build -t service-k2:${TAG:-latest} -f ./Dockerfile ../..",
+    "build": "DOCKER_BUILDKIT=1 docker build -t ${KALISIO_DOCKERHUB_URL:-docker.io}/kalisio/k2:${IMAGE_TAG:-dev} --build-arg NODE_VERSION=${NODE_VERSION:-20} --build-arg DEBIAN_VERSION=${DEBIAN_VERSION:-bookworm} -f ./Dockerfile ../..",
     "dev": "node --watch src/main.js",
     "lint": "standard --fix",
     "test": "bash -c 'source ../../../development/workspaces/services/services.sh service-k2 && vitest run --coverage'"
