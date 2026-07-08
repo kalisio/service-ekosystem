@@ -168,3 +168,7 @@ Here are the environment variables you can use to customize the service:
 | `HOSTNAME` | The hostname to be used when exposing the service | `localhost` |
 | `API_PATH` | The path to the API |
 | `API_URL` | The url used when exposing the service | `localhost:8080/api` |
+
+## API
+
+The HTTP API exposed by **service-geokoder** is documented on the [API reference](./service-geokoder-openapi) page.
