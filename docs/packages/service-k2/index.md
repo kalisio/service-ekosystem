@@ -18,10 +18,27 @@ _3D terrain server for Cesium tiles_
 
 ![Elevation computation](./k2-elevation.png)
 
-The service can serve either:
+For 3D terrain tiles, the service always serves a single terrain file on the root path (`/`), taken from the `TERRAIN_FILEPATH` environment variable (default `/mbtiles/terrain.mbtiles`). In addition, if the `TERRAIN_FOLDER` environment variable is set, every `*.mbtiles` file found in that folder is also served, each under a path derived from its basename.
 
-- a single terrain file, specified through the `TERRAIN_FILEPATH` environment variable,
-- multiple terrain files from a folder, specified through the `TERRAIN_FOLDER` environment variable — every `*.mbtiles` file in the folder is then served under a path derived from its basename.
+::: warning
+Serving the single `TERRAIN_FILEPATH` file is always active, even when `TERRAIN_FOLDER` is set. That file must therefore exist, otherwise the service fails to start.
+:::
+
+## Data
+
+**service-k2** needs data to serve, and its two features rely on **different datasets** — so to run the service locally (or in production) you have to provide the data for whichever feature you want to use:
+
+- **3D terrain tiles** are served from **quantized-mesh `.mbtiles`** files, configured through `TERRAIN_FILEPATH` or `TERRAIN_FOLDER` (see [Configuration](#configuration)). See [Converting GeoTIFF to MBTiles](#converting-geotiff-to-mbtiles) to produce them.
+- **Elevation computation** reads a **Digital Elevation Model (DEM/MNT)** in a GDAL-readable format (GeoTIFF or VRT). By default the DEM is picked from `/mbtiles` depending on the requested resolution:
+
+  | Resolution | DEM file                      |
+  |------------|-------------------------------|
+  | `< 250 m`  | `/mbtiles/srtm.vrt`           |
+  | `< 500 m`  | `/mbtiles/GMTED2010/mx75.tif` |
+  | `< 1000 m` | `/mbtiles/GMTED2010/mx15.tif` |
+  | otherwise  | `/mbtiles/GMTED2010/mx30.tif` |
+
+  You can bypass this selection with the `demOverride` parameter, resolved relative to `/mbtiles`. Note that this `/mbtiles` root is **not** configurable through an environment variable. The `/elevation` endpoint also requires **GDAL** (`gdalwarp`) to be installed on the host or image at runtime.
 
 ## Installation
 
