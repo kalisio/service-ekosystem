@@ -8,11 +8,7 @@
     "build:service-geokoder": "pnpm --filter @kalisio/service-geokoder build",
     "build:service-kapture": "pnpm --filter @kalisio/service-kapture build",
     "build:service-katalog": "pnpm --filter @kalisio/service-katalog build",
-    "prebump": "changeset",
     "bump": "changeset version",
-    "postbump": "bash scripts/release/commit.sh",
-    "release": "bash scripts/release/tag.sh",
-    "postrelease": "bash scripts/release/push.sh",
     "docs:build": "pnpm --filter docs run build",
     "docs:dev": "pnpm --filter docs run dev",
     "inspect": "pnpm knip",
@@ -21,14 +17,20 @@
     "lint:service-k2": "pnpm --filter @kalisio/service-k2 lint",
     "lint:service-kapture": "pnpm --filter @kalisio/service-kapture lint",
     "lint:service-katalog": "pnpm --filter @kalisio/service-katalog lint",
+    "lint:service-kfs": "pnpm --filter @kalisio/service-kfs lint",
+    "postbump": "bash scripts/release/commit.sh",
+    "postrelease": "bash scripts/release/push.sh",
     "posttest": "pnpm lcov-result-merger --prepend-source-files 'packages/*/coverage/lcov.info' coverage/lcov.info",
+    "prebump": "changeset",
     "prepare": "husky",
     "pretest": "mkdir -p coverage",
+    "release": "bash scripts/release/tag.sh",
     "test": "bash -c 'source ../../../development/workspaces/services/services.sh service-ekosystem && pnpm -r --workspace-concurrency=1 test'",
     "test:service-geokoder": "pnpm --filter @kalisio/service-geokoder test",
     "test:service-k2": "pnpm --filter @kalisio/service-k2 test",
     "test:service-kapture": "pnpm --filter @kalisio/service-kapture test",
-    "test:service-katalog": "pnpm --filter @kalisio/service-katalog test"
+    "test:service-katalog": "pnpm --filter @kalisio/service-katalog test",
+    "test:service-kfs": "pnpm --filter @kalisio/service-kfs test"
   },
   "keywords": [
     "kalisio"
@@ -62,7 +64,7 @@
   },
   "metaCatalog": {
     "version": "0.10.0",
-    "syncedAt": "2026-06-25T15:32:36.619Z"
+    "syncedAt": "2026-07-09T09:49:14.161Z"
   },
   "pnpm": {
     "onlyBuiltDependencies": [

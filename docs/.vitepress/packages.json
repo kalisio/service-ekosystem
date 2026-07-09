@@ -2,5 +2,6 @@
   "service-geokoder",
   "service-katalog",
   "service-kapture",
-  "service-k2"
+  "service-k2",
+  "service-kfs"
 ]
