@@ -75,6 +75,9 @@ end_group "Determining what to build ..."
 
 begin_group "Building images ..."
 
+use_node "$NODE_VER"
+ensure_pnpm
+
 load_env_files "$WORKSPACE_DIR/development/common/kalisio_dockerhub.enc.env"
 
 export KALISIO_DOCKERHUB_URL
