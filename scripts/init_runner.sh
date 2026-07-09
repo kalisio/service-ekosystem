@@ -23,7 +23,7 @@ init_github_build_docs() {
     install_reqs age sops nvm node20
 }
 
-init_github_build_services() {
+init_github_build_package() {
     install_reqs age sops nvm node20
 }
 

@@ -22,20 +22,15 @@ on:
         default: false
         required: false
         type: boolean
-      build_services:
-        description: "Build services"
+      build_package:
+        description: "Build packages"
         default: false
         required: false
         type: boolean
-      build_services_input:
-        description: "Services to build, space-separated package names. Leave empty for auto-detection."
+      build_package_input:
+        description: "Packages to build, space-separated package names. Leave empty for auto-detection."
         required: false
         default: ""
-      publish:
-        description: "Publish (push) built images to the registry"
-        default: false
-        required: false
-        type: boolean
 
 jobs:
   run_tests:
@@ -105,7 +100,7 @@ jobs:
       - name: Setup workspace
         env:
           KALISIO_GITHUB_URL: ${{ secrets.KALISIO_GITHUB_URL }}
-        run: bash ./scripts/setup_workspace.sh
+        run: bash ./scripts/setup_workspace.sh -n ${{ matrix.node }}
       - name: Run tests
         env:
           SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
@@ -135,10 +130,10 @@ jobs:
           SOPS_AGE_KEY: ${{ secrets.SOPS_AGE_KEY }}
         run: bash ./scripts/build_docs.sh -p -r ${{ github.job }}
 
-  build_services:
-    name: Build services
+  build_package:
+    name: Build package
     if: ${{
-      github.event_name == 'workflow_dispatch' && inputs.build_services ||
+      github.event_name == 'workflow_dispatch' && inputs.build_package ||
       github.event_name == 'push' && github.ref_type == 'tag' ||
       github.event_name == 'push' && github.ref_type == 'branch' && !contains(github.event.head_commit.message, 'skip services')
       }}
@@ -155,11 +150,10 @@ jobs:
         env:
           KALISIO_GITHUB_URL: ${{ secrets.KALISIO_GITHUB_URL }}
         run: bash ./scripts/setup_workspace.sh
-      - name: Build services
+      - name: Build package
         env:
           SOPS_AGE_KEY:        ${{ secrets.SOPS_AGE_KEY }}
           GITHUB_EVENT_BEFORE: ${{ github.event.before }}
-          INPUT_PACKAGES:      ${{ github.event.inputs.build_services_input }}
-        # Push on any automatic trigger (tag / branch); on manual dispatch only
-        # when the 'publish' input is checked (so you can build without pushing).
-        run: bash ./scripts/build_package.sh ${{ (github.event_name != 'workflow_dispatch' || inputs.publish) && '-p' || '' }} -r ${{ github.job }}
+          INPUT_PACKAGES:      ${{ github.event.inputs.build_package_input }}
+        # Always build and publish (-p) the images.
+        run: bash ./scripts/build_package.sh -p -r ${{ github.job }}
