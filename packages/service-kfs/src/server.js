@@ -1,5 +1,3 @@
-#!/usr/bin/env node
-
 import createServer from './main.js'
 
 async function run () {
