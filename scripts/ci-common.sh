@@ -156,10 +156,13 @@ resolve_build_filter_and_tag() {
     else
         local TARGET_REF
         TARGET_REF=$(get_diff_base_ref "$ROOT")
+        # Always scope to packages/<prefix>* so non-service workspace projects
+        # (docs/, examples/, the root) — which may also have a 'build' script —
+        # are never built here.
         if [ -z "$TARGET_REF" ] || should_rebuild_all_packages "$ROOT" "$TARGET_REF" "$@"; then
-            FILTER="-r"
+            FILTER="--filter=./packages/${PREFIX}*"
         else
-            FILTER="--filter=...[${TARGET_REF}]"
+            FILTER="--filter=./packages/${PREFIX}*[${TARGET_REF}]"
         fi
     fi
 
