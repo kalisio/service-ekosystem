@@ -5,10 +5,12 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "build": "DOCKER_BUILDKIT=1 docker build -t service-kfs:${TAG:-latest} -f ./Dockerfile ../..",
+    "build": "DOCKER_BUILDKIT=1 docker build -t ${KALISIO_DOCKERHUB_URL:-docker.io}/kalisio/kfs:${IMAGE_TAG:-dev} --build-arg NODE_VERSION=${NODE_VERSION:-20} --build-arg DEBIAN_VERSION=${DEBIAN_VERSION:-bookworm} -f ./Dockerfile ../..",
     "dev": "node --watch src/server.js",
     "lint": "standard --fix",
-    "test": "cross-env NODE_CONFIG_DIR=./test/config vitest run --coverage"
+    "release": "git tag \"$(node -p \"const p=require('./package.json');p.name+'@'+p.version\")\" # e.g. git tag @kalisio/service-kfs@0.1.0",
+    "postrelease": "git push origin \"$(node -p \"const p=require('./package.json');p.name+'@'+p.version\")\" # e.g. git push origin @kalisio/service-kfs@0.1.0",
+    "test": "bash -c 'source ../../../development/workspaces/services/services.sh kfs && export NODE_CONFIG_DIR=./test/config && vitest run --coverage'"
   },
   "keywords": [
     "kalisio"

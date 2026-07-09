@@ -9,6 +9,8 @@
     "build": "DOCKER_BUILDKIT=1 docker build -t ${KALISIO_DOCKERHUB_URL:-docker.io}/kalisio/k2:${IMAGE_TAG:-dev} --build-arg NODE_VERSION=${NODE_VERSION:-20} --build-arg DEBIAN_VERSION=${DEBIAN_VERSION:-bookworm} -f ./Dockerfile ../..",
     "dev": "node --watch src/main.js",
     "lint": "standard --fix",
+    "release": "git tag \"$(node -p \"const p=require('./package.json');p.name+'@'+p.version\")\" # e.g. git tag @kalisio/service-k2@0.1.0",
+    "postrelease": "git push origin \"$(node -p \"const p=require('./package.json');p.name+'@'+p.version\")\" # e.g. git push origin @kalisio/service-k2@0.1.0",
     "test": "bash -c 'source ../../../development/workspaces/services/services.sh service-k2 && vitest run --coverage'"
   },
   "keywords": [

@@ -9,6 +9,8 @@
     "build": "DOCKER_BUILDKIT=1 docker build -t ${KALISIO_DOCKERHUB_URL:-docker.io}/kalisio/katalog:${IMAGE_TAG:-dev} --build-arg NODE_VERSION=${NODE_VERSION:-20} --build-arg DEBIAN_VERSION=${DEBIAN_VERSION:-bookworm} -f ./Dockerfile ../..",
     "dev": "node --conditions=development --watch src/main.js",
     "lint": "standard --fix",
+    "release": "git tag \"$(node -p \"const p=require('./package.json');p.name+'@'+p.version\")\" # e.g. git tag @kalisio/service-katalog@0.1.0",
+    "postrelease": "git push origin \"$(node -p \"const p=require('./package.json');p.name+'@'+p.version\")\" # e.g. git push origin @kalisio/service-katalog@0.1.0",
     "test": "bash -c 'source ../../../development/workspaces/services/services.sh service-katalog && vitest run --coverage'"
   },
   "keywords": [
