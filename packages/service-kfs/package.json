@@ -31,6 +31,7 @@
   "homepage": "https://github.com/kalisio/service-ekosystem/tree/master/packages/service-kfs",
   "dependencies": {
     "@feathersjs/commons": "catalog:",
+    "@feathersjs/configuration": "catalog:",
     "@feathersjs/errors": "catalog:",
     "@feathersjs/express": "catalog:",
     "@feathersjs/feathers": "catalog:",
@@ -59,7 +60,8 @@
     "@feathersjs/memory": "catalog:",
     "@kalisio/kdk": "catalog:",
     "cross-env": "catalog:",
-    "sift": "catalog:"
+    "sift": "catalog:",
+    "config": "catalog:"
    },
   "engines": {
     "node": ">=20"

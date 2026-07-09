@@ -1,0 +1,27 @@
+{
+  "name": "@kalisio/kfs-mcp",
+  "version": "1.0.0",
+  "description": "MCP server for interacting with the Kalisio Features Service (OGC API Features)",
+  "type": "module",
+  "private": true,
+  "main": "server.js",
+  "bin": {
+    "kfs-mcp": "server.js"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "test": "vitest run test/server.test.js --coverage",
+    "test:integration": "cross-env NODE_CONFIG_DIR=../test/config/ vitest run test/integration.test.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "cross-env": "catalog:"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
