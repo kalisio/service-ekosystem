@@ -186,6 +186,9 @@ catalogs:
     standard:
       specifier: ~17.1.2
       version: 17.1.2
+    superagent:
+      specifier: ~10.3.0
+      version: 10.3.0
     vite:
       specifier: ~7.3.1
       version: 7.3.2
@@ -581,6 +584,9 @@ importers:
       sift:
         specifier: 'catalog:'
         version: 17.1.3
+      superagent:
+        specifier: 'catalog:'
+        version: 10.3.0
 
   packages/service-kfs/mcp:
     dependencies:
@@ -6942,6 +6948,10 @@ packages:
   sublevelup@4.0.0:
     resolution: {integrity: sha512-ssC1I45OFIlWeGaI7Bok+ilVj02UYKgG6S4bxknJsdQaXQz4vJ3zinEsW4yDQiwZa8lrZXe/2LUkPk3ZnMGziw==}
 
+  superagent@10.3.0:
+    resolution: {integrity: sha512-B+4Ik7ROgVKrQsXTV0Jwp2u+PXYLSlqtDAhYnkkD+zn3yg8s/zjA2MeGayPoY/KICrbitwneDHrjSotxKL+0XQ==}
+    engines: {node: '>=14.18.0'}
+
   superagent@5.3.1:
     resolution: {integrity: sha512-wjJ/MoTid2/RuGCOFtlacyGNxN9QLMgcpYLDQlWFIhhdJ93kNscFonGvrpAHSCVjRVj++DGCglocF7Aej1KHvQ==}
     engines: {node: '>= 7.0.0'}
@@ -12454,7 +12464,7 @@ snapshots:
       call-bound: 1.0.4
       define-properties: 1.2.1
       functions-have-names: 1.2.3
-      hasown: 2.0.2
+      hasown: 2.0.4
       is-callable: 1.2.7
 
   functions-have-names@1.2.3: {}
@@ -13040,7 +13050,7 @@ snapshots:
       call-bound: 1.0.4
       gopd: 1.2.0
       has-tostringtag: 1.0.2
-      hasown: 2.0.2
+      hasown: 2.0.4
 
   is-set@2.0.3: {}
 
@@ -15436,6 +15446,20 @@ snapshots:
       levelup: 1.3.9
       prefixdown: 1.4.0
       xtend: 4.0.2
+
+  superagent@10.3.0:
+    dependencies:
+      component-emitter: 1.3.1
+      cookiejar: 2.1.4
+      debug: 4.4.3
+      fast-safe-stringify: 2.1.1
+      form-data: 4.0.6
+      formidable: 3.5.4
+      methods: 1.1.2
+      mime: 2.6.0
+      qs: 6.15.3
+    transitivePeerDependencies:
+      - supports-color
 
   superagent@5.3.1:
     dependencies:

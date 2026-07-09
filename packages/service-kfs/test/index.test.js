@@ -1,7 +1,5 @@
 import utility from 'util'
-import chai from 'chai'
-import chailint from 'chai-lint'
-import { describe, it, beforeAll } from 'vitest'
+import { describe, it, expect } from 'vitest'
 import assert from 'assert'
 import _ from 'lodash'
 import path from 'path'
@@ -20,7 +18,6 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const modelsPath = path.join(__dirname, 'models')
 const servicesPath = path.join(__dirname, 'services')
 const sift = siftModule.default
-const { util, expect } = chai
 
 // Test suite based on using the catalog service or not
 // and using features service or not
@@ -58,28 +55,26 @@ function runTests (options = {
     if (options.catalog) {
       await createCatalogService.call(kapp)
       catalogService = kapp.getService('catalog')
-      expect(catalogService).toExist()
+      expect(catalogService).toBeDefined()
     }
   })
-  // Let enough time to process
-    .timeout(5000)
 
   it('registers the default layers', async () => {
     const layers = await fs.readJson(path.join(__dirname, 'config/layers.json'))
-    expect(layers.length > 0)
+    expect(layers.length > 0).toBe(true)
     // Create layers
     if (options.catalog) defaultLayers = await catalogService.create(layers)
     else defaultLayers = layers
     // Single layer case
     if (!Array.isArray(defaultLayers)) defaultLayers = [defaultLayers]
-    expect(defaultLayers.length > 0)
+    expect(defaultLayers.length > 0).toBe(true)
   })
 
   it('create and feed the hubeau stations service', async () => {
     // Create the services
     const hubeauLayer = _.find(defaultLayers, { name: 'Layers.HUBEAU' })
-    expect(hubeauLayer).toExist()
-    expect(hubeauLayer.probeService === 'hubeau-stations').beTrue()
+    expect(hubeauLayer).toBeDefined()
+    expect(hubeauLayer.probeService === 'hubeau-stations').toBe(true)
     if (options.features) {
       await createFeaturesService.call(kapp, {
         collection: hubeauLayer.probeService,
@@ -94,7 +89,7 @@ function runTests (options = {
       })
     }
     hubeauStationsService = kapp.getService(hubeauLayer.probeService)
-    expect(hubeauStationsService).toExist()
+    expect(hubeauStationsService).toBeDefined()
     // Feed the collection
     let stations = fs.readJsonSync(path.join(__dirname, 'data/hubeau.stations.json')).features
     nbStations = stations.length
@@ -108,14 +103,12 @@ function runTests (options = {
     stations = await hubeauStationsService.create(stations)
     feature = stations[Math.floor(Math.random() * nbStations)]
   })
-  // Let enough time to process
-    .timeout(5000)
 
   it('create and feed the hubeau observations service', async () => {
     // Create the service
     const hubeauLayer = _.find(defaultLayers, { name: 'Layers.HUBEAU' })
-    expect(hubeauLayer).toExist()
-    expect(hubeauLayer.service === 'hubeau-observations').beTrue()
+    expect(hubeauLayer).toBeDefined()
+    expect(hubeauLayer.service === 'hubeau-observations').toBe(true)
     if (options.features) {
       await createFeaturesService.call(kapp, {
         collection: hubeauLayer.service,
@@ -130,7 +123,7 @@ function runTests (options = {
       })
     }
     hubeauObsService = kapp.getService(hubeauLayer.service)
-    expect(hubeauObsService).toExist()
+    expect(hubeauObsService).toBeDefined()
     // Feed the collection, most observations have H = 0.33 with a few exceptions:
     // First one with H = 0.63, second to last four ones with H = 0.43, last four ones with H = 0.53
     const observations = fs.readJsonSync(path.join(__dirname, 'data/hubeau.observations.json'))
@@ -139,14 +132,12 @@ function runTests (options = {
     if (!options.features) observations.forEach(observation => { observation.time = new Date(observation.time) })
     await hubeauObsService.create(observations)
   })
-  // Let enough time to process
-    .timeout(5000)
 
   it('create and feed the hubeau filtered service', async () => {
     // Create the service
     const hubeauLayer = _.find(defaultLayers, { name: 'Layers.FILTERED_SERVICE' })
-    expect(hubeauLayer).toExist()
-    expect(hubeauLayer.service === 'hubeau-filtered').beTrue()
+    expect(hubeauLayer).toBeDefined()
+    expect(hubeauLayer.service === 'hubeau-filtered').toBe(true)
     if (options.features) {
       await createFeaturesService.call(kapp, {
         collection: hubeauLayer.service,
@@ -161,99 +152,85 @@ function runTests (options = {
       })
     }
     hubeauFilteredService = kapp.getService(hubeauLayer.service)
-    expect(hubeauFilteredService).toExist()
+    expect(hubeauFilteredService).toBeDefined()
   })
-  // Let enough time to process
-    .timeout(5000)
 
   it('initialize the app', async () => {
     server = await createServer()
-    expect(server).toExist()
+    expect(server).toBeDefined()
     app = server.app
-    expect(app).toExist()
+    expect(app).toBeDefined()
     baseUrl = app.get('baseUrl')
     // Wait long enough to be sure distribution is up
     await utility.promisify(setTimeout)(10000)
   })
-  // Let enough time to process
-    .timeout(15000)
 
   it('get landing page', async () => {
     const response = await request.get(`${baseUrl}`)
-    expect(response.body.links).toExist()
-    expect(response.body.links.length).to.equal(4)
+    expect(response.body.links).toBeDefined()
+    expect(response.body.links.length).toBe(4)
     response.body.links.forEach(link => {
-      expect(link.href).toExist()
-      expect(link.rel).toExist()
+      expect(link.href).toBeDefined()
+      expect(link.rel).toBeDefined()
     })
   })
-  // Let enough time to process
-    .timeout(5000)
 
   it('get conformance page', async () => {
     const response = await request.get(`${baseUrl}/conformance`)
-    expect(response.body.conformsTo).toExist()
+    expect(response.body.conformsTo).toBeDefined()
   })
-  // Let enough time to process
-    .timeout(5000)
 
   it('get api definition', async () => {
     const response = await request.get(`${baseUrl}/definition`)
-    expect(response.body.paths).toExist()
+    expect(response.body.paths).toBeDefined()
   })
-  // Let enough time to process
-    .timeout(5000)
 
   it('get collections', async () => {
     const response = await request.get(`${baseUrl}/collections`)
-    expect(response.body.collections).toExist()
+    expect(response.body.collections).toBeDefined()
     // We should have hubeau stations + measures collection
     // and this twice again as the layer declares two filters
-    expect(response.body.collections.length).to.equal(options.catalog && options.features ? 6 : 2)
-    expect(response.body.links).toExist()
-    expect(response.body.links.length).to.equal(1)
+    expect(response.body.collections.length).toBe(options.catalog && options.features ? 6 : 2)
+    expect(response.body.links).toBeDefined()
+    expect(response.body.links.length).toBe(1)
     response.body.links.forEach(link => {
-      expect(link.href).toExist()
-      expect(link.rel).toExist()
+      expect(link.href).toBeDefined()
+      expect(link.rel).toBeDefined()
     })
   })
-  // Let enough time to process
-    .timeout(5000)
 
   it('get collection', async () => {
     const response = await request.get(`${baseUrl}/collections/hubeau-stations`)
-    expect(response.body.id).toExist()
-    expect(response.body.id).to.equal('hubeau-stations')
-    expect(response.body.itemType).toExist()
-    expect(response.body.itemType).to.equal('feature')
-    expect(response.body.title).toExist()
+    expect(response.body.id).toBeDefined()
+    expect(response.body.id).toBe('hubeau-stations')
+    expect(response.body.itemType).toBeDefined()
+    expect(response.body.itemType).toBe('feature')
+    expect(response.body.title).toBeDefined()
     // When not using layers we don't have this information
     if (options.catalog) {
-      expect(response.body.description).toExist()
-      expect(response.body.extent).toExist()
-      expect(response.body.extent.spatial).toExist()
-      expect(response.body.extent.spatial.bbox).toExist()
-      expect(response.body.extent.spatial.crs).toExist()
-      expect(response.body.extent.temporal).toExist()
-      expect(response.body.extent.temporal.interval).toExist()
-      expect(response.body.extent.temporal.interval.length).to.equal(1)
-      expect(response.body.extent.temporal.interval[0].length).to.equal(2)
-      expect(response.body.extent.temporal.interval[0][0]).not.to.equal(null)
-      expect(response.body.extent.temporal.interval[0][1]).not.to.equal(null)
-      expect(response.body.extent.temporal.trs).toExist()
-      expect(response.body.defaultSortOrder).toExist()
-      expect(response.body.defaultSortOrder).to.deep.equal(['-time'])
+      expect(response.body.description).toBeDefined()
+      expect(response.body.extent).toBeDefined()
+      expect(response.body.extent.spatial).toBeDefined()
+      expect(response.body.extent.spatial.bbox).toBeDefined()
+      expect(response.body.extent.spatial.crs).toBeDefined()
+      expect(response.body.extent.temporal).toBeDefined()
+      expect(response.body.extent.temporal.interval).toBeDefined()
+      expect(response.body.extent.temporal.interval.length).toBe(1)
+      expect(response.body.extent.temporal.interval[0].length).toBe(2)
+      expect(response.body.extent.temporal.interval[0][0]).not.toBe(null)
+      expect(response.body.extent.temporal.interval[0][1]).not.toBe(null)
+      expect(response.body.extent.temporal.trs).toBeDefined()
+      expect(response.body.defaultSortOrder).toBeDefined()
+      expect(response.body.defaultSortOrder).toEqual(['-time'])
     }
-    expect(response.body.crs).toExist()
-    expect(response.body.links).toExist()
-    expect(response.body.links.length).to.equal(2)
+    expect(response.body.crs).toBeDefined()
+    expect(response.body.links).toBeDefined()
+    expect(response.body.links.length).toBe(2)
     response.body.links.forEach(link => {
-      expect(link.href).toExist()
-      expect(link.rel).toExist()
+      expect(link.href).toBeDefined()
+      expect(link.rel).toBeDefined()
     })
   })
-  // Let enough time to process
-    .timeout(5000)
 
   // When not using layers we don't have filter collections
   if (options.catalog && options.features) {
@@ -263,35 +240,33 @@ function runTests (options = {
       const filterName = _.get(hubeauLayer, `i18n.en.${filter.label}`)
       const collection = getCollectionName('hubeau-stations', filterName)
       const response = await request.get(`${baseUrl}/collections/${collection}`)
-      expect(response.body.id).toExist()
-      expect(response.body.id).to.equal(collection)
-      expect(response.body.itemType).toExist()
-      expect(response.body.itemType).to.equal('feature')
-      expect(response.body.title).toExist()
-      expect(response.body.description).toExist()
-      expect(response.body.extent).toExist()
-      expect(response.body.extent.spatial).toExist()
-      expect(response.body.extent.spatial.bbox).toExist()
-      expect(response.body.extent.spatial.crs).toExist()
-      expect(response.body.extent.temporal).toExist()
-      expect(response.body.extent.temporal.interval).toExist()
-      expect(response.body.extent.temporal.interval.length).to.equal(1)
-      expect(response.body.extent.temporal.interval[0].length).to.equal(2)
-      expect(response.body.extent.temporal.interval[0][0]).not.to.equal(null)
-      expect(response.body.extent.temporal.interval[0][1]).not.to.equal(null)
-      expect(response.body.extent.temporal.trs).toExist()
-      expect(response.body.defaultSortOrder).toExist()
-      expect(response.body.defaultSortOrder).to.deep.equal(['-time'])
-      expect(response.body.crs).toExist()
-      expect(response.body.links).toExist()
-      expect(response.body.links.length).to.equal(2)
+      expect(response.body.id).toBeDefined()
+      expect(response.body.id).toBe(collection)
+      expect(response.body.itemType).toBeDefined()
+      expect(response.body.itemType).toBe('feature')
+      expect(response.body.title).toBeDefined()
+      expect(response.body.description).toBeDefined()
+      expect(response.body.extent).toBeDefined()
+      expect(response.body.extent.spatial).toBeDefined()
+      expect(response.body.extent.spatial.bbox).toBeDefined()
+      expect(response.body.extent.spatial.crs).toBeDefined()
+      expect(response.body.extent.temporal).toBeDefined()
+      expect(response.body.extent.temporal.interval).toBeDefined()
+      expect(response.body.extent.temporal.interval.length).toBe(1)
+      expect(response.body.extent.temporal.interval[0].length).toBe(2)
+      expect(response.body.extent.temporal.interval[0][0]).not.toBe(null)
+      expect(response.body.extent.temporal.interval[0][1]).not.toBe(null)
+      expect(response.body.extent.temporal.trs).toBeDefined()
+      expect(response.body.defaultSortOrder).toBeDefined()
+      expect(response.body.defaultSortOrder).toEqual(['-time'])
+      expect(response.body.crs).toBeDefined()
+      expect(response.body.links).toBeDefined()
+      expect(response.body.links.length).toBe(2)
       response.body.links.forEach(link => {
-        expect(link.href).toExist()
-        expect(link.rel).toExist()
+        expect(link.href).toBeDefined()
+        expect(link.rel).toBeDefined()
       })
     })
-    // Let enough time to process
-      .timeout(5000)
   }
 
   it('get nonexistent collection', async () => {
@@ -300,29 +275,25 @@ function runTests (options = {
       assert.fail('getting nonexistent collection should raise on error')
     } catch (data) {
       const error = data.response.body
-      expect(error).toExist()
-      expect(error.name).to.equal('NotFound')
+      expect(error).toBeDefined()
+      expect(error.name).toBe('NotFound')
     }
   })
-  // Let enough time to process
-    .timeout(5000)
 
   it('get items', async () => {
     const response = await request.get(`${baseUrl}/collections/hubeau-stations/items`)
-    expect(response.body.features).toExist()
-    expect(response.body.numberMatched).toExist()
-    expect(response.body.numberReturned).toExist()
-    expect(response.body.numberMatched).to.equal(nbStations)
-    expect(response.body.numberReturned).to.equal(nbStations < nbPerPage ? nbStations : nbPerPage)
+    expect(response.body.features).toBeDefined()
+    expect(response.body.numberMatched).toBeDefined()
+    expect(response.body.numberReturned).toBeDefined()
+    expect(response.body.numberMatched).toBe(nbStations)
+    expect(response.body.numberReturned).toBe(nbStations < nbPerPage ? nbStations : nbPerPage)
     response.body.links.forEach(link => {
-      expect(link.href).toExist()
-      expect(link.href.includes('offset')).beTrue()
-      expect(link.href.includes('limit')).beTrue()
-      expect(link.rel).toExist()
+      expect(link.href).toBeDefined()
+      expect(link.href.includes('offset')).toBe(true)
+      expect(link.href.includes('limit')).toBe(true)
+      expect(link.rel).toBeDefined()
     })
   })
-  // Let enough time to process
-    .timeout(5000)
 
   // When not using layers we don't have filter collections
   if (options.catalog && options.features) {
@@ -333,54 +304,50 @@ function runTests (options = {
         const filterName = _.get(hubeauLayer, `i18n.en.${filter.label}`)
         const collection = getCollectionName('hubeau-stations', filterName)
         const response = await request.get(`${baseUrl}/collections/${collection}/items`)
-        expect(response.body.features).toExist()
-        expect(response.body.numberMatched).toExist()
-        expect(response.body.numberReturned).toExist()
-        expect(response.body.numberMatched).to.equal(nbFilteredStations[i])
-        expect(response.body.numberReturned).to.equal(nbFilteredStations[i] < nbPerPage ? nbFilteredStations[i] : nbPerPage)
+        expect(response.body.features).toBeDefined()
+        expect(response.body.numberMatched).toBeDefined()
+        expect(response.body.numberReturned).toBeDefined()
+        expect(response.body.numberMatched).toBe(nbFilteredStations[i])
+        expect(response.body.numberReturned).toBe(nbFilteredStations[i] < nbPerPage ? nbFilteredStations[i] : nbPerPage)
         response.body.links.forEach(link => {
-          expect(link.href).toExist()
-          expect(link.href.includes('offset')).beTrue()
-          expect(link.href.includes('limit')).beTrue()
-          expect(link.rel).toExist()
+          expect(link.href).toBeDefined()
+          expect(link.href.includes('offset')).toBe(true)
+          expect(link.href.includes('limit')).toBe(true)
+          expect(link.rel).toBeDefined()
         })
       }
     })
-    // Let enough time to process
-      .timeout(5000)
   }
 
   it('get sorted items', async () => {
     // Use a string property that actually contains a number so that comparisons are made easy
     let response = await request.get(`${baseUrl}/collections/hubeau-stations/items`)
       .query({ sortby: '+CdCommune' })
-    expect(response.body.features).toExist()
-    expect(response.body.numberMatched).toExist()
-    expect(response.body.numberReturned).toExist()
-    expect(response.body.numberMatched).to.equal(nbStations)
-    expect(response.body.numberReturned).to.equal(nbStations < nbPerPage ? nbStations : nbPerPage)
+    expect(response.body.features).toBeDefined()
+    expect(response.body.numberMatched).toBeDefined()
+    expect(response.body.numberReturned).toBeDefined()
+    expect(response.body.numberMatched).toBe(nbStations)
+    expect(response.body.numberReturned).toBe(nbStations < nbPerPage ? nbStations : nbPerPage)
     let CdCommune, previousCdCommune
     response.body.features.forEach(feature => {
       CdCommune = Number(_.get(feature, 'properties.CdCommune'))
-      if (previousCdCommune) expect(previousCdCommune <= CdCommune).beTrue()
+      if (previousCdCommune) expect(previousCdCommune <= CdCommune).toBe(true)
       previousCdCommune = CdCommune
     })
     response = await request.get(`${baseUrl}/collections/hubeau-stations/items`)
       .query({ sortby: '-CdCommune' })
-    expect(response.body.features).toExist()
-    expect(response.body.numberMatched).toExist()
-    expect(response.body.numberReturned).toExist()
-    expect(response.body.numberMatched).to.equal(nbStations)
-    expect(response.body.numberReturned).to.equal(nbStations < nbPerPage ? nbStations : nbPerPage)
+    expect(response.body.features).toBeDefined()
+    expect(response.body.numberMatched).toBeDefined()
+    expect(response.body.numberReturned).toBeDefined()
+    expect(response.body.numberMatched).toBe(nbStations)
+    expect(response.body.numberReturned).toBe(nbStations < nbPerPage ? nbStations : nbPerPage)
     previousCdCommune = undefined
     response.body.features.forEach(feature => {
       CdCommune = Number(_.get(feature, 'properties.CdCommune'))
-      if (previousCdCommune) expect(previousCdCommune >= CdCommune).beTrue()
+      if (previousCdCommune) expect(previousCdCommune >= CdCommune).toBe(true)
       previousCdCommune = CdCommune
     })
   })
-  // Let enough time to process
-    .timeout(5000)
 
   it('get nonexistent item', async () => {
     try {
@@ -388,75 +355,63 @@ function runTests (options = {
       assert.fail('getting nonexistent item should raise on error')
     } catch (data) {
       const error = data.response.body
-      expect(error).toExist()
-      expect(error.name).to.equal('NotFound')
+      expect(error).toBeDefined()
+      expect(error.name).toBe('NotFound')
     }
   })
-  // Let enough time to process
-    .timeout(5000)
 
   it('get item', async () => {
     const response = await request.get(`${baseUrl}/collections/hubeau-stations/items/${feature._id}`)
-    expect(response.body.id).toExist()
-    expect(response.body.id.toString()).to.equal(feature._id.toString())
-    expect(response.body.properties).toExist()
-    expect(response.body.links).toExist()
-    expect(response.body.links.length).to.equal(2)
+    expect(response.body.id).toBeDefined()
+    expect(response.body.id.toString()).toBe(feature._id.toString())
+    expect(response.body.properties).toBeDefined()
+    expect(response.body.links).toBeDefined()
+    expect(response.body.links.length).toBe(2)
     response.body.links.forEach(link => {
-      expect(link.href).toExist()
-      expect(link.rel).toExist()
+      expect(link.href).toBeDefined()
+      expect(link.rel).toBeDefined()
     })
   })
-  // Let enough time to process
-    .timeout(5000)
 
   it('get items with filtering on string property', async () => {
     const response = await request.get(`${baseUrl}/collections/hubeau-observations/items`)
       .query({ gml_id: 'StationHydro_FXX_shp.A282000101' })
-    expect(response.body.features).toExist()
-    expect(response.body.numberMatched).toExist()
-    expect(response.body.numberReturned).toExist()
-    expect(response.body.numberMatched).to.equal(nbObservations)
-    expect(response.body.numberReturned).to.equal(nbObservations < nbPerPage ? nbObservations : nbPerPage)
+    expect(response.body.features).toBeDefined()
+    expect(response.body.numberMatched).toBeDefined()
+    expect(response.body.numberReturned).toBeDefined()
+    expect(response.body.numberMatched).toBe(nbObservations)
+    expect(response.body.numberReturned).toBe(nbObservations < nbPerPage ? nbObservations : nbPerPage)
   })
-  // Let enough time to process
-    .timeout(5000)
 
   it('get items without filtering on a reserved query parameter', async () => {
     const response = await request.get(`${baseUrl}/collections/hubeau-stations/items`)
       .query({ jwt: 'xxx' })
-    expect(response.body.features).toExist()
-    expect(response.body.numberMatched).toExist()
-    expect(response.body.numberReturned).toExist()
-    expect(response.body.numberMatched).to.equal(nbStations)
-    expect(response.body.numberReturned).to.equal(nbStations < nbPerPage ? nbStations : nbPerPage)
+    expect(response.body.features).toBeDefined()
+    expect(response.body.numberMatched).toBeDefined()
+    expect(response.body.numberReturned).toBeDefined()
+    expect(response.body.numberMatched).toBe(nbStations)
+    expect(response.body.numberReturned).toBe(nbStations < nbPerPage ? nbStations : nbPerPage)
   })
-  // Let enough time to process
-    .timeout(5000)
 
   it('get items with filtering on number property', async () => {
     const response = await request.get(`${baseUrl}/collections/hubeau-observations/items`)
       .query({ H: 0.63 })
-    expect(response.body.features).toExist()
-    expect(response.body.numberMatched).toExist()
-    expect(response.body.numberReturned).toExist()
-    expect(response.body.numberMatched).to.equal(1)
-    expect(response.body.numberReturned).to.equal(1)
+    expect(response.body.features).toBeDefined()
+    expect(response.body.numberMatched).toBeDefined()
+    expect(response.body.numberReturned).toBeDefined()
+    expect(response.body.numberMatched).toBe(1)
+    expect(response.body.numberReturned).toBe(1)
   })
-  // Let enough time to process
-    .timeout(5000)
 
   it('get items with filtering on number-like property but stored as string', async () => {
     const response = await request.get(`${baseUrl}/collections/hubeau-stations/items`)
       .query({ CdCommune: '\'67520\'' })
-    expect(response.body.features).toExist()
-    expect(response.body.numberMatched).toExist()
-    expect(response.body.numberReturned).toExist()
-    expect(response.body.numberMatched).to.equal(1)
-    expect(response.body.numberReturned).to.equal(1)
+    expect(response.body.features).toBeDefined()
+    expect(response.body.numberMatched).toBeDefined()
+    expect(response.body.numberReturned).toBeDefined()
+    expect(response.body.numberMatched).toBe(1)
+    expect(response.body.numberReturned).toBe(1)
   })
-  // Let enough time to process
-    .timeout(5000)
 
   it('get items with incomplete bbox', async () => {
     try {
@@ -465,24 +420,20 @@ function runTests (options = {
       assert.fail('getting with incomplete bbox should raise on error')
     } catch (data) {
       const error = data.response.body
-      expect(error).toExist()
-      expect(error.name).to.equal('BadRequest')
+      expect(error).toBeDefined()
+      expect(error.name).toBe('BadRequest')
     }
   })
-  // Let enough time to process
-    .timeout(5000)
 
   it('get items in bbox', async () => {
     const response = await request.get(`${baseUrl}/collections/hubeau-stations/items`)
       .query({ bbox: [6.39, 48.30, 6.41, 48.32].join(',') })
-    expect(response.body.features).toExist()
-    expect(response.body.numberMatched).toExist()
-    expect(response.body.numberReturned).toExist()
-    expect(response.body.numberMatched).to.equal(1)
-    expect(response.body.numberReturned).to.equal(1)
+    expect(response.body.features).toBeDefined()
+    expect(response.body.numberMatched).toBeDefined()
+    expect(response.body.numberReturned).toBeDefined()
+    expect(response.body.numberMatched).toBe(1)
+    expect(response.body.numberReturned).toBe(1)
   })
-  // Let enough time to process
-    .timeout(5000)
 
   it('get items in bbox with CRS', async () => {
     const response = await request.get(`${baseUrl}/collections/hubeau-stations/items`)
@@ -490,14 +441,12 @@ function runTests (options = {
         bbox: [951316.244, 6805359.199, 952702.05, 6807643.879].join(','),
         'bbox-crs': 'http://www.opengis.net/def/crs/EPSG/2154'
       })
-    expect(response.body.features).toExist()
-    expect(response.body.numberMatched).toExist()
-    expect(response.body.numberReturned).toExist()
-    expect(response.body.numberMatched).to.equal(1)
-    expect(response.body.numberReturned).to.equal(1)
+    expect(response.body.features).toBeDefined()
+    expect(response.body.numberMatched).toBeDefined()
+    expect(response.body.numberReturned).toBeDefined()
+    expect(response.body.numberMatched).toBe(1)
+    expect(response.body.numberReturned).toBe(1)
   })
-  // Let enough time to process
-    .timeout(5000)
 
   it('get paginated items', async () => {
     const nbPages = Math.ceil(nbStations / nbPerPage)
@@ -508,41 +457,39 @@ function runTests (options = {
     for (let i = 0; i < nbPages; i++) {
       const isLastPage = (i === (nbPages - 1))
       const response = await request.get(href)
-      expect(response.body.features).toExist()
+      expect(response.body.features).toBeDefined()
       const currentFeatures = response.body.features
       if (i > 0) {
         // Check there is no doublon in pages
         previousFeatures.forEach(previousFeature => {
-          expect(!currentFeatures.find(currentFeature => {
+          expect(currentFeatures.find(currentFeature => {
             return previousFeature.properties.CdStationH === currentFeature.properties.CdStationH
-          }))
+          })).toBeUndefined()
         })
       }
       previousFeatures = currentFeatures
-      expect(response.body.numberMatched).toExist()
-      expect(response.body.numberReturned).toExist()
-      expect(response.body.numberMatched).to.equal(nbStations)
-      expect(response.body.numberReturned).to.equal(isLastPage && hasUnfilledPage ? nbStations - i * nbPerPage : nbPerPage)
-      expect(response.body.links).toExist()
-      expect(response.body.links.length).to.equal(isLastPage ? 1 : 2)
+      expect(response.body.numberMatched).toBeDefined()
+      expect(response.body.numberReturned).toBeDefined()
+      expect(response.body.numberMatched).toBe(nbStations)
+      expect(response.body.numberReturned).toBe(isLastPage && hasUnfilledPage ? nbStations - i * nbPerPage : nbPerPage)
+      expect(response.body.links).toBeDefined()
+      expect(response.body.links.length).toBe(isLastPage ? 1 : 2)
       const currentPage = response.body.links[0]
-      expect(currentPage.href).toExist()
-      expect(currentPage.href.includes(`offset=${i * nbPerPage}`)).beTrue()
-      expect(currentPage.href.includes(`limit=${nbPerPage}`)).beTrue()
-      expect(currentPage.rel).toExist()
+      expect(currentPage.href).toBeDefined()
+      expect(currentPage.href.includes(`offset=${i * nbPerPage}`)).toBe(true)
+      expect(currentPage.href.includes(`limit=${nbPerPage}`)).toBe(true)
+      expect(currentPage.rel).toBeDefined()
       if (!isLastPage) {
         const nextPage = response.body.links[1]
-        expect(nextPage.href).toExist()
-        expect(nextPage.href.includes(`offset=${(i + 1) * nbPerPage}`)).beTrue()
-        expect(nextPage.href.includes(`limit=${nbPerPage}`)).beTrue()
-        expect(nextPage.rel).toExist()
+        expect(nextPage.href).toBeDefined()
+        expect(nextPage.href.includes(`offset=${(i + 1) * nbPerPage}`)).toBe(true)
+        expect(nextPage.href.includes(`limit=${nbPerPage}`)).toBe(true)
+        expect(nextPage.rel).toBeDefined()
         // Get next page url
         href = nextPage.href
       }
     }
   })
-  // Let enough time to process
-    .timeout(5000)
 
   it('get items at invalid time', async () => {
     try {
@@ -551,24 +498,20 @@ function runTests (options = {
       assert.fail('getting at invalid time should raise on error')
     } catch (data) {
       const error = data.response.body
-      expect(error).toExist()
-      expect(error.name).to.equal('BadRequest')
+      expect(error).toBeDefined()
+      expect(error.name).toBe('BadRequest')
     }
   })
-  // Let enough time to process
-    .timeout(5000)
 
   it('get items at time', async () => {
     const response = await request.get(`${baseUrl}/collections/hubeau-observations/items`)
       .query({ datetime: '2018-10-22T22:00:00.000Z' })
-    expect(response.body.features).toExist()
-    expect(response.body.numberMatched).toExist()
-    expect(response.body.numberReturned).toExist()
-    expect(response.body.numberMatched).to.equal(1)
-    expect(response.body.numberReturned).to.equal(1)
+    expect(response.body.features).toBeDefined()
+    expect(response.body.numberMatched).toBeDefined()
+    expect(response.body.numberReturned).toBeDefined()
+    expect(response.body.numberMatched).toBe(1)
+    expect(response.body.numberReturned).toBe(1)
   })
-  // Let enough time to process
-    .timeout(5000)
 
   it('get items with invalid time interval', async () => {
     try {
@@ -577,12 +520,10 @@ function runTests (options = {
       assert.fail('getting with invalid time interval should raise on error')
     } catch (data) {
       const error = data.response.body
-      expect(error).toExist()
-      expect(error.name).to.equal('BadRequest')
+      expect(error).toBeDefined()
+      expect(error.name).toBe('BadRequest')
     }
   })
-  // Let enough time to process
-    .timeout(5000)
 
   it('get items in bounded time interval', async () => {
     // Data in range 2018-10-22T22:00:00.000Z/2018-10-24T08:00:00.000Z every hour
@@ -590,14 +531,12 @@ function runTests (options = {
       .query({ datetime: '2018-10-22T22:00:00.000Z/2018-10-24T08:00:00.000Z' })
     // First day = 3 obs, second day 24 obs, third day 8 obs
     const nbObservations = 3 + 24 + 8
-    expect(response.body.features).toExist()
-    expect(response.body.numberMatched).toExist()
-    expect(response.body.numberReturned).toExist()
-    expect(response.body.numberMatched).to.equal(nbObservations)
-    expect(response.body.numberReturned).to.equal(nbObservations < nbPerPage ? nbObservations : nbPerPage)
+    expect(response.body.features).toBeDefined()
+    expect(response.body.numberMatched).toBeDefined()
+    expect(response.body.numberReturned).toBeDefined()
+    expect(response.body.numberMatched).toBe(nbObservations)
+    expect(response.body.numberReturned).toBe(nbObservations < nbPerPage ? nbObservations : nbPerPage)
   })
-  // Let enough time to process
-    .timeout(5000)
 
   it('get items in half-bounded start time interval', async () => {
     // Data starts at 2018-10-22T22:00:00.000Z every hour
@@ -605,16 +544,14 @@ function runTests (options = {
       .query({ datetime: '../2018-10-23T08:00:00.000Z' })
     // First day = 3 obs, second day 8 obs
     const nbObservations = 3 + 8
-    expect(response.body.features).toExist()
-    expect(response.body.numberMatched).toExist()
-    expect(response.body.numberReturned).toExist()
-    expect(response.body.numberMatched).to.equal(nbObservations)
-    expect(response.body.numberReturned).to.equal(nbObservations < nbPerPage ? nbObservations : nbPerPage)
+    expect(response.body.features).toBeDefined()
+    expect(response.body.numberMatched).toBeDefined()
+    expect(response.body.numberReturned).toBeDefined()
+    expect(response.body.numberMatched).toBe(nbObservations)
+    expect(response.body.numberReturned).toBe(nbObservations < nbPerPage ? nbObservations : nbPerPage)
     // Data ends at 2018-11-23T08:06:00.000Z every 3 mns
     // First day = 3 obs, second day 8 obs
   })
-  // Let enough time to process
-    .timeout(5000)
 
   it('get items in half-bounded end time interval', async () => {
     // Data ends at 2018-11-23T08:06:00.000Z every 3 mns
@@ -622,14 +559,12 @@ function runTests (options = {
       .query({ datetime: '2018-11-22T20:00:00.000Z/..' })
     // First day = 80 obs, second day 163 obs
     const nbObservations = 80 + 163
-    expect(response.body.features).toExist()
-    expect(response.body.numberMatched).toExist()
-    expect(response.body.numberReturned).toExist()
-    expect(response.body.numberMatched).to.equal(nbObservations)
-    expect(response.body.numberReturned).to.equal(nbObservations < nbPerPage ? nbObservations : nbPerPage)
+    expect(response.body.features).toBeDefined()
+    expect(response.body.numberMatched).toBeDefined()
+    expect(response.body.numberReturned).toBeDefined()
+    expect(response.body.numberMatched).toBe(nbObservations)
+    expect(response.body.numberReturned).toBe(nbObservations < nbPerPage ? nbObservations : nbPerPage)
   })
-  // Let enough time to process
-    .timeout(5000)
 
   it('get items by sorted times', async () => {
     let time, previousTime, minTime, maxTime
@@ -637,32 +572,32 @@ function runTests (options = {
     let response = await request.get(`${baseUrl}/collections/hubeau-observations/items`)
       .query({ datetime: '../2018-10-23T08:00:00.000Z' })
     let features = response.body.features
-    expect(features).toExist()
-    expect(response.body.numberMatched).toExist()
-    expect(response.body.numberMatched > 0).beTrue()
+    expect(features).toBeDefined()
+    expect(response.body.numberMatched).toBeDefined()
+    expect(response.body.numberMatched > 0).toBe(true)
     // Default sort order should be descending time (only for features services)
     if (options.features) {
       minTime = moment.utc(features[features.length - 1].time)
       maxTime = moment.utc(features[0].time)
-      expect(maxTime.isAfter(minTime)).beTrue()
+      expect(maxTime.isAfter(minTime)).toBe(true)
       features.forEach(feature => {
         time = moment.utc(feature.time)
-        expect(time.isSameOrAfter(minTime)).beTrue()
-        expect(time.isSameOrBefore(maxTime)).beTrue()
-        if (previousTime) expect(time.isBefore(previousTime)).beTrue()
+        expect(time.isSameOrAfter(minTime)).toBe(true)
+        expect(time.isSameOrBefore(maxTime)).toBe(true)
+        if (previousTime) expect(time.isBefore(previousTime)).toBe(true)
         previousTime = time
       })
     }
     response = await request.get(`${baseUrl}/collections/hubeau-observations/items`)
       .query({ datetime: '../2018-10-23T08:00:00.000Z', sortby: '+time' })
     features = response.body.features
-    expect(features).toExist()
-    expect(response.body.numberMatched).toExist()
-    expect(response.body.numberMatched > 0).beTrue()
+    expect(features).toBeDefined()
+    expect(response.body.numberMatched).toBeDefined()
+    expect(response.body.numberMatched > 0).toBe(true)
     // Sort order should now be ascending time
     if (options.features) {
-      expect(moment.utc(features[0].time).isSame(minTime)).beTrue()
-      expect(moment.utc(features[features.length - 1].time).isSame(maxTime)).beTrue()
+      expect(moment.utc(features[0].time).isSame(minTime)).toBe(true)
+      expect(moment.utc(features[features.length - 1].time).isSame(maxTime)).toBe(true)
     } else {
       minTime = moment.utc(features[0].time)
       maxTime = moment.utc(features[features.length - 1].time)
@@ -670,197 +605,185 @@ function runTests (options = {
     previousTime = undefined
     features.forEach(feature => {
       time = moment.utc(feature.time)
-      expect(time.isSameOrAfter(minTime)).beTrue()
-      expect(time.isSameOrBefore(maxTime)).beTrue()
-      if (previousTime) expect(time.isAfter(previousTime)).beTrue()
+      expect(time.isSameOrAfter(minTime)).toBe(true)
+      expect(time.isSameOrBefore(maxTime)).toBe(true)
+      if (previousTime) expect(time.isAfter(previousTime)).toBe(true)
       previousTime = time
     })
   })
-  // Let enough time to process
-    .timeout(5000)
 
   it('get items with combined filters', async () => {
     // Data ends at 2018-11-23T08:06:00.000Z every 3 mns with some values higher than 0.33
     const response = await request.get(`${baseUrl}/collections/hubeau-observations/items`)
       .query({ H: 0.43, datetime: '2018-11-22T20:00:00.000Z/..', bbox: [7.42, 48.63, 7.43, 48.64].join(','), limit: 3 })
-    expect(response.body.features).toExist()
-    expect(response.body.numberMatched).toExist()
-    expect(response.body.numberReturned).toExist()
-    expect(response.body.numberMatched).to.equal(4)
-    expect(response.body.numberReturned).to.equal(3)
+    expect(response.body.features).toBeDefined()
+    expect(response.body.numberMatched).toBeDefined()
+    expect(response.body.numberReturned).toBeDefined()
+    expect(response.body.numberMatched).toBe(4)
+    expect(response.body.numberReturned).toBe(3)
   })
-  // Let enough time to process
-    .timeout(5000)
 
   it('cql is null expressions', async () => {
     let response = await request.post(`${baseUrl}/collections/hubeau-observations/items`)
       .query({ 'filter-lang': 'cql-json', limit: 3 })
       .send({ op: 'isNull', args: [{ property: 'H' }] })
-    expect(response.body.features).toExist()
-    expect(response.body.numberMatched).toExist()
-    expect(response.body.numberReturned).toExist()
-    expect(response.body.numberMatched).to.equal(0)
-    expect(response.body.numberReturned).to.equal(0)
+    expect(response.body.features).toBeDefined()
+    expect(response.body.numberMatched).toBeDefined()
+    expect(response.body.numberReturned).toBeDefined()
+    expect(response.body.numberMatched).toBe(0)
+    expect(response.body.numberReturned).toBe(0)
     response = await request.post(`${baseUrl}/collections/hubeau-observations/items`)
       .query({ 'filter-lang': 'cql-json', limit: 3 })
       .send({ op: 'not', args: [{ op: 'isNull', args: [{ property: 'H' }] }] })
-    expect(response.body.features).toExist()
-    expect(response.body.numberMatched).toExist()
-    expect(response.body.numberReturned).toExist()
-    expect(response.body.numberMatched).to.equal(nbObservations)
-    expect(response.body.numberReturned).to.equal(3)
+    expect(response.body.features).toBeDefined()
+    expect(response.body.numberMatched).toBeDefined()
+    expect(response.body.numberReturned).toBeDefined()
+    expect(response.body.numberMatched).toBe(nbObservations)
+    expect(response.body.numberReturned).toBe(3)
   })
-  // Let enough time to process
-    .timeout(5000)
 
   it('cql comparison expressions', async () => {
     let response = await request.post(`${baseUrl}/collections/hubeau-observations/items`)
       .query({ 'filter-lang': 'cql-json', limit: 3 })
       .send({ op: 'eq', args: [{ property: 'H' }, 0.63] })
-    expect(response.body.features).toExist()
-    expect(response.body.numberMatched).toExist()
-    expect(response.body.numberReturned).toExist()
-    expect(response.body.numberMatched).to.equal(1)
-    expect(response.body.numberReturned).to.equal(1)
+    expect(response.body.features).toBeDefined()
+    expect(response.body.numberMatched).toBeDefined()
+    expect(response.body.numberReturned).toBeDefined()
+    expect(response.body.numberMatched).toBe(1)
+    expect(response.body.numberReturned).toBe(1)
 
     response = await request.post(`${baseUrl}/collections/hubeau-observations/items`)
       .query({ 'filter-lang': 'cql-json', limit: 3 })
       .send({ op: 'lt', args: [{ property: 'H' }, 0.4] })
-    expect(response.body.features).toExist()
-    expect(response.body.numberMatched).toExist()
-    expect(response.body.numberReturned).toExist()
-    expect(response.body.numberMatched).to.equal(nbObservations - 9)
-    expect(response.body.numberReturned).to.equal(3)
+    expect(response.body.features).toBeDefined()
+    expect(response.body.numberMatched).toBeDefined()
+    expect(response.body.numberReturned).toBeDefined()
+    expect(response.body.numberMatched).toBe(nbObservations - 9)
+    expect(response.body.numberReturned).toBe(3)
 
     response = await request.get(`${baseUrl}/collections/hubeau-stations/items`)
       .query({ 'filter-lang': 'cql-text', filter: 'InfluLocal IS NULL', limit: 1 })
-    expect(response.body.features).toExist()
-    expect(response.body.numberMatched).toExist()
-    expect(response.body.numberReturned).toExist()
-    expect(response.body.numberMatched).to.equal(nbStationsWithNullInfluLocal)
-    expect(response.body.numberReturned).to.equal(1)
-    expect(response.body.features[0].properties.InfluLocal).beNull()
+    expect(response.body.features).toBeDefined()
+    expect(response.body.numberMatched).toBeDefined()
+    expect(response.body.numberReturned).toBeDefined()
+    expect(response.body.numberMatched).toBe(nbStationsWithNullInfluLocal)
+    expect(response.body.numberReturned).toBe(1)
+    expect(response.body.features[0].properties.InfluLocal).toBeNull()
 
     response = await request.get(`${baseUrl}/collections/hubeau-stations/items`)
       .query({ 'filter-lang': 'cql-text', filter: 'InfluLocal IS NOT NULL', limit: 1 })
-    expect(response.body.features).toExist()
-    expect(response.body.numberMatched).toExist()
-    expect(response.body.numberReturned).toExist()
-    expect(response.body.numberMatched).to.equal(nbStations - nbStationsWithNullInfluLocal)
-    expect(response.body.numberReturned).to.equal(1)
-    expect(response.body.features[0].properties.InfluLocal).toExist()
+    expect(response.body.features).toBeDefined()
+    expect(response.body.numberMatched).toBeDefined()
+    expect(response.body.numberReturned).toBeDefined()
+    expect(response.body.numberMatched).toBe(nbStations - nbStationsWithNullInfluLocal)
+    expect(response.body.numberReturned).toBe(1)
+    expect(response.body.features[0].properties.InfluLocal).toBeDefined()
   })
-  // Let enough time to process
-    .timeout(5000)
 
   it('cql like expressions', async () => {
     // CQL JSON: case-sensitive exact match
     let response = await request.post(`${baseUrl}/collections/hubeau-stations/items`)
       .query({ 'filter-lang': 'cql-json', limit: 3 })
       .send({ op: 'like', args: [{ property: 'TypStation' }, 'LIMNI'] })
-    expect(response.body.features).toExist()
-    expect(response.body.numberMatched).to.equal(nbStationsLIMNI)
-    response.body.features.forEach(f => expect(f.properties.TypStation).to.equal('LIMNI'))
+    expect(response.body.features).toBeDefined()
+    expect(response.body.numberMatched).toBe(nbStationsLIMNI)
+    response.body.features.forEach(f => expect(f.properties.TypStation).toBe('LIMNI'))
 
     // CQL JSON: case-insensitive via nocase (standard format)
     response = await request.post(`${baseUrl}/collections/hubeau-stations/items`)
       .query({ 'filter-lang': 'cql-json', limit: 3 })
       .send({ op: 'like', args: [{ property: 'TypStation' }, 'limni'], nocase: true })
-    expect(response.body.numberMatched).to.equal(nbStationsLIMNI)
-    response.body.features.forEach(f => expect(f.properties.TypStation.toLowerCase()).to.equal('limni'))
+    expect(response.body.numberMatched).toBe(nbStationsLIMNI)
+    response.body.features.forEach(f => expect(f.properties.TypStation.toLowerCase()).toBe('limni'))
 
     // CQL JSON: wildcard pattern (contains)
     response = await request.post(`${baseUrl}/collections/hubeau-stations/items`)
       .query({ 'filter-lang': 'cql-json' })
       .send({ op: 'like', args: [{ property: 'LbStationH' }, '%Wasselonne%'] })
-    expect(response.body.numberMatched).to.equal(1)
+    expect(response.body.numberMatched).toBe(1)
 
     // CQL JSON: custom wildcard character
     response = await request.post(`${baseUrl}/collections/hubeau-stations/items`)
       .query({ 'filter-lang': 'cql-json' })
       .send({ op: 'like', args: [{ property: 'LbStationH' }, '*Wasselonne*'], wildcard: '*' })
-    expect(response.body.numberMatched).to.equal(1)
+    expect(response.body.numberMatched).toBe(1)
 
     // CQL JSON: NOT LIKE
     response = await request.post(`${baseUrl}/collections/hubeau-stations/items`)
       .query({ 'filter-lang': 'cql-json' })
       .send({ op: 'not', args: [{ op: 'like', args: [{ property: 'TypStation' }, 'LIMNI'] }] })
-    expect(response.body.numberMatched).to.equal(nbStations - nbStationsLIMNI)
+    expect(response.body.numberMatched).toBe(nbStations - nbStationsLIMNI)
 
     // CQL JSON: AND combining LIKE with another predicate
     response = await request.post(`${baseUrl}/collections/hubeau-stations/items`)
       .query({ 'filter-lang': 'cql-json' })
       .send({ op: 'and', args: [{ op: 'like', args: [{ property: 'TypStation' }, 'LIMNI'] }, { op: 'isNull', args: [{ property: 'InfluLocal' }] }] })
-    expect(response.body.numberMatched).to.equal(nbStationsLIMNIWithNullInfluLocal)
+    expect(response.body.numberMatched).toBe(nbStationsLIMNIWithNullInfluLocal)
 
     // CQL text: LIKE exact match
     response = await request.get(`${baseUrl}/collections/hubeau-stations/items`)
       .query({ 'filter-lang': 'cql-text', filter: 'TypStation LIKE \'LIMNI\'', limit: 3 })
-    expect(response.body.numberMatched).to.equal(nbStationsLIMNI)
+    expect(response.body.numberMatched).toBe(nbStationsLIMNI)
 
     // CQL text: ILIKE exact match
     response = await request.get(`${baseUrl}/collections/hubeau-stations/items`)
       .query({ 'filter-lang': 'cql-text', filter: 'TypStation ILIKE \'limni\'', limit: 3 })
-    expect(response.body.numberMatched).to.equal(nbStationsLIMNI)
+    expect(response.body.numberMatched).toBe(nbStationsLIMNI)
 
     // CQL text: LIKE with % wildcard (contains)
     response = await request.get(`${baseUrl}/collections/hubeau-stations/items`)
       .query({ 'filter-lang': 'cql-text', filter: 'LbStationH LIKE \'%Wasselonne%\'' })
-    expect(response.body.numberMatched).to.equal(1)
+    expect(response.body.numberMatched).toBe(1)
 
     // CQL text: ILIKE with % wildcard (case-insensitive contains)
     response = await request.get(`${baseUrl}/collections/hubeau-stations/items`)
       .query({ 'filter-lang': 'cql-text', filter: 'LbStationH ILIKE \'%wasselonne%\'' })
-    expect(response.body.numberMatched).to.equal(1)
+    expect(response.body.numberMatched).toBe(1)
 
     // CQL text: LIKE with % wildcard (starts with, includes space in pattern)
     response = await request.get(`${baseUrl}/collections/hubeau-stations/items`)
       .query({ 'filter-lang': 'cql-text', filter: 'LbStationH LIKE \'La %\'' })
-    expect(response.body.numberMatched).to.equal(270)
+    expect(response.body.numberMatched).toBe(270)
 
     // CQL text: LIKE with % wildcard (ends with)
     response = await request.get(`${baseUrl}/collections/hubeau-stations/items`)
       .query({ 'filter-lang': 'cql-text', filter: 'LbStationH LIKE \'%Wasselonne\'' })
-    expect(response.body.numberMatched).to.equal(1)
+    expect(response.body.numberMatched).toBe(1)
 
     // CQL text: LIKE with _ wildcard (single char)
     response = await request.get(`${baseUrl}/collections/hubeau-stations/items`)
       .query({ 'filter-lang': 'cql-text', filter: 'TypStation LIKE \'LIM_I\'', limit: 3 })
-    expect(response.body.numberMatched).to.equal(nbStationsLIMNI)
+    expect(response.body.numberMatched).toBe(nbStationsLIMNI)
 
     // CQL text: LIKE with partially URL-encoded filter (% not encoded as %25, quotes encoded as %27)
     // This simulates clients that encode ' → %27 but leave % as raw, causing qs to fall back
     // and leave %27 undecoded; our normalization in convertCqlQuery must fix this
     response = await request.get(
       `${baseUrl}/collections/hubeau-stations/items?filter-lang=cql-text&filter=LbStationH%20LIKE%20%27%25Wasselonne%25%27`)
-    expect(response.body.numberMatched).to.equal(1)
+    expect(response.body.numberMatched).toBe(1)
     response = await request.get(
       `${baseUrl}/collections/hubeau-stations/items?filter-lang=cql-text&filter=LbStationH%20LIKE%20%27%Wasselonne%25%27`)
-    expect(response.body.numberMatched).to.equal(1)
+    expect(response.body.numberMatched).toBe(1)
   })
-  // Let enough time to process
-    .timeout(10000)
 
   it('cql logical expressions', async () => {
     let response = await request.post(`${baseUrl}/collections/hubeau-observations/items`)
       .query({ 'filter-lang': 'cql-json', limit: 3 })
       .send({ op: 'and', args: [{ op: 'gte', args: [{ property: 'H' }, 0.63] }, { op: 'lte', args: [{ property: 'H' }, 0.63] }] })
-    expect(response.body.features).toExist()
-    expect(response.body.numberMatched).toExist()
-    expect(response.body.numberReturned).toExist()
-    expect(response.body.numberMatched).to.equal(1)
-    expect(response.body.numberReturned).to.equal(1)
+    expect(response.body.features).toBeDefined()
+    expect(response.body.numberMatched).toBeDefined()
+    expect(response.body.numberReturned).toBeDefined()
+    expect(response.body.numberMatched).toBe(1)
+    expect(response.body.numberReturned).toBe(1)
     response = await request.post(`${baseUrl}/collections/hubeau-observations/items`)
       .query({ 'filter-lang': 'cql-json', limit: 3 })
       .send({ op: 'not', args: [{ op: 'lt', args: [{ property: 'H' }, 0.63] }] })
-    expect(response.body.features).toExist()
-    expect(response.body.numberMatched).toExist()
-    expect(response.body.numberReturned).toExist()
-    expect(response.body.numberMatched).to.equal(1)
-    expect(response.body.numberReturned).to.equal(1)
+    expect(response.body.features).toBeDefined()
+    expect(response.body.numberMatched).toBeDefined()
+    expect(response.body.numberReturned).toBeDefined()
+    expect(response.body.numberMatched).toBe(1)
+    expect(response.body.numberReturned).toBe(1)
   })
-  // Let enough time to process
-    .timeout(5000)
 
   it('cql temporal expressions', async () => {
     // Data in range 2018-10-22T22:00:00.000Z/2018-10-24T08:00:00.000Z every hour
@@ -869,44 +792,40 @@ function runTests (options = {
       .send({ op: 't_during', args: [{ property: 'time' }, ['2018-10-22T22:00:00.000Z', '2018-10-24T08:00:00.000Z']] })
     // First day = 3 obs, second day 24 obs, third day 8 obs
     const nbObservations = 3 + 24 + 8
-    expect(response.body.features).toExist()
-    expect(response.body.numberMatched).toExist()
-    expect(response.body.numberReturned).toExist()
-    expect(response.body.numberMatched).to.equal(nbObservations)
-    expect(response.body.numberReturned).to.equal(nbObservations < nbPerPage ? nbObservations : nbPerPage)
+    expect(response.body.features).toBeDefined()
+    expect(response.body.numberMatched).toBeDefined()
+    expect(response.body.numberReturned).toBeDefined()
+    expect(response.body.numberMatched).toBe(nbObservations)
+    expect(response.body.numberReturned).toBe(nbObservations < nbPerPage ? nbObservations : nbPerPage)
   })
-  // Let enough time to process
-    .timeout(5000)
 
   it('cql spatial expressions', async () => {
     let response = await request.post(`${baseUrl}/collections/hubeau-stations/items`)
       .query({ 'filter-lang': 'cql-json', limit: 3 })
       .send({ op: 's_intersects', args: [{ property: 'geometry' }, { type: 'Polygon', coordinates: [[[7.42, 48.63], [7.43, 48.63], [7.43, 48.64], [7.42, 48.64], [7.42, 48.63]]] }] })
-    expect(response.body.features).toExist()
-    expect(response.body.numberMatched).toExist()
-    expect(response.body.numberReturned).toExist()
-    expect(response.body.numberMatched).to.equal(1)
-    expect(response.body.numberReturned).to.equal(1)
+    expect(response.body.features).toBeDefined()
+    expect(response.body.numberMatched).toBeDefined()
+    expect(response.body.numberReturned).toBeDefined()
+    expect(response.body.numberMatched).toBe(1)
+    expect(response.body.numberReturned).toBe(1)
 
     response = await request.get(`${baseUrl}/collections/hubeau-stations/items`)
       .query({ 'filter-lang': 'cql-text', filter: 'S_INTERSECTS(geometry,POLYGON((7.42 48.63, 7.43 48.63, 7.43 48.64, 7.42 48.64, 7.42 48.63)))', limit: 3 })
-    expect(response.body.features).toExist()
-    expect(response.body.numberMatched).toExist()
-    expect(response.body.numberReturned).toExist()
-    expect(response.body.numberMatched).to.equal(1)
-    expect(response.body.numberReturned).to.equal(1)
+    expect(response.body.features).toBeDefined()
+    expect(response.body.numberMatched).toBeDefined()
+    expect(response.body.numberReturned).toBeDefined()
+    expect(response.body.numberMatched).toBe(1)
+    expect(response.body.numberReturned).toBe(1)
 
     // CQL text: intersects with URL-encoded WKT
     response = await request.get(
       `${baseUrl}/collections/hubeau-stations/items?filter-lang=cql-text&filter=S_INTERSECTS(geometry,POLYGON((7.42%2048.63,%207.43%2048.63,%207.43%2048.64,%207.42%2048.64,%207.42%2048.63)))`)
-    expect(response.body.features).toExist()
-    expect(response.body.numberMatched).toExist()
-    expect(response.body.numberReturned).toExist()
-    expect(response.body.numberMatched).to.equal(1)
-    expect(response.body.numberReturned).to.equal(1)
+    expect(response.body.features).toBeDefined()
+    expect(response.body.numberMatched).toBeDefined()
+    expect(response.body.numberReturned).toBeDefined()
+    expect(response.body.numberMatched).toBe(1)
+    expect(response.body.numberReturned).toBe(1)
   })
-  // Let enough time to process
-    .timeout(5000)
 
   // Cleanup
   it('cleanup', async () => {
@@ -920,12 +839,8 @@ function runTests (options = {
   })
 }
 describe('kfs', () => {
-  beforeAll(async () => {
-    chailint(chai, util)
-  })
-
   it('is ES module compatible', () => {
-    expect(typeof createServer).to.equal('function')
+    expect(typeof createServer).toBe('function')
   })
 
   // Run test with/without catalog

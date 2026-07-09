@@ -1,5 +1,5 @@
 const path = require('path')
-const containerized = require('containerized')()
+const isDocker = require('is-docker')()
 
 // Use default app config
 const config = require(path.join(__dirname, '../../config/default.cjs'))
@@ -18,7 +18,7 @@ config.distribution.remoteServices = (service) => (service.key === 'kfs-test')
 // This is for KDK test app
 config.db = {
   adapter: 'mongodb',
-  url: (containerized ? 'mongodb://mongodb:27017/kfs-test' : 'mongodb://127.0.0.1:27017/kfs-test')
+  url: (isDocker ? 'mongodb://mongodb:27017/kfs-test' : 'mongodb://127.0.0.1:27017/kfs-test')
 }
 
 module.exports = config

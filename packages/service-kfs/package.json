@@ -8,7 +8,7 @@
     "build": "DOCKER_BUILDKIT=1 docker build -t service-kfs:${TAG:-latest} -f ./Dockerfile ../..",
     "dev": "node --watch src/main.js",
     "lint": "standard --fix",
-    "test": "vitest run --coverage"
+    "test": "cross-env NODE_CONFIG_DIR=./test/config vitest run --coverage"
   },
   "keywords": [
     "kalisio"
@@ -59,9 +59,10 @@
   "devDependencies": {
     "@feathersjs/memory": "catalog:",
     "@kalisio/kdk": "catalog:",
+    "config": "catalog:",
     "cross-env": "catalog:",
     "sift": "catalog:",
-    "config": "catalog:"
+    "superagent": "catalog:"
    },
   "engines": {
     "node": ">=20"
