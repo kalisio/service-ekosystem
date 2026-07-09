@@ -17,6 +17,7 @@ slack_report() {
 ## Monorepo configuration
 ##
 
+MAIN_BRANCH="master"
 EXTRA_FULL_REBUILD_PATHS=()
 
 ## Parse options
@@ -54,7 +55,7 @@ done
 begin_group "Determining packages to test ..."
 
 # Get target ref
-TARGET_REF=$(get_diff_base_ref "$ROOT_DIR")
+TARGET_REF=$(get_diff_base_ref "$ROOT_DIR" "$MAIN_BRANCH")
 if [ -n "$TARGET_REF" ] && should_rebuild_all_packages "$ROOT_DIR" "$TARGET_REF" "${EXTRA_FULL_REBUILD_PATHS[@]}"; then
     TARGET_REF=""
 fi

@@ -20,6 +20,7 @@ slack_report() {
 PACKAGE_PREFIX="service-"
 DOCKER_NAMESPACE="kalisio"
 DEV_TAG="dev"
+MAIN_BRANCH="master"
 EXTRA_FULL_REBUILD_PATHS=()
 
 ## Parse options
@@ -59,7 +60,7 @@ begin_group "Determining what to build ..."
 
 FILTER_AND_TAG=$(resolve_build_filter_and_tag \
     "$ROOT_DIR" "$PACKAGE_PREFIX" "$DEV_TAG" "${INPUT_PACKAGES:-}" \
-    "$(get_git_tag "$ROOT_DIR")" "$(get_git_branch "$ROOT_DIR")" \
+    "$(get_git_tag "$ROOT_DIR")" "$(get_git_branch "$ROOT_DIR")" "$MAIN_BRANCH" \
     "${EXTRA_FULL_REBUILD_PATHS[@]}")
 FILTER=${FILTER_AND_TAG%%$'\n'*}
 SHORT_TAG=${FILTER_AND_TAG##*$'\n'}

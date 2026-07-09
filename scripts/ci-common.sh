@@ -18,8 +18,10 @@
 ## could be resolved (caller should then fall back to processing everything).
 ## All informational output goes to stderr: stdout is the return channel.
 ## Arg1: the repository root
+## Arg2: the main branch to diff against locally (optional, defaults to master)
 get_diff_base_ref() {
     local REPO_DIR="$1"
+    local MAIN_BRANCH="${2:-master}"
     local ZERO_SHA="0000000000000000000000000000000000000000"
     local TARGET_REF=""
 
@@ -43,7 +45,7 @@ get_diff_base_ref() {
         "")
             # Local run (no known CI): diff against the default branch so
             # devs still get filtering when iterating on a feature branch.
-            TARGET_REF="origin/master"
+            TARGET_REF="origin/${MAIN_BRANCH}"
             ;;
         *)
             # Unhandled CI system (eg. travis): fall back to a full run
@@ -109,17 +111,18 @@ should_rebuild_all_packages() {
 # short tag. Logs to stderr and returns 1 on an invalid release tag / package.
 #
 # Cases (priority order):
-#   INPUT non-empty   -> exactly those packages           (manual dispatch)
-#   release tag       -> that one package, tag = <version> (@<scope>/<prefix>x@ver)
-#   branch != master  -> changed packages,  tag = <dev>-<custom>
-#   master (default)  -> changed packages,  tag = <dev>
+#   INPUT non-empty       -> exactly those packages           (manual dispatch)
+#   release tag           -> that one package, tag = <version> (@<scope>/<prefix>x@ver)
+#   branch != main branch -> changed packages,  tag = <dev>-<custom>
+#   main branch (default) -> changed packages,  tag = <dev>
 #
 # Args:
 #   1. ROOT_DIR              2. package prefix (eg. service-)
 #   3. base dev tag (eg. dev)
 #   4. INPUT packages (space-separated dir names, may be empty)
 #   5. GIT_TAG               6. GIT_BRANCH
-#   7+ extra globs forcing a full rebuild (optional)
+#   7. main branch (eg. master): gets the plain <dev> tag; others get <dev>-<custom>
+#   8+ extra globs forcing a full rebuild (optional)
 resolve_build_filter_and_tag() {
     local ROOT="$1"
     local PREFIX="$2"
@@ -127,7 +130,8 @@ resolve_build_filter_and_tag() {
     local INPUT="$4"
     local GIT_TAG="$5"
     local GIT_BRANCH="$6"
-    shift 6
+    local MAIN_BRANCH="$7"
+    shift 7
     local FILTER=""
     local SHORT_TAG="$DEV_TAG"
 
@@ -155,7 +159,7 @@ resolve_build_filter_and_tag() {
         SHORT_TAG="$VER"
     else
         local TARGET_REF
-        TARGET_REF=$(get_diff_base_ref "$ROOT")
+        TARGET_REF=$(get_diff_base_ref "$ROOT" "$MAIN_BRANCH")
         # Always scope to packages/<prefix>* so non-service workspace projects
         # (docs/, examples/, the root) — which may also have a 'build' script —
         # are never built here.
@@ -166,8 +170,8 @@ resolve_build_filter_and_tag() {
         fi
     fi
 
-    # Non-release builds: 'dev', or 'dev-<custom>' on any branch but master.
-    if [ -z "$GIT_TAG" ] && [ -n "$GIT_BRANCH" ] && [ "$GIT_BRANCH" != "master" ]; then
+    # Non-release builds: 'dev', or 'dev-<custom>' on any branch but the main one.
+    if [ -z "$GIT_TAG" ] && [ -n "$GIT_BRANCH" ] && [ "$GIT_BRANCH" != "$MAIN_BRANCH" ]; then
         local CUSTOM
         CUSTOM=$(get_custom_from_git_ref "$GIT_BRANCH")
         [ -z "$CUSTOM" ] && CUSTOM="${GIT_BRANCH//\//-}"
