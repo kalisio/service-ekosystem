@@ -48,6 +48,13 @@ while getopts "m:n:sr:" option; do
     esac
 done
 
+## Test requirements
+##
+
+if [ "$RUN_SONAR" = true ]; then
+    . "$WORKSPACE_DIR/development/workspaces/services/services.sh" service-ekosystem
+fi
+
 
 ## Determine which packages need to be run test
 ##
