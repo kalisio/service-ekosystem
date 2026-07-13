@@ -33,7 +33,7 @@ export class Server {
     const layers = await loadLayers(this.app)
     const categories = await loadCategories(this.app)
     const sublegends = await loadSublegends(this.app)
-    this.app.set('catalog', Object.assign({}, this.app.get('catalog'), { layers, categories, sublegends }))
+    this.app.set('catalog', { ...this.app.get('catalog'), layers, categories, sublegends })
 
     await createCatalogService.call(this.app)
     await createDefaultCatalogLayers.call(this.app)

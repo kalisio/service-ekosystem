@@ -10,6 +10,35 @@ import { long2tile, lat2tile } from '../utils.js'
 
 const debug = makeDebug('geokoder:providers:mbtiles')
 
+const toError = (err) => (err instanceof Error ? err : new Error(String(err)))
+
+function getTile (mbtiles, z, x, y) {
+  return new Promise((resolve, reject) => {
+    mbtiles.getTile(z, x, y, (err, data, headers) => {
+      if (err) reject(toError(err))
+      else resolve(data)
+    })
+  })
+}
+
+function unzipBuffer (buffer) {
+  return new Promise((resolve, reject) => {
+    zlib.unzip(buffer, (err, data) => {
+      if (err) reject(toError(err))
+      else resolve(data)
+    })
+  })
+}
+
+function queryTiles (tiles, point, options) {
+  return new Promise((resolve, reject) => {
+    vtquery(tiles, point, options, (err, result) => {
+      if (err) reject(toError(err))
+      else resolve(result)
+    })
+  })
+}
+
 export async function createMBTilesProvider (app) {
   const providers = app.get('providers')
   const config = _.get(providers, 'MBTiles')
@@ -21,13 +50,13 @@ export async function createMBTilesProvider (app) {
     const mbtiles = await new Promise((resolve, reject) => {
       return new MBTiles(`${conf.filepath}?mode=ro`, (err, mbtiles) => {
         debug(`Loaded ${conf.filepath}`)
-        if (err) reject(err)
+        if (err) reject(toError(err))
         else resolve(mbtiles)
       })
     })
     const metadata = await new Promise((resolve, reject) => {
       mbtiles.getInfo((err, info) => {
-        if (err) reject(err)
+        if (err) reject(toError(err))
         else resolve(info)
       })
     })
@@ -76,16 +105,11 @@ export async function createMBTilesProvider (app) {
           x = long2tile(lon, z)
           y = lat2tile(lat, z)
           try {
-            gzip = await new Promise((resolve, reject) => {
-              dataset.mbtiles.getTile(z, x, y, (err, data, headers) => {
-                debug(`${dataset.name}: retrieving tile ${x}, ${y}, ${z} for location (${lon}, ${lat})`)
-                if (err) reject(err)
-                else resolve(data)
-              })
-            })
+            debug(`${dataset.name}: retrieving tile ${x}, ${y}, ${z} for location (${lon}, ${lat})`)
+            gzip = await getTile(dataset.mbtiles, z, x, y)
           } catch (err) {
             // It's ok to fail here, not every dataset covers the whole coordinate space
-            debug(`${dataset.name}: couldn't find tile for location ${lon}, ${lat} @ level ${z}, skipping.`)
+            debug(`${dataset.name}: couldn't find tile for location ${lon}, ${lat} @ level ${z}, skipping.`, err)
             --z
           }
         }
@@ -96,12 +120,7 @@ export async function createMBTilesProvider (app) {
 
         // For debug purpose
         // fs.writeFileSync('test.mvt.gz', gzip)
-        const data = await new Promise((resolve, reject) => {
-          zlib.unzip(gzip, (err, data) => {
-            if (err) reject(err)
-            else resolve(data)
-          })
-        })
+        const data = await unzipBuffer(gzip)
         // For debug purpose
         // fs.writeFileSync('test.mvt', data)
         const layerNames = layers.map(layer => layer.id)
@@ -110,22 +129,17 @@ export async function createMBTilesProvider (app) {
         limit = _.isNil(limit) ? 10 : limit
         debug(`${dataset.name}: requesting layers ${layerNames} with radius ${radius} and limit ${limit}`)
         // Then return a feature
-        const geoJson = await new Promise((resolve, reject) => {
-          vtquery([{
-            buffer: data, x, y, z
-          }], [lon, lat], {
-            radius, limit, layers: layerNames
-          }, (err, result) => {
-            if (err) reject(err)
-            else resolve(result)
-          })
+        const geoJson = await queryTiles([{
+          buffer: data, x, y, z
+        }], [lon, lat], {
+          radius, limit, layers: layerNames
         })
         const features = geoJson.features.map(feature => {
           const source = `${dataset.name}:${_.get(feature, 'properties.tilequery.layer')}`
           const normalizedFeature = _.omit(feature, ['properties.tilequery'])
           const featureLabelFn = config[dataset.name]?.featureLabel
           if (featureLabelFn) normalizedFeature.properties.formattedLabel = featureLabelFn(normalizedFeature)
-          return Object.assign({ source }, { feature: normalizedFeature })
+          return { source, feature: normalizedFeature }
         })
         responses = responses.concat(features)
         debug(`${dataset.name}: retrieved ${features.length} features from dataset`)

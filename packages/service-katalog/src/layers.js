@@ -2,6 +2,7 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { globSync } from 'glob'
 import { config } from '@kalisio/kdk-map-api'
+import { logger } from './logger.js'
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 const kargoDomain = (process.env.SUBDOMAIN ? process.env.SUBDOMAIN : 'test.kalisio.xyz')
@@ -14,11 +15,11 @@ let s3Url = (process.env.API_GATEWAY_URL ? process.env.API_GATEWAY_URL + '/s3' :
 
 if (process.env.K2_URL) {
   k2Url = process.env.K2_URL
-  console.log(`Using custom K2 URL ${k2Url}`)
+  logger.info(`Using custom K2 URL ${k2Url}`)
 }
 if (process.env.S3_URL) {
   s3Url = process.env.S3_URL
-  console.log(`Using custom S3 URL ${s3Url}`)
+  logger.info(`Using custom S3 URL ${s3Url}`)
 }
 
 export async function loadLayers (app) {
@@ -28,7 +29,7 @@ export async function loadLayers (app) {
 
   const layerFiles = globSync(path.join(layersDir, '**/*.cjs').replace(/\\/g, '/'))
 
-  const context = Object.assign({ wmtsUrl, tmsUrl, wmsUrl, wcsUrl, k2Url, s3Url }, app.get('catalog') || {})
+  const context = { wmtsUrl, tmsUrl, wmsUrl, wcsUrl, k2Url, s3Url, ...(app.get('catalog') || {}) }
 
   const layers = config.loadLayers(layerFiles, context)
 
@@ -38,7 +39,7 @@ export async function loadLayers (app) {
 export async function loadCategories (app) {
   const categoriesDir = path.resolve(__dirname, '../config/categories')
   const categoryFiles = globSync(path.join(categoriesDir, '**/*.cjs').replace(/\\/g, '/'))
-  const context = Object.assign({ domain: kargoDomain, wmtsUrl, tmsUrl, wmsUrl, wcsUrl, k2Url, s3Url }, app.get('catalog') || {})
+  const context = { domain: kargoDomain, wmtsUrl, tmsUrl, wmsUrl, wcsUrl, k2Url, s3Url, ...(app.get('catalog') || {}) }
   return config.loadCategories(categoryFiles, context)
 }
 
