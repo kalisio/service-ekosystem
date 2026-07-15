@@ -96,7 +96,7 @@
     </mxGraphModel>
   </diagram>
   <diagram name="build_package.sh" id="buildpkg">
-    <mxGraphModel dx="1571" dy="879" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="900" pageHeight="1100" math="0" shadow="0">
+    <mxGraphModel dx="1768" dy="989" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="900" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -258,36 +258,27 @@
     </mxGraphModel>
   </diagram>
   <diagram name="run_tests.sh" id="runtests">
-    <mxGraphModel dx="1571" dy="879" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="900" pageHeight="1100" math="0" shadow="0">
+    <mxGraphModel dx="2564" dy="931" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="900" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="rt_ev" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="&lt;b&gt;&lt;font style=&quot;font-size: 14px;&quot;&gt;EVENT&lt;/font&gt;&lt;/b&gt;&amp;nbsp;&lt;div&gt;&lt;font style=&quot;font-size: 10px;&quot;&gt;&lt;i&gt;(push branche / push TAG / manual trigger)&lt;/i&gt;&lt;/font&gt;&lt;/div&gt;" vertex="1">
-          <mxGeometry height="40" width="340" x="240" y="70" as="geometry" />
-        </mxCell>
         <mxCell id="rt_init" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" value="init_runner.sh" vertex="1">
           <mxGeometry height="40" width="340" x="240" y="130" as="geometry" />
         </mxCell>
         <mxCell id="rt_setup" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" value="setup_workspace.sh" vertex="1">
           <mxGeometry height="40" width="340" x="240" y="190" as="geometry" />
         </mxCell>
-        <mxCell id="rt_sh" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontStyle=1;" value="run_tests.sh&lt;div&gt;&lt;font style=&quot;font-size: 10px;&quot;&gt;&lt;i style=&quot;font-weight: normal;&quot;&gt;utilisé par run_tests (node/mongo par défaut, -s)&lt;br&gt;et additional_tests (matrice node/mongo)&lt;/i&gt;&lt;/font&gt;&lt;/div&gt;" vertex="1">
+        <mxCell id="rt_sh" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;fontStyle=1;" value="&lt;span style=&quot;font-weight: normal;&quot;&gt;run_tests.sh&lt;/span&gt;" vertex="1">
           <mxGeometry height="50" width="340" x="240" y="250" as="geometry" />
         </mxCell>
-        <mxCell id="rt_ph1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;b&gt;1 - Test requirements&lt;/b&gt;&lt;/font&gt;&lt;div&gt;&lt;font style=&quot;font-size: 10px;&quot;&gt;&lt;i&gt;prérequis avant de lancer les tests&lt;/i&gt;&lt;/font&gt;&lt;/div&gt;" vertex="1">
-          <mxGeometry height="60" width="380" x="220" y="330" as="geometry" />
-        </mxCell>
-        <mxCell id="rt_ph2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;b&gt;2 - Determining packages to test ...&lt;/b&gt;&lt;/font&gt;&lt;div&gt;&lt;font style=&quot;font-size: 10px;&quot;&gt;&lt;i&gt;RETURN : TARGET_REF (vide = tous)&lt;/i&gt;&lt;/font&gt;&lt;/div&gt;" vertex="1">
+        <mxCell id="rt_ph2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;b&gt;1 - Determining packages to test ...&lt;/b&gt;&lt;/font&gt;&lt;div&gt;&lt;font style=&quot;font-size: 10px;&quot;&gt;&lt;i style=&quot;&quot;&gt;RETURN : TARGET_REF (vide = tous)&lt;/i&gt;&lt;/font&gt;&lt;/div&gt;" vertex="1">
           <mxGeometry height="60" width="380" x="220" y="440" as="geometry" />
         </mxCell>
-        <mxCell id="rt_ph3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;b&gt;3 - Running tests ...&lt;/b&gt;&lt;/font&gt;&lt;div&gt;&lt;font style=&quot;font-size: 10px;&quot;&gt;&lt;i&gt;run_package_tests&lt;/i&gt;&lt;/font&gt;&lt;/div&gt;" vertex="1">
+        <mxCell id="rt_ph3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;b&gt;3 - Running tests ...&lt;/b&gt;&lt;/font&gt;&lt;div&gt;&lt;font style=&quot;font-size: 10px;&quot;&gt;&lt;i style=&quot;&quot;&gt;pnpm $FILTER --workspace-concurrency=1 run --if-present test&lt;/i&gt;&lt;/font&gt;&lt;/div&gt;" vertex="1">
           <mxGeometry height="60" width="380" x="220" y="550" as="geometry" />
         </mxCell>
         <mxCell id="rt_end" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="&lt;b&gt;&lt;font style=&quot;font-size: 13px;&quot;&gt;END&lt;/font&gt;&lt;/b&gt;" vertex="1">
-          <mxGeometry height="40" width="380" x="220" y="660" as="geometry" />
-        </mxCell>
-        <mxCell id="rt_f1" edge="1" parent="1" source="rt_ev" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" target="rt_init">
-          <mxGeometry relative="1" as="geometry" />
+          <mxGeometry height="40" width="380" x="220" y="780" as="geometry" />
         </mxCell>
         <mxCell id="rt_f2" edge="1" parent="1" source="rt_init" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" target="rt_setup">
           <mxGeometry relative="1" as="geometry" />
@@ -295,11 +286,10 @@
         <mxCell id="rt_f3" edge="1" parent="1" source="rt_setup" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" target="rt_sh">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="rt_f4" edge="1" parent="1" source="rt_sh" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" target="rt_ph1">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="rt_f5" edge="1" parent="1" source="rt_ph1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" target="rt_ph2">
-          <mxGeometry relative="1" as="geometry" />
+        <mxCell id="rt_f5" edge="1" parent="1" source="rt_sh" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" target="rt_ph2">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="410" y="390" as="sourcePoint" />
+          </mxGeometry>
         </mxCell>
         <mxCell id="rt_f6" edge="1" parent="1" source="rt_ph2" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" target="rt_ph3">
           <mxGeometry relative="1" as="geometry" />
@@ -307,35 +297,17 @@
         <mxCell id="rt_f7" edge="1" parent="1" source="rt_ph3" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" target="rt_end">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="rt_d_sonar" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="&lt;font style=&quot;font-size: 13px;&quot;&gt;&lt;b&gt;RUN_SONAR ?&lt;/b&gt;&lt;/font&gt;&lt;br&gt;&lt;font style=&quot;font-size: 11px;&quot;&gt;&lt;i&gt;(-s)&lt;/i&gt;&lt;/font&gt;" vertex="1">
-          <mxGeometry height="80" width="180" x="720" y="320" as="geometry" />
-        </mxCell>
-        <mxCell id="rt_env_gen" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="&lt;b&gt;Charge l'env générique du monorepo&lt;/b&gt;&lt;div&gt;&lt;font style=&quot;font-size: 10px;&quot;&gt;&lt;i&gt;(script test racine → source services.sh / jobs.sh)&lt;/i&gt;&lt;/font&gt;&lt;/div&gt;&lt;div&gt;&lt;font style=&quot;font-size: 10px;&quot;&gt;&lt;i&gt;→ SONAR_HOST_URL + SONAR_TOKEN&lt;/i&gt;&lt;/font&gt;&lt;/div&gt;" vertex="1">
-          <mxGeometry height="70" width="340" x="1010" y="290" as="geometry" />
-        </mxCell>
-        <mxCell id="rt_skip" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;" value="&lt;i style=&quot;font-size: 11px;&quot;&gt;on continue&lt;/i&gt;" vertex="1">
-          <mxGeometry height="40" width="120" x="770" y="420" as="geometry" />
-        </mxCell>
-        <mxCell id="rt_e_sonar_y" edge="1" parent="1" source="rt_d_sonar" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" target="rt_env_gen" value="oui">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="rt_e_sonar_n" edge="1" parent="1" source="rt_d_sonar" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" target="rt_skip" value="non">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="rt_e_ph1" edge="1" parent="1" source="rt_ph1" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;dashed=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" target="rt_d_sonar">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
         <mxCell id="rt_tref" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="&lt;b&gt;TARGET_REF = get_diff_base_ref&lt;/b&gt;&lt;br&gt;&lt;font style=&quot;font-size: 10px;&quot;&gt;&lt;i&gt;extrait le commit de référence contre lequel diffèrent les modifications courantes (le dernier run)&lt;/i&gt;&lt;/font&gt;" vertex="1">
-          <mxGeometry height="50" width="300" x="720" y="415" as="geometry" />
+          <mxGeometry height="50" width="300" x="850" y="445" as="geometry" />
         </mxCell>
         <mxCell id="rt_d_all" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="&lt;font style=&quot;font-size: 13px;&quot;&gt;&lt;b&gt;vide OU&lt;br&gt;fichier racine&lt;br&gt;changé ?&lt;/b&gt;&lt;/font&gt;" vertex="1">
-          <mxGeometry height="90" width="180" x="730" y="490" as="geometry" />
+          <mxGeometry height="90" width="180" x="910" y="520" as="geometry" />
         </mxCell>
         <mxCell id="rt_all" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="&lt;font style=&quot;font-size: 13px;&quot;&gt;&lt;b&gt;TARGET_REF = &quot;&quot; → FILTER = -r&lt;/b&gt;&lt;/font&gt;&lt;br&gt;&lt;font style=&quot;font-size: 10px;&quot;&gt;&lt;i&gt;(tous les packages)&lt;/i&gt;&lt;/font&gt;" vertex="1">
-          <mxGeometry height="50" width="340" x="1010" y="475" as="geometry" />
+          <mxGeometry height="50" width="340" x="1160" y="540" as="geometry" />
         </mxCell>
         <mxCell id="rt_chg" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="&lt;font style=&quot;font-size: 13px;&quot;&gt;&lt;b&gt;FILTER = --filter=...[TARGET_REF]&lt;/b&gt;&lt;/font&gt;&lt;br&gt;&lt;font style=&quot;font-size: 10px;&quot;&gt;&lt;i&gt;(packages changés + dépendants)&lt;/i&gt;&lt;/font&gt;" vertex="1">
-          <mxGeometry height="50" width="340" x="1010" y="545" as="geometry" />
+          <mxGeometry height="50" width="340" x="830" y="630" as="geometry" />
         </mxCell>
         <mxCell id="rt_e_ph2" edge="1" parent="1" source="rt_ph2" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;dashed=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" target="rt_tref">
           <mxGeometry relative="1" as="geometry" />
@@ -349,32 +321,19 @@
         <mxCell id="rt_e_chg" edge="1" parent="1" source="rt_d_all" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" target="rt_chg" value="non">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="rt_prep" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="&lt;b&gt;use_mongo + use_node + ensure_pnpm&lt;/b&gt;&lt;div&gt;&lt;font style=&quot;font-size: 10px;&quot;&gt;&lt;i&gt;pnpm install (sauf si SKIP_INSTALL)&lt;/i&gt;&lt;/font&gt;&lt;/div&gt;" vertex="1">
-          <mxGeometry height="50" width="340" x="720" y="545" as="geometry" />
-        </mxCell>
-        <mxCell id="rt_run" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="&lt;b&gt;pnpm $FILTER --workspace-concurrency=1 run --if-present test&lt;/b&gt;&lt;div&gt;&lt;font style=&quot;font-size: 10px;&quot;&gt;&lt;i&gt;--if-present : ignore les packages sans script test&lt;/i&gt;&lt;/font&gt;&lt;/div&gt;" vertex="1">
-          <mxGeometry height="60" width="340" x="720" y="615" as="geometry" />
-        </mxCell>
         <mxCell id="rt_env_pkg" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f5f5;strokeColor=#666666;dashed=1;" value="&lt;b style=&quot;font-size: 11px;&quot;&gt;Chaque package charge son env spécifique&lt;/b&gt;&lt;div&gt;&lt;font style=&quot;font-size: 10px;&quot;&gt;&lt;i&gt;via son propre script test (source services.sh &amp;lt;package&amp;gt;)&lt;/i&gt;&lt;/font&gt;&lt;/div&gt;" vertex="1">
-          <mxGeometry height="50" width="340" x="1010" y="620" as="geometry" />
+          <mxGeometry height="50" width="340" x="-170" y="555" as="geometry" />
         </mxCell>
         <mxCell id="rt_d_sonar2" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="&lt;font style=&quot;font-size: 13px;&quot;&gt;&lt;b&gt;RUN_SONAR ?&lt;/b&gt;&lt;/font&gt;" vertex="1">
-          <mxGeometry height="80" width="180" x="800" y="700" as="geometry" />
+          <mxGeometry height="80" width="180" x="320" y="660" as="geometry" />
         </mxCell>
-        <mxCell id="rt_scan" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="&lt;b&gt;sonar-scanner&lt;/b&gt;&lt;div&gt;&lt;font style=&quot;font-size: 10px;&quot;&gt;&lt;i&gt;analyse + couverture (lcov.info)&lt;/i&gt;&lt;/font&gt;&lt;/div&gt;" vertex="1">
-          <mxGeometry height="50" width="340" x="1010" y="715" as="geometry" />
+        <mxCell id="rt_scan" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="&lt;b&gt;sonar-scanner&lt;/b&gt;&lt;div&gt;&lt;font style=&quot;font-size: 10px;&quot;&gt;&lt;i&gt;(lcov.info)&lt;/i&gt;&lt;/font&gt;&lt;/div&gt;" vertex="1">
+          <mxGeometry height="50" width="340" x="-170" y="675" as="geometry" />
         </mxCell>
-        <mxCell id="rt_e_ph3" edge="1" parent="1" source="rt_ph3" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;dashed=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" target="rt_prep">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="rt_e_prep" edge="1" parent="1" source="rt_prep" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" target="rt_run">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="rt_e_env_pkg" edge="1" parent="1" source="rt_run" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;dashed=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" target="rt_env_pkg">
-          <mxGeometry relative="1" as="geometry" />
-        </mxCell>
-        <mxCell id="rt_e_run" edge="1" parent="1" source="rt_run" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" target="rt_d_sonar2">
-          <mxGeometry relative="1" as="geometry" />
+        <mxCell id="rt_e_env_pkg" edge="1" parent="1" source="rt_ph3" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;dashed=1;entryX=1;entryY=0.5;entryDx=0;entryDy=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" target="rt_env_pkg">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="-270" y="580" as="sourcePoint" />
+          </mxGeometry>
         </mxCell>
         <mxCell id="rt_e_scan" edge="1" parent="1" source="rt_d_sonar2" style="edgeStyle=orthogonalEdgeStyle;html=1;endArrow=block;" target="rt_scan" value="oui">
           <mxGeometry relative="1" as="geometry" />
