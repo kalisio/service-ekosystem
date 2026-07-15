@@ -137,7 +137,8 @@ resolve_build_filter_and_tag() {
 
     if [ -n "$INPUT" ]; then
         local PKG
-        for PKG in $INPUT; do
+        # Accept comma- and/or space-separated package lists.
+        for PKG in ${INPUT//,/ }; do
             if [ ! -d "$ROOT/packages/$PKG" ]; then
                 echo "-> Error: package '$PKG' not found" >&2
                 return 1
@@ -277,4 +278,42 @@ run_package_tests() {
     if [ "$RUN_SONAR" = true ]; then
         cd "$LOCAL_ROOT_DIR" && sonar-scanner
     fi
+}
+
+# Push every job image this run built. For each package under packages/<prefix>*,
+# derive its image tags from the very `build*` scripts that `pnpm run "/^build/"`
+# executed (single source of truth with the build):
+#   build           -> <registry>/<namespace>/<pkg>:<IMAGE_TAG>
+#   build:<variant> -> <registry>/<namespace>/<pkg>:<variant>-<IMAGE_TAG>
+# so any variant naming (incl. a frequency suffix, eg. paquetobs-observations-6m)
+# is preserved exactly. Only images that exist locally (ie. were built by the
+# selected filter) are pushed. Assumes the caller is already `docker login`-ed.
+# Args:
+#   1. ROOT_DIR       2. package prefix (eg. krawler-)
+#   3. registry URL   4. image namespace (eg. kalisio)
+#   5. IMAGE_TAG
+publish_job_images() {
+    local ROOT="$1"
+    local PREFIX="$2"
+    local REGISTRY="$3"
+    local NAMESPACE="$4"
+    local IMAGE_TAG="$5"
+    local D PKG IMAGE KEY ITAG
+    for D in "$ROOT"/packages/"$PREFIX"*/; do
+        [ -f "$D/package.json" ] || continue
+        PKG=$(basename "$D")
+        IMAGE="$REGISTRY/$NAMESPACE/$PKG"
+        while IFS= read -r KEY; do
+            if [ "$KEY" = "build" ]; then
+                ITAG="$IMAGE_TAG"
+            else
+                ITAG="${KEY#build:}-$IMAGE_TAG"
+            fi
+            # Only publish images that this run actually built.
+            docker image inspect "$IMAGE:$ITAG" > /dev/null 2>&1 || continue
+            begin_group "Publishing $IMAGE:$ITAG ..."
+            docker push "$IMAGE:$ITAG"
+            end_group "Publishing $IMAGE:$ITAG ..."
+        done < <(jq -r '.scripts // {} | keys[] | select(. == "build" or startswith("build:"))' "$D/package.json")
+    done
 }
