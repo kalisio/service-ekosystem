@@ -5,6 +5,17 @@
     "description": "3D terrain server for Cesium tiles and terrain elevation computation",
     "version": "1.0.0"
   },
+  "servers": [
+    {
+      "url": "https://api.dev.kalisio.xyz/k2",
+      "description": "Development"
+    }
+  ],
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
   "tags": [
     {
       "name": "Health",
@@ -226,6 +237,14 @@
     }
   },
   "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Paste a Kalisio JWT access token to authorize requests sent through the API gateway."
+      }
+    },
     "parameters": {
       "Z": {
         "name": "z",
