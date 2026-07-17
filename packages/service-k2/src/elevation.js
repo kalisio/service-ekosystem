@@ -23,7 +23,7 @@ function execBg (exe, args, logFile, { cwd = null, env = null, exitIfFails = tru
   return new Promise((resolve, reject) => {
     childProcess.exec(cl, opts, (error, stdout, stderr) => {
       if (error !== null) {
-        console.error(stderr)
+        debug(stderr)
         if (exitIfFails) {
           process.exit(1)
         } else {
@@ -56,7 +56,7 @@ async function parallelExec (tasklist, concurrency) {
       try {
         await Promise.race(pending)
       } catch (err) {
-        // some job failed, keep on
+        debug(`job failed, continuing: ${err.message}`)
       }
     }
   }
@@ -73,7 +73,7 @@ async function elevation (geojson, query) {
   const corridorWidth = _.get(query, 'corridorWidth', _.get(geojson, 'corridorWidth', 0))
   const halfCorridorWidth = Math.max(1, corridorWidth / 2)
   const elevationOffset = parseInt(_.get(query, 'elevationOffset', _.get(geojson, 'elevationOffset', 0)), 10)
-  console.log('[K2] elevation requested with parameters: ', { resolution, concurrency, demOverride, corridorWidth, elevationOffset })
+  debug('[K2] elevation requested with parameters: ', { resolution, concurrency, demOverride, corridorWidth, elevationOffset })
 
   // 1 arc sec is ~30m at the equator (~ 0.0002778deg)
   // srtmv4 is 3arcsec => ~90m
