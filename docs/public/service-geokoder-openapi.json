@@ -5,8 +5,19 @@
     "description": "Multi-provider geocoding API (forward/reverse)",
     "version": "1.0.0"
   },
+  "servers": [
+    {
+      "url": "https://api.dev.kalisio.xyz/geocoder",
+      "description": "Development"
+    }
+  ],
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
   "paths": {
-    "/api/healthcheck": {
+    "/healthcheck": {
       "get": {
         "summary": "Service health check",
         "operationId": "healthcheck",
@@ -42,7 +53,7 @@
         }
       }
     },
-    "/api/capabilities/{operation}": {
+    "/capabilities/{operation}": {
       "get": {
         "summary": "List available geocoding sources for a given operation",
         "operationId": "capabilities",
@@ -109,7 +120,7 @@
         }
       }
     },
-    "/api/forward": {
+    "/forward": {
       "get": {
         "summary": "Forward geocoding — address/place name to coordinates",
         "operationId": "forward",
@@ -174,7 +185,7 @@
         }
       }
     },
-    "/api/reverse": {
+    "/reverse": {
       "get": {
         "summary": "Reverse geocoding — coordinates to address/place name",
         "operationId": "reverse",
@@ -264,6 +275,14 @@
     }
   },
   "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Paste a Kalisio JWT access token to authorize requests sent through the API gateway."
+      }
+    },
     "schemas": {
       "GeokoderForward": {
         "type": "object",

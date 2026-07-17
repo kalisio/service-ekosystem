@@ -24,7 +24,7 @@
     "vitepress-plugin-mermaid": "catalog:"
   },
   "devDependencies": {
-    "vitepress-openapi": "^0.2.0",
+    "vitepress-openapi": "^0.2.1",
     "vitepress-theme-kalisio": "github:kalisio/vitepress-theme-kalisio"
   }
 }
