@@ -8,6 +8,59 @@ import { filterSources } from '../utils.js'
 
 const debug = makeDebug('geokoder:providers:node-geocoder')
 
+function buildForwardQuery (name, { search, limit, viewbox }) {
+  let query = {}
+  if (name === 'openstreetmap') {
+    query.q = search
+    if (!_.isNil(limit)) query.limit = limit
+    if (!_.isNil(viewbox)) {
+      // make a viewbox bounded query
+      // cf. https://nominatim.org/release-docs/latest/api/Search/#result-restriction
+      query.viewbox = `${viewbox.minLon},${viewbox.minLat},${viewbox.maxLon},${viewbox.maxLat}`
+      query.bounded = 1
+    }
+  } else if (name === 'opendatafrance') {
+    query.address = search
+    if (!_.isNil(limit)) query.limit = limit
+    if (!_.isNil(viewbox)) {
+      // use lat,lon to focus in the viewbox
+      // cf. https://adresse.data.gouv.fr/api-doc/adresse
+      query.lat = viewbox.minLat + ((viewbox.maxLat - viewbox.minLat) / 2)
+      query.lon = viewbox.minLon + ((viewbox.maxLon - viewbox.minLon) / 2)
+    }
+  } else {
+    query = search
+  }
+  return query
+}
+
+function normalizeForwardEntry (entry, sourceName) {
+  const norm = { source: sourceName }
+  if (entry.provider === 'opendatafrance') {
+    // https://adresse.data.gouv.fr/api-doc/adresse
+    const props = _.omit(entry, ['latitude', 'longitude', 'provider'])
+    norm.feature = { type: 'Feature', properties: props, geometry: { type: 'Point', coordinates: [entry.longitude, entry.latitude] } }
+    if (entry.type === 'municipality') {
+      norm.matchProp = 'city'
+    } else if (entry.type === 'locality') {
+      norm.matchProp = 'streetName'
+    } else if (entry.type === 'street') {
+      norm.matchProp = 'streetName'
+    } else if (entry.type === 'housenumber') {
+      norm.matchProp = 'streetName'
+    }
+    norm.match = _.get(entry, norm.matchProp, 'foo')
+  } else if (entry.provider === 'openstreetmap') {
+    const props = _.omit(entry, ['latitude', 'longitude', 'provider'])
+    norm.feature = { type: 'Feature', properties: props, geometry: { type: 'Point', coordinates: [entry.longitude, entry.latitude] } }
+    norm.matchProp = 'formattedAddress'
+    norm.match = _.get(entry, norm.matchProp, 'foo')
+  } else {
+    debug(`Don't know how to normalize results from provider '${entry.provider}'`)
+  }
+  return norm
+}
+
 export async function createNodeGeocoderProvider (app) {
   const providers = app.get('providers')
   const config = _.get(providers, 'NodeGeocoder')
@@ -30,7 +83,7 @@ export async function createNodeGeocoderProvider (app) {
         }
       }
 
-      geocoders.push({ name: key, impl: NodeGeocoder(Object.assign({ provider: key }, sup)) })
+      geocoders.push({ name: key, impl: NodeGeocoder({ provider: key, ...sup }) })
     }
   })
 
@@ -51,28 +104,7 @@ export async function createNodeGeocoderProvider (app) {
       // issue requests to geocoders
       debug(`Requesting ${matchingSources.length} matching sources`, _.map(matchingSources, 'name'))
       for (const geocoder of matchingSources) {
-        let query = {}
-        if (geocoder.name === 'openstreetmap') {
-          query.q = search
-          if (!_.isNil(limit)) query.limit = limit
-          if (!_.isNil(viewbox)) {
-            // make a viewbox bounded query
-            // cf. https://nominatim.org/release-docs/latest/api/Search/#result-restriction
-            query.viewbox = `${viewbox.minLon},${viewbox.minLat},${viewbox.maxLon},${viewbox.maxLat}`
-            query.bounded = 1
-          }
-        } else if (geocoder.name === 'opendatafrance') {
-          query.address = search
-          if (!_.isNil(limit)) query.limit = limit
-          if (!_.isNil(viewbox)) {
-            // use lat,lon to focus in the viewbox
-            // cf. https://adresse.data.gouv.fr/api-doc/adresse
-            query.lat = viewbox.minLat + ((viewbox.maxLat - viewbox.minLat) / 2)
-            query.lon = viewbox.minLon + ((viewbox.maxLon - viewbox.minLon) / 2)
-          }
-        } else {
-          query = search
-        }
+        const query = buildForwardQuery(geocoder.name, { search, limit, viewbox })
         debug(`Requesting impl ${geocoder.name} with query`, query)
         const request = geocoder.impl.geocode(query)
         request.source = geocoder
@@ -93,30 +125,7 @@ export async function createNodeGeocoderProvider (app) {
 
         for (const entry of result.value) {
           // 'normalize' response
-          const norm = { source: source.name }
-          if (entry.provider === 'opendatafrance') {
-            // https://adresse.data.gouv.fr/api-doc/adresse
-            const props = _.omit(entry, ['latitude', 'longitude', 'provider'])
-            norm.feature = { type: 'Feature', properties: props, geometry: { type: 'Point', coordinates: [entry.longitude, entry.latitude] } }
-            if (entry.type === 'municipality') {
-              norm.matchProp = 'city'
-            } else if (entry.type === 'locality') {
-              norm.matchProp = 'streetName'
-            } else if (entry.type === 'street') {
-              norm.matchProp = 'streetName'
-            } else if (entry.type === 'housenumber') {
-              norm.matchProp = 'streetName'
-            }
-            norm.match = _.get(entry, norm.matchProp, 'foo')
-          } else if (entry.provider === 'openstreetmap') {
-            const props = _.omit(entry, ['latitude', 'longitude', 'provider'])
-            norm.feature = { type: 'Feature', properties: props, geometry: { type: 'Point', coordinates: [entry.longitude, entry.latitude] } }
-            norm.matchProp = 'formattedAddress'
-            norm.match = _.get(entry, norm.matchProp, 'foo')
-          } else {
-            debug(`Don't know how to normalize results from provider '${entry.provider}'`)
-          }
-          response.push(norm)
+          response.push(normalizeForwardEntry(entry, source.name))
         }
       }
 

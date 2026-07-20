@@ -54,11 +54,9 @@ function jaroWinklerSimilarity (s1, s2) {
 export function sortAndLimitResults (results, limit) {
   // Sort based on computed score [0, 1] 1 is best
   results.sort((a, b) => {
-    return a.geokoder.score < b.geokoder.score
-      ? 1
-      : a.geokoder.score > b.geokoder.score
-        ? -1
-        : 0
+    if (a.geokoder.score < b.geokoder.score) return 1
+    if (a.geokoder.score > b.geokoder.score) return -1
+    return 0
   })
 
   if (limit > 0) { results.length = Math.min(results.length, limit) }
