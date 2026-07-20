@@ -4,7 +4,7 @@ import { fileURLToPath } from 'url'
 import { describe, it, afterAll, expect } from 'vitest'
 import _ from 'lodash'
 import distribution from '@kalisio/feathers-distributed'
-import { kdk } from '@kalisio/kdk-core-api'
+import { createApplication } from '@kalisio/kdk-core-api'
 import { createFeaturesService, createCatalogService, removeCatalogService } from '@kalisio/kdk-map-api'
 import { createServer } from '../src/server.js'
 
@@ -32,7 +32,7 @@ describe('geokoder:kano', () => {
   })
 
   it('initialize the remote app', async () => {
-    kapp = kdk()
+    kapp = createApplication()
     await kapp.configure(distribution({
       cote: {
         helloInterval: 2000,

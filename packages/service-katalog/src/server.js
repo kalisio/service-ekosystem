@@ -1,6 +1,6 @@
 import express from '@feathersjs/express'
 import distribution, { finalize } from '@kalisio/feathers-distributed'
-import { kdk } from '@kalisio/kdk-core-api'
+import { createApplication } from '@kalisio/kdk-core-api'
 import { createCatalogService, createDefaultCatalogLayers, createCatalogFeaturesServices } from '@kalisio/kdk-map-api'
 import { logger } from './logger.js'
 import { loadLayers, loadCategories, loadSublegends } from './layers.js'
@@ -9,7 +9,7 @@ const { notFound, errorHandler } = express
 
 export class Server {
   constructor () {
-    this.app = kdk()
+    this.app = createApplication()
 
     this.app.use(notFound())
     this.app.use(errorHandler({ logger }))
