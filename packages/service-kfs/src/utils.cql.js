@@ -76,16 +76,21 @@ function likeToRegex (pattern, options = {}) {
   const nocase = options.nocase || false
   // Build regex char by char so escapeChar is handled before wildcard substitution
   let result = ''
-  for (let i = 0; i < pattern.length; i++) {
+  let i = 0
+  while (i < pattern.length) {
     const char = pattern[i]
     if (char === escapeChar && i + 1 < pattern.length) {
-      result += pattern[++i].replace(/[.+^${}()|[\]\\]/g, '\\$&')
+      result += pattern[i + 1].replace(/[.+^${}()|[\]\\]/g, '\\$&')
+      i += 2
     } else if (char === wildcard) {
       result += '.*'
+      i++
     } else if (char === singleChar) {
       result += '.'
+      i++
     } else {
       result += char.replace(/[.+^${}()|[\]\\]/g, '\\$&')
+      i++
     }
   }
   // Use PCRE inline flag so the string survives JSON serialization (avoids $options key)
@@ -228,7 +233,7 @@ export function convertIsNullCqlExpression (expression) {
 }
 
 export function convertCqlExpression (expression) {
-  if (!expression || !expression.op) return {}
+  if (!expression?.op) return {}
   const { op } = expression
   // Dispatch to the appropriate converter based on op
   if (op === 'isNull') return convertIsNullCqlExpression(expression)

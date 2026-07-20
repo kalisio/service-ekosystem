@@ -82,7 +82,7 @@ export function getPagination (service, query = {}) {
 function getServiceOptions (serviceName, service) {
   const services = config.services
   if (typeof services === 'function') return services(serviceName, service)
-  else return (services && services[serviceName])
+  else return (services?.[serviceName])
 }
 
 export function isExposedService (serviceName, service) {
@@ -97,12 +97,13 @@ export function isExposedService (serviceName, service) {
 export function generateCollectionExtent (layer) {
   // TODO: compute spatial extent based on data ?
   return {
-    extent: Object.assign({
+    extent: {
       spatial: {
         bbox: layer.bbox || [-180, -90, 180, 90],
         crs: 'http://www.opengis.net/def/crs/OGC/1.3/CRS84'
-      }
-    }, generateCollectionTemporal(layer))
+      },
+      ...generateCollectionTemporal(layer)
+    }
   }
 }
 
@@ -268,8 +269,7 @@ export async function getLayerForService (app, name, context) {
     // authorised in the distribution config it should be exposed
     debug(`Seeking for service ${name} in app`)
     const servicePaths = Object.keys(app.services)
-    for (let i = 0; i < servicePaths.length; i++) {
-      const path = servicePaths[i]
+    for (const path of servicePaths) {
       const service = app.service(path)
       // We do not expose local internal services
       if (!service.remote) continue

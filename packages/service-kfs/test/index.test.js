@@ -1,5 +1,5 @@
 import utility from 'util'
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, afterAll } from 'vitest'
 import assert from 'assert'
 import _ from 'lodash'
 import path from 'path'
@@ -828,7 +828,7 @@ function runTests (options = {
   })
 
   // Cleanup
-  it('cleanup', async () => {
+  afterAll(async () => {
     if (server) await server.close()
     finalize(kapp)
     fs.emptyDirSync(path.join(__dirname, 'logs'))

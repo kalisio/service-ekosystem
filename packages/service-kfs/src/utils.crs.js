@@ -24,7 +24,7 @@ export function getSrid (crs) {
       return parseInt(crs.substring(crs.lastIndexOf(':') + 1))
     }
   } catch (error) {
-    throw new BadRequest('Invalid CRS format')
+    throw new BadRequest(`Invalid CRS format: ${error.message}`)
   }
   return -1
 }

@@ -34,7 +34,7 @@ export default async function createServer () {
   app.use(compress(app.get('compression')))
   const bodyParserConfig = app.get('bodyParser')
   app.use(express.json(_.get(bodyParserConfig, 'json')))
-  app.use(express.urlencoded(Object.assign({ extended: true }, _.get(bodyParserConfig, 'urlencoded'))))
+  app.use(express.urlencoded({ extended: true, ..._.get(bodyParserConfig, 'urlencoded') }))
 
   // Set up plugins and providers
   await app.configure(rest())
