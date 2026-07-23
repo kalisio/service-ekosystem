@@ -20,6 +20,7 @@
     "lint:service-kapture": "pnpm --filter @kalisio/service-kapture lint",
     "lint:service-katalog": "pnpm --filter @kalisio/service-katalog lint",
     "lint:service-kfs": "pnpm --filter @kalisio/service-kfs lint",
+    "lint:service-trakkar": "pnpm --filter @kalisio/service-trakkar lint",
     "posttest": "pnpm lcov-result-merger --prepend-source-files 'packages/*/coverage/lcov.info' coverage/lcov.info",
     "prebump": "changeset",
     "prepare": "husky",
@@ -34,7 +35,8 @@
     "test:service-k2": "pnpm --filter @kalisio/service-k2 test",
     "test:service-kapture": "pnpm --filter @kalisio/service-kapture test",
     "test:service-katalog": "pnpm --filter @kalisio/service-katalog test",
-    "test:service-kfs": "pnpm --filter @kalisio/service-kfs test"
+    "test:service-kfs": "pnpm --filter @kalisio/service-kfs test",
+    "test:service-trakkar": "pnpm --filter @kalisio/service-trakkar test"
   },
   "keywords": [
     "kalisio"

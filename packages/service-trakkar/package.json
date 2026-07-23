@@ -1,0 +1,37 @@
+{
+  "name": "@kalisio/service-trakkar",
+  "description": "A simple gateway between a traccar instance and Kalisio Maps instance.",
+  "version": "0.0.0",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "build": "DOCKER_BUILDKIT=1 docker build -t service-trakkar:${TAG:-latest} -f ./Dockerfile ../..",
+    "dev": "node --watch src/main.js",
+    "lint": "standard --fix",
+    "test": "vitest run --coverage"
+  },
+  "keywords": [
+    "kalisio"
+  ],
+  "author": {
+    "name": "Kalisio",
+    "email": "contact@kalisio.com",
+    "url": "https://github.com/kalisio"
+  },
+  "contributors": [],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kalisio/service-ekosystem.git",
+    "directory": "packages/service-trakkar"
+  },
+  "bugs": {
+    "url": "https://github.com/kalisio/service-ekosystem/issues"
+  },
+  "homepage": "https://github.com/kalisio/service-ekosystem/tree/master/packages/service-trakkar",
+  "dependencies": {},
+  "devDependencies": {},
+  "engines": {
+    "node": ">=20"
+  }
+}
