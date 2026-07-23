@@ -29,7 +29,18 @@
     "url": "https://github.com/kalisio/service-ekosystem/issues"
   },
   "homepage": "https://github.com/kalisio/service-ekosystem/tree/master/packages/service-trakkar",
-  "dependencies": {},
+  "dependencies": {
+    "@feathersjs/configuration": "catalog:",
+    "@feathersjs/errors": "catalog:",
+    "@feathersjs/express": "catalog:",
+    "@feathersjs/feathers": "catalog:",
+    "@feathersjs/socketio": "catalog:",
+    "@kalisio/feathers-distributed": "catalog:",
+    "lodash": "catalog:",
+    "sift": "catalog:",
+    "winston": "catalog:",
+    "ws": "catalog:"
+  },
   "devDependencies": {},
   "engines": {
     "node": ">=20"
