@@ -1,5 +1,4 @@
-import axios from 'axios'
-import mingo from 'mingo'
+import sift from 'sift'
 import _ from 'lodash'
 import crypto from 'crypto'
 import app from './index.js'
@@ -23,16 +22,17 @@ export async function getSessionHeaders () {
     Accept: 'application/json'
   }
 
-  const response = await axios.post(
-        `${TRACCAR_URL}/api/session`,
-        new URLSearchParams(payload).toString(),
-        {
-          headers,
-          validateStatus: status => status === 200
-        }
-  )
+  const response = await fetch(`${TRACCAR_URL}/api/session`, {
+    method: 'POST',
+    headers,
+    body: new URLSearchParams(payload).toString()
+  })
 
-  const cookies = response.headers['set-cookie']
+  if (!response.ok) {
+    throw new Error(`Response status: ${response.status}`)
+  }
+
+  const cookies = response.headers.getSetCookie()
   let jsessionid = ''
 
   // Extract JSESSIONID from cookies
@@ -68,17 +68,20 @@ export async function saveLastInfosFromTraccar (deviceId = null) {
   }
 
   // get the devices
-  const devicesReq = await axios.get(`${baseUrl}/api/devices?all=true`, { headers })
+  const devicesReq = await fetch(`${baseUrl}/api/devices?all=true`, { headers })
   // get the last positions
-  const positionsReq = await axios.get(`${baseUrl}/api/positions`, { headers })
+  const positionsReq = await fetch(`${baseUrl}/api/positions`, { headers })
 
   if (devicesReq.status !== 200 || positionsReq.status !== 200) {
     throw new Error('Error getting data from Traccar')
   }
 
+  const devices = await devicesReq.json()
+  const positions = await positionsReq.json()
+
   // check if each device has a position, and skip if not
-  for (const device of devicesReq.data) {
-    const position = positionsReq.data.find(p => p.deviceId === device.id)
+  for (const device of devices) {
+    const position = positions.find(p => p.deviceId === device.id)
     if (!position) {
       app.logger.warn(`[TRACCAR_API] No position found for device #${device.id} in Traccar...Skipping`)
       continue
@@ -94,26 +97,29 @@ export async function manualFetchData (deviceId) {
   const headers = {
     Authorization: `Basic ${Buffer.from(`${app.get('email')}:${app.get('password')}`).toString('base64')}`
   }
-  const devicesReq = await axios.get(`${baseUrl}/api/devices?id=${deviceId}`, { headers })
-  const positionsReq = await axios.get(`${baseUrl}/api/positions?deviceId=${deviceId}`, { headers })
+  const devicesReq = await fetch(`${baseUrl}/api/devices?id=${deviceId}`, { headers })
+  const positionsReq = await fetch(`${baseUrl}/api/positions?deviceId=${deviceId}`, { headers })
 
   if (devicesReq.status !== 200 || positionsReq.status !== 200) {
     throw new Error('Error getting data from Traccar')
   }
 
-  if (devicesReq.data.length === 0) {
+  const devices = await devicesReq.json()
+  const positions = await positionsReq.json()
+
+  if (devices.length === 0) {
     app.logger.warn(`[TRACCAR_API] Device #${deviceId} not found in Traccar...Skipping`)
     // remove the device from the known devices
     // app.knownDevices.delete(deviceId);
     return
   }
 
-  if (positionsReq.data.length === 0) {
+  if (positions.length === 0) {
     app.logger.warn(`[TRACCAR_API] No position found for device #${deviceId} in Traccar ...Skipping`)
     return
   }
-  app.processWSQueue.push({ devices: devicesReq.data })
-  app.processWSQueue.push({ positions: positionsReq.data })
+  app.processWSQueue.push({ devices })
+  app.processWSQueue.push({ positions })
 }
 
 /**
@@ -125,8 +131,7 @@ export async function manualFetchData (deviceId) {
 function matchFilterToSubLayer (data) {
   const filters = app.get('filters')
   for (const filter of filters) {
-    const query = new mingo.Query(filter.query)
-    if (query.test(data)) {
+    if (sift(filter.query)(data)) {
       return filter.subLayer
     }
   }
