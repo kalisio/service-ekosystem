@@ -1,5 +1,5 @@
 <mxfile host="app.diagrams.net" pages="4">
-  <diagram name="overview" id="overview">
+  <diagram name="overview" id="6O9IlXgMafchdb-cpwEi">
     <mxGraphModel dx="1414" dy="791" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="700" math="0" shadow="0">
       <root>
         <mxCell id="0" />
@@ -92,10 +92,43 @@
             </Array>
           </mxGeometry>
         </mxCell>
+        <mxCell id="FcyEvdk2r1jpDOquRLqQ-6" edge="1" parent="1" source="FcyEvdk2r1jpDOquRLqQ-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="FcyEvdk2r1jpDOquRLqQ-2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="FcyEvdk2r1jpDOquRLqQ-1" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="init_runner.sh" vertex="1">
+          <mxGeometry height="40" width="160" x="1270" y="205" as="geometry" />
+        </mxCell>
+        <mxCell id="FcyEvdk2r1jpDOquRLqQ-3" edge="1" parent="1" source="FcyEvdk2r1jpDOquRLqQ-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="s_bd">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="FcyEvdk2r1jpDOquRLqQ-4" edge="1" parent="1" source="FcyEvdk2r1jpDOquRLqQ-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="s_rt">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="FcyEvdk2r1jpDOquRLqQ-5" edge="1" parent="1" source="FcyEvdk2r1jpDOquRLqQ-2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" target="s_bp">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="FcyEvdk2r1jpDOquRLqQ-2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ffe6cc;strokeColor=#d79b00;" value="setup_workspace.sh" vertex="1">
+          <mxGeometry height="40" width="160" x="1080" y="205" as="geometry" />
+        </mxCell>
+        <mxCell id="FcyEvdk2r1jpDOquRLqQ-7" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" value="kash.sh" vertex="1">
+          <mxGeometry height="20" width="90" x="855" y="125" as="geometry" />
+        </mxCell>
+        <mxCell id="FcyEvdk2r1jpDOquRLqQ-11" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" value="kash.sh" vertex="1">
+          <mxGeometry height="20" width="90" x="850" y="230" as="geometry" />
+        </mxCell>
+        <mxCell id="FcyEvdk2r1jpDOquRLqQ-12" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" value="kash.sh" vertex="1">
+          <mxGeometry height="20" width="90" x="850" y="310" as="geometry" />
+        </mxCell>
+        <mxCell id="FcyEvdk2r1jpDOquRLqQ-13" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" value="kash.sh" vertex="1">
+          <mxGeometry height="20" width="90" x="1115" y="240" as="geometry" />
+        </mxCell>
+        <mxCell id="FcyEvdk2r1jpDOquRLqQ-14" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;" value="kash.sh" vertex="1">
+          <mxGeometry height="20" width="90" x="1305" y="240" as="geometry" />
+        </mxCell>
       </root>
     </mxGraphModel>
   </diagram>
-  <diagram name="build_package.sh" id="buildpkg">
+  <diagram name="build_package.sh" id="nb4n1xh9ocNn3xOOPx0X">
     <mxGraphModel dx="1768" dy="989" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="900" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
@@ -115,7 +148,7 @@
         <mxCell id="cwSc-QBwgUKs4BrVyhMM-1" edge="1" parent="1" source="ph0" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="xZ4WxuU2YvEiz-b-WnOS-1">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="ph0" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;b&gt;1 -&amp;nbsp;Determining what to build ...&lt;/b&gt;&lt;/font&gt;&lt;div&gt;&lt;font style=&quot;font-size: 10px;&quot;&gt;&lt;i style=&quot;&quot;&gt;RETURN:&amp;nbsp;&amp;nbsp;&lt;/i&gt;&lt;/font&gt;&lt;span style=&quot;background-color: transparent; font-size: 10px;&quot;&gt;&lt;i&gt;FILTER &amp;amp;&amp;nbsp;&lt;/i&gt;&lt;/span&gt;&lt;span style=&quot;background-color: transparent; font-size: 10px;&quot;&gt;&lt;i&gt;IMAGE_TAG&lt;/i&gt;&lt;/span&gt;&lt;/div&gt;" vertex="1">
+        <mxCell id="ph0" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;b&gt;1 -&amp;nbsp;Determining what to build ...&lt;/b&gt;&lt;/font&gt;&lt;div&gt;&lt;font style=&quot;font-size: 10px;&quot;&gt;&lt;i style=&quot;&quot;&gt;RETURN:&amp;nbsp;&amp;nbsp;&lt;/i&gt;&lt;/font&gt;&lt;span style=&quot;background-color: transparent; font-size: 10px;&quot;&gt;&lt;i&gt;FILTER &amp;amp;&amp;nbsp;&lt;/i&gt;&lt;/span&gt;&lt;span style=&quot;background-color: transparent; font-size: 10px;&quot;&gt;&lt;i&gt;SHORT_TAG&lt;/i&gt;&lt;/span&gt;&lt;/div&gt;" vertex="1">
           <mxGeometry height="60" width="380" x="220" y="320" as="geometry" />
         </mxCell>
         <mxCell id="dpub" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="PUBLISH ? (-p)" vertex="1">
@@ -192,10 +225,10 @@
         <mxCell id="xZ4WxuU2YvEiz-b-WnOS-6" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;b&gt;vide OU&lt;br&gt;fichier racine&lt;br&gt;changé ?&lt;/b&gt;&lt;/font&gt;" vertex="1">
           <mxGeometry height="90" width="200" x="960" y="630" as="geometry" />
         </mxCell>
-        <mxCell id="xZ4WxuU2YvEiz-b-WnOS-7" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;b&gt;FILTER = -r&lt;br&gt;&lt;/b&gt;&lt;/font&gt;&lt;font style=&quot;font-size: 10px;&quot;&gt;&lt;i&gt;(tous les packages)&lt;/i&gt;&lt;/font&gt;" vertex="1">
+        <mxCell id="xZ4WxuU2YvEiz-b-WnOS-7" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;b&gt;FILTER = --filter=./packages/service-*&lt;br&gt;&lt;/b&gt;&lt;/font&gt;&lt;font style=&quot;font-size: 10px;&quot;&gt;&lt;i&gt;(tous les services)&lt;/i&gt;&lt;/font&gt;" vertex="1">
           <mxGeometry height="50" width="320" x="1310" y="610" as="geometry" />
         </mxCell>
-        <mxCell id="xZ4WxuU2YvEiz-b-WnOS-8" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;b&gt;FILTER = --filter=...[&lt;/b&gt;&lt;b style=&quot;font-size: 12px;&quot;&gt;TARGET_REF&lt;/b&gt;&lt;b&gt;]&lt;/b&gt;&lt;/font&gt;&lt;br&gt;&lt;font style=&quot;font-size: 10px;&quot;&gt;&lt;i&gt;(packages changés + dépendants)&lt;/i&gt;&lt;/font&gt;" vertex="1">
+        <mxCell id="xZ4WxuU2YvEiz-b-WnOS-8" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;b&gt;FILTER = --filter=./packages/&amp;lt;pkg&amp;gt;&lt;/b&gt;&lt;/font&gt;&lt;br&gt;&lt;font style=&quot;font-size: 10px;&quot;&gt;&lt;i&gt;(un --filter par service changé)&lt;/i&gt;&lt;/font&gt;" vertex="1">
           <mxGeometry height="50" width="320" x="1310" y="690" as="geometry" />
         </mxCell>
         <mxCell id="xZ4WxuU2YvEiz-b-WnOS-9" parent="1" style="rhombus;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="&lt;b&gt;&lt;font style=&quot;font-size: 14px;&quot;&gt;GIT_TAG vide&lt;br&gt;ET branche != master ?&lt;/font&gt;&lt;/b&gt;" vertex="1">
@@ -257,8 +290,8 @@
       </root>
     </mxGraphModel>
   </diagram>
-  <diagram name="run_tests.sh" id="runtests">
-    <mxGraphModel dx="2564" dy="931" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="900" pageHeight="1100" math="0" shadow="0">
+  <diagram name="run_tests.sh" id="YTjjU2lcW_zWjJ_XrZNa">
+    <mxGraphModel grid="1" page="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" pageScale="1" pageWidth="900" pageHeight="1100" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -274,7 +307,7 @@
         <mxCell id="rt_ph2" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;b&gt;1 - Determining packages to test ...&lt;/b&gt;&lt;/font&gt;&lt;div&gt;&lt;font style=&quot;font-size: 10px;&quot;&gt;&lt;i style=&quot;&quot;&gt;RETURN : TARGET_REF (vide = tous)&lt;/i&gt;&lt;/font&gt;&lt;/div&gt;" vertex="1">
           <mxGeometry height="60" width="380" x="220" y="440" as="geometry" />
         </mxCell>
-        <mxCell id="rt_ph3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;b&gt;3 - Running tests ...&lt;/b&gt;&lt;/font&gt;&lt;div&gt;&lt;font style=&quot;font-size: 10px;&quot;&gt;&lt;i style=&quot;&quot;&gt;pnpm $FILTER --workspace-concurrency=1 run --if-present test&lt;/i&gt;&lt;/font&gt;&lt;/div&gt;" vertex="1">
+        <mxCell id="rt_ph3" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="&lt;font style=&quot;font-size: 14px;&quot;&gt;&lt;b&gt;2 - Running tests ...&lt;/b&gt;&lt;/font&gt;&lt;div&gt;&lt;font style=&quot;font-size: 10px;&quot;&gt;&lt;i style=&quot;&quot;&gt;pnpm $FILTER --workspace-concurrency=1 run --if-present test&lt;/i&gt;&lt;/font&gt;&lt;/div&gt;" vertex="1">
           <mxGeometry height="60" width="380" x="220" y="550" as="geometry" />
         </mxCell>
         <mxCell id="rt_end" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="&lt;b&gt;&lt;font style=&quot;font-size: 13px;&quot;&gt;END&lt;/font&gt;&lt;/b&gt;" vertex="1">
@@ -341,8 +374,8 @@
       </root>
     </mxGraphModel>
   </diagram>
-  <diagram name="release" id="release">
-    <mxGraphModel dx="2020" dy="2180" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="900" pageHeight="1050" math="0" shadow="0">
+  <diagram name="release" id="cB36Pw-VCZP7aFHUJ9YV">
+    <mxGraphModel grid="1" page="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" pageScale="1" pageWidth="900" pageHeight="1050" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
@@ -435,8 +468,8 @@
         <mxCell id="3Y45HMe1LClmilkez88Q-18" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="&lt;font style=&quot;font-size: 20px;&quot;&gt;&lt;b&gt;LIBS&lt;/b&gt;&lt;/font&gt;" vertex="1">
           <mxGeometry height="30" width="60" x="1030" y="-40" as="geometry" />
         </mxCell>
-        <mxCell id="3Y45HMe1LClmilkez88Q-19" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="&lt;font style=&quot;font-size: 20px;&quot;&gt;&lt;b&gt;SERVICE + JOBS&lt;/b&gt;&lt;/font&gt;" vertex="1">
-          <mxGeometry height="30" width="210" x="340" y="-40" as="geometry" />
+        <mxCell id="3Y45HMe1LClmilkez88Q-19" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="&lt;font style=&quot;font-size: 20px;&quot;&gt;&lt;b&gt;SERVICE + KRAWLER + JOBS&lt;/b&gt;&lt;/font&gt;" vertex="1">
+          <mxGeometry height="30" width="320" x="290" y="-40" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>

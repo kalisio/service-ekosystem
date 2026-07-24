@@ -35,6 +35,7 @@ export default withMermaid(
         '/overview/': [
           { text: 'About', link: '/overview/about' },
           { text: 'Contributing', link: '/overview/contributing' },
+          { text: 'CI', link: '/overview/ci' },
           { text: 'Roadmap', link: '/overview/roadmap' },
           { text: 'Changelog', link: '/overview/changelog' },
           { text: 'License', link: '/overview/license' },
