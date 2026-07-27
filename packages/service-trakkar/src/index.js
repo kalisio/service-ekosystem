@@ -54,6 +54,6 @@ app.get('/healthcheck', (req, res) => {
   return res.status(500).json({ status: 'services not available' })
 })
 
-app.listen(3000)
+app.listen(app.get('port'))
 
 export default app
