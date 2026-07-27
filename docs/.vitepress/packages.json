@@ -4,5 +4,6 @@
   "service-kapture",
   "service-k2",
   "service-kfs",
-  "service-trakkar"
+  "service-trakkar",
+  "service-geokatcher"
 ]
