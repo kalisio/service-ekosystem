@@ -45,7 +45,7 @@
     "is-docker":"catalog:",
     "cors": "catalog:",
     "debug": "catalog:",
-    "envsub": "^4.0.7",
+    "envsub": "catalog:",
     "epsg-index": "catalog:",
     "feathers-hooks-common": "catalog:",
     "feathers-mongodb-fuzzy-search": "catalog:",
