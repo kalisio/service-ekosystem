@@ -28,8 +28,38 @@
     "url": "https://github.com/kalisio/service-ekosystem/issues"
   },
   "homepage": "https://github.com/kalisio/service-ekosystem/tree/master/packages/service-geokatcher",
-  "dependencies": {},
-  "devDependencies": {},
+  "dependencies": {
+    "@feathersjs/commons": "catalog:",
+    "@feathersjs/configuration": "catalog:",
+    "@feathersjs/express": "catalog:",
+    "@feathersjs/feathers": "catalog:",
+    "@feathersjs/mongodb": "catalog:",
+    "@kalisio/feathers-distributed": "catalog:",
+    "@mapbox/mbtiles": "catalog:",
+    "@mapbox/vtquery": "catalog:",
+    "is-docker": "catalog:",
+    "cors": "catalog:",
+    "debug": "catalog:",
+    "fs-extra": "catalog:",
+    "glob": "catalog:",
+    "lodash": "catalog:",
+    "sift": "catalog:",
+    "minimatch": "catalog:",
+    "mongodb": "catalog:",
+    "bullmq": "catalog:",
+    "node-geocoder": "catalog:",
+    "winston": "catalog:",
+    "winston-daily-rotate-file": "catalog:",
+    "zlib": "catalog:",
+    "zod": "catalog:"
+  },
+  "devDependencies": {
+    "@kalisio/kdk": "catalog:",
+    "@vitest/coverage-v8": "catalog:",
+    "vitest": "catalog:",
+    "cross-env": "catalog:",
+    "standard": "catalog:"
+  },
   "engines": {
     "node": ">=20"
   }

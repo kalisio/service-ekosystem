@@ -30,6 +30,9 @@ catalogs:
     '@feathersjs/memory':
       specifier: ~5.0.44
       version: 5.0.46
+    '@feathersjs/mongodb':
+      specifier: ~5.0.44
+      version: 5.0.46
     '@feathersjs/schema':
       specifier: ~5.0.44
       version: 5.0.44
@@ -84,6 +87,9 @@ catalogs:
     '@vitest/coverage-v8':
       specifier: ~4.1.4
       version: 4.1.4
+    bullmq:
+      specifier: ~5.71.1
+      version: 5.71.1
     compression:
       specifier: ~1.8.1
       version: 1.8.1
@@ -162,6 +168,9 @@ catalogs:
     moment:
       specifier: ~2.30.1
       version: 2.30.1
+    mongodb:
+      specifier: ~6.20.0
+      version: 6.20.0
     node-geocoder:
       specifier: git+https://github.com/nchaulet/node-geocoder.git#f66ea8db928d780b5d4268938909f86fba503eef
       version: 4.4.1
@@ -295,7 +304,93 @@ importers:
         specifier: github:kalisio/vitepress-theme-kalisio
         version: https://codeload.github.com/kalisio/vitepress-theme-kalisio/tar.gz/079ad558b4a365c2aa4cec816f08e2d3aaa6294d(vitepress-openapi@0.2.1(vitepress@1.6.4(@algolia/client-search@5.56.0)(axios@1.15.0)(jwt-decode@4.0.0)(postcss@8.5.19)(search-insights@2.17.3)(typescript@6.0.2))(vue@3.5.40(typescript@6.0.2)))
 
-  packages/service-geokatcher: {}
+  packages/service-geokatcher:
+    dependencies:
+      '@feathersjs/commons':
+        specifier: 'catalog:'
+        version: 5.0.44
+      '@feathersjs/configuration':
+        specifier: 'catalog:'
+        version: 5.0.44(typescript@6.0.2)
+      '@feathersjs/express':
+        specifier: 'catalog:'
+        version: 5.0.44(typescript@6.0.2)
+      '@feathersjs/feathers':
+        specifier: 'catalog:'
+        version: 5.0.44
+      '@feathersjs/mongodb':
+        specifier: 'catalog:'
+        version: 5.0.46(mongodb@6.20.0(@aws-sdk/credential-providers@3.1083.0)(socks@2.8.9))
+      '@kalisio/feathers-distributed':
+        specifier: 'catalog:'
+        version: 2.4.0
+      '@mapbox/mbtiles':
+        specifier: 'catalog:'
+        version: 0.12.1
+      '@mapbox/vtquery':
+        specifier: 'catalog:'
+        version: 0.6.0(encoding@0.1.13)
+      bullmq:
+        specifier: 'catalog:'
+        version: 5.71.1
+      cors:
+        specifier: 'catalog:'
+        version: 2.8.6
+      debug:
+        specifier: 'catalog:'
+        version: 4.4.3
+      fs-extra:
+        specifier: 'catalog:'
+        version: 8.1.0
+      glob:
+        specifier: 'catalog:'
+        version: 13.0.6
+      is-docker:
+        specifier: 'catalog:'
+        version: 2.2.1
+      lodash:
+        specifier: 'catalog:'
+        version: 4.18.1
+      minimatch:
+        specifier: 'catalog:'
+        version: 10.2.5
+      mongodb:
+        specifier: 'catalog:'
+        version: 6.20.0(@aws-sdk/credential-providers@3.1083.0)(socks@2.8.9)
+      node-geocoder:
+        specifier: 'catalog:'
+        version: https://codeload.github.com/nchaulet/node-geocoder/tar.gz/f66ea8db928d780b5d4268938909f86fba503eef(encoding@0.1.13)
+      sift:
+        specifier: 'catalog:'
+        version: 17.1.3
+      winston:
+        specifier: 'catalog:'
+        version: 3.19.0
+      winston-daily-rotate-file:
+        specifier: 'catalog:'
+        version: 4.7.1(winston@3.19.0)
+      zlib:
+        specifier: 'catalog:'
+        version: 1.0.5
+      zod:
+        specifier: 'catalog:'
+        version: 4.4.3
+    devDependencies:
+      '@kalisio/kdk':
+        specifier: 'catalog:'
+        version: 2.7.1(handlebars@4.7.9)(mongoose@8.24.1(@aws-sdk/credential-providers@3.1083.0)(socks@2.8.9))(typescript@6.0.2)
+      '@vitest/coverage-v8':
+        specifier: 'catalog:'
+        version: 4.1.4(vitest@4.1.4)
+      cross-env:
+        specifier: 'catalog:'
+        version: 10.1.0
+      standard:
+        specifier: 'catalog:'
+        version: 17.1.2
+      vitest:
+        specifier: 'catalog:'
+        version: 4.1.4(@vitest/coverage-v8@4.1.4)(vite@7.3.2(jiti@2.6.1)(tsx@4.21.0)(yaml@2.8.3))
 
   packages/service-geokoder:
     dependencies:
@@ -1396,6 +1491,12 @@ packages:
     resolution: {integrity: sha512-dsb88XEtB2S2aY1gp+XEO6JnuT8G7JgakOCk5acwpt/xEmPKgoElQ7qIEA395fGSAcWxzoOABeEUrypMUhHiTg==}
     engines: {node: '>= 12'}
 
+  '@feathersjs/mongodb@5.0.46':
+    resolution: {integrity: sha512-2MZmCfHkbzORnefsUTQaQ4EpSBSS0tWciE8F36bGHZSKAFxReJFnL15mQlf0fCkvk5z/mFPIUQ941nvPWqTj1g==}
+    engines: {node: '>= 14'}
+    peerDependencies:
+      mongodb: ^6.19.0
+
   '@feathersjs/rest-client@5.0.46':
     resolution: {integrity: sha512-qjsI4dUdtYgd7y57X0r7vTVw3jEdi+fnE4+fPn7lYDAkg92VyQO37zzYpdHZq32mzBK9FqpFBCs7WuAREXVQEA==}
     engines: {node: '>= 12'}
@@ -1614,6 +1715,36 @@ packages:
 
   '@mongodb-js/saslprep@1.4.12':
     resolution: {integrity: sha512-QAfAMwNgnYxZ2C6D1HgeP7Gc4i/uvJRim415PCIL9ptRxWMNbWeLBYb2/9R4pGKny/s1FVu2JA2cxCUBUOggrA==}
+
+  '@msgpackr-extract/msgpackr-extract-darwin-arm64@3.0.4':
+    resolution: {integrity: sha512-LCkGo6JDfaBhgST7UpPWgNgLINpcpabaHfyz5OBx75nUYxBsaEPxjnyNjWpeb/xBup/682QnBfRBy2/LvPutZQ==}
+    cpu: [arm64]
+    os: [darwin]
+
+  '@msgpackr-extract/msgpackr-extract-darwin-x64@3.0.4':
+    resolution: {integrity: sha512-zExlW9zUJKZH/tOtVMttwjKa4Xm/3KcNjnE3dPN92uCktwavMxpgCA3MoJK/DOnTWsQgo224OaST27/mPNAf+w==}
+    cpu: [x64]
+    os: [darwin]
+
+  '@msgpackr-extract/msgpackr-extract-linux-arm64@3.0.4':
+    resolution: {integrity: sha512-dgX0P/9wGPJeHFBG+ZmhgE6bmtMt7NP5CRBGyyktpopdk/mW4POnrpQsSLtKI1dwpc+pPLuXHDh6vvskyQE/sw==}
+    cpu: [arm64]
+    os: [linux]
+
+  '@msgpackr-extract/msgpackr-extract-linux-arm@3.0.4':
+    resolution: {integrity: sha512-Tg3yX65f5GbtXLkrYEHE5oibZG9epyYWas7FogTTEJeDEF9JlXJzKgXaNhT3UXlTOeA+AfZpYZYZ0uPj7Cfquw==}
+    cpu: [arm]
+    os: [linux]
+
+  '@msgpackr-extract/msgpackr-extract-linux-x64@3.0.4':
+    resolution: {integrity: sha512-8TNXMEjJc3QEy7R/x1INhgiU+XakDAFUzBhaz7+Rbrs8NH5UQeHQxxmzsSBJGyV6I1jW79undiQm8tOI+D+8FQ==}
+    cpu: [x64]
+    os: [linux]
+
+  '@msgpackr-extract/msgpackr-extract-win32-x64@3.0.4':
+    resolution: {integrity: sha512-CmCXPQrkbwExx3j946/PtHWHbYJiCRBRDl4BlkRQcJB/YOwQxJRTpoo7aTsortjgoJ1x7opzTSxn7C+ASSLVjQ==}
+    cpu: [x64]
+    os: [win32]
 
   '@napi-rs/wasm-runtime@1.1.4':
     resolution: {integrity: sha512-3NQNNgA1YSlJb/kMH1ildASP9HW7/7kYnRI2szWJaofaS1hWmbGI4H+d3+22aGzXXN9IJ+n+GiFVcGipJP18ow==}
@@ -3031,6 +3162,9 @@ packages:
   builtins@5.1.0:
     resolution: {integrity: sha512-SW9lzGTLvWTP1AY8xeAMZimqDrIaSdLQUcVr9DMef51niJ022Ri87SwRRKYm4A6iHfkPaiVUu/Duw2Wc4J7kKg==}
 
+  bullmq@5.71.1:
+    resolution: {integrity: sha512-kOBfdcsHmO6wwmIjpersoVdYQ7jkjTgky4Yop0loc7QwSdgxliSzD69U9ijZuRrkyCJwz5p5eqxeGeQkJ0YGZQ==}
+
   bytes@3.1.2:
     resolution: {integrity: sha512-/Nf7TyzTx6S3yRJObOAV7956r8cr2+Oj8AC5dt8wSP3BQAoeX58NoHyCU8P8zGkNXStjTSi6fzO6F0pBdcYbEg==}
     engines: {node: '>= 0.8'}
@@ -3513,6 +3647,10 @@ packages:
 
   crc@3.8.0:
     resolution: {integrity: sha512-iX3mfgcTMIq3ZKLIsVFAbv7+Mc10kxabAGQb8HvjA1o3T1PIYprbakQ65d3I+2HGHt6nSKkM9PYjgoJO2KcFBQ==}
+
+  cron-parser@4.9.0:
+    resolution: {integrity: sha512-p0SaNjrHOnQeR8/VnfGbmg9te2kfyYSQ7Sc/j/6DtPL3JQvKxmjO9TSjNFpujqV3vEYYBvNNvXSxzyksBWAx1Q==}
+    engines: {node: '>=12.0.0'}
 
   cron@1.8.2:
     resolution: {integrity: sha512-Gk2c4y6xKEO8FSAUTklqtfSr7oTq0CiPQeLBG5Fl0qoXpZyMcj1SG59YL+hqq04bu6/IuEA7lMkYDAplQNKkyg==}
@@ -5503,6 +5641,10 @@ packages:
     peerDependencies:
       vue: '>=3.0.1'
 
+  luxon@3.7.2:
+    resolution: {integrity: sha512-vtEhXh/gNjI9Yg1u4jX/0YVPMvxzHuGgCm6tC5kZyb08yjGWGnqAjGJvcXbqQR2P3MyMEFnRbpcdFS6PBcLqew==}
+    engines: {node: '>=12'}
+
   magic-string@0.30.21:
     resolution: {integrity: sha512-vd2F4YUyEXKGcLHoq+TEyCjxueSeHnFxyyjNp80yg0XV4vUhnDer/lvvlqM/arB5bXQN5K2/3oinyCRyx8T2CQ==}
 
@@ -5889,6 +6031,13 @@ packages:
   ms@2.1.3:
     resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==}
 
+  msgpackr-extract@3.0.4:
+    resolution: {integrity: sha512-4kmO/MdyUIkLIvTPr8VHLil4AtoKIoniWPIEk5+CDy0xnWC84azhSFmuJ7PxZdsYtiP5kEeQsORAVIeMgxT+Hw==}
+    hasBin: true
+
+  msgpackr@1.11.5:
+    resolution: {integrity: sha512-UjkUHN0yqp9RWKy0Lplhh+wlpdt9oQBYgULZOiFhV3VclSF1JnSQWZ5r9gORQlNYaUKQoR8itv7g7z1xDDuACA==}
+
   nanoid@3.3.11:
     resolution: {integrity: sha512-N8SpfPUnUp1bK+PMYW8qSWdl9U+wwNWI4QKxOYDy9JAro3WMX7p2OeVRF9v+347pnakNevPmiHhNmZ2HbFA76w==}
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
@@ -5936,6 +6085,9 @@ packages:
     resolution: {integrity: sha512-KdHvFWZjEKDf0cakgFjebl371GPsISX2oZHcuyKqM7DtogIsHrqKeLTo8wBHxaXRAQlY2PsPlZmfo+9ZCxEREQ==}
     engines: {node: '>=10'}
 
+  node-abort-controller@3.1.1:
+    resolution: {integrity: sha512-AGK2yQKIjRuqnc6VkX2Xj5d+QW8xZ87pa1UK6yA6ouUyuxfHuMP6umE5QK7UmTeOAymo+Zx1Fxiuw9rVx8taHQ==}
+
   node-addon-api@4.3.0:
     resolution: {integrity: sha512-73sE9+3UaLYYFmDsFZnqCInzPyh3MqIwZO9cw58yIqAZhONrrabrYyYe3TuIqtIiOuTXVhsGau8hcrhhwSsDIQ==}
 
@@ -5959,6 +6111,10 @@ packages:
     resolution: {tarball: https://codeload.github.com/nchaulet/node-geocoder/tar.gz/f66ea8db928d780b5d4268938909f86fba503eef}
     version: 4.4.1
     engines: {node: '>=18'}
+
+  node-gyp-build-optional-packages@5.2.2:
+    resolution: {integrity: sha512-s+w+rBWnpTMwSFbaE0UXsRlg7hU4FjekKU4eyAih5T8nJuNZT1nNsskXpxmeqSK9UzkBl6UgRlnKc8hz8IEqOw==}
+    hasBin: true
 
   node-gyp@8.4.1:
     resolution: {integrity: sha512-olTJRgUtAb/hOXG0E93wZDs5YiJlgbXxTwQAFHyNlRsXQnYzUaF2aGgujZbw+hR8aF4ZG/rST57bWMWD16jr9w==}
@@ -8509,7 +8665,7 @@ snapshots:
 
   '@feathersjs/adapter-commons@5.0.44':
     dependencies:
-      '@feathersjs/commons': 5.0.44
+      '@feathersjs/commons': 5.0.46
       '@feathersjs/errors': 5.0.46
       '@feathersjs/feathers': 5.0.46
 
@@ -8593,9 +8749,9 @@ snapshots:
 
   '@feathersjs/authentication@5.0.44(typescript@6.0.2)':
     dependencies:
-      '@feathersjs/commons': 5.0.44
+      '@feathersjs/commons': 5.0.46
       '@feathersjs/errors': 5.0.44
-      '@feathersjs/feathers': 5.0.44
+      '@feathersjs/feathers': 5.0.46
       '@feathersjs/hooks': 0.9.0
       '@feathersjs/schema': 5.0.44(typescript@6.0.2)
       '@feathersjs/transport-commons': 5.0.44
@@ -8753,6 +8909,14 @@ snapshots:
       '@feathersjs/errors': 5.0.46
       sift: 17.1.3
 
+  '@feathersjs/mongodb@5.0.46(mongodb@6.20.0(@aws-sdk/credential-providers@3.1083.0)(socks@2.8.9))':
+    dependencies:
+      '@feathersjs/adapter-commons': 5.0.46
+      '@feathersjs/commons': 5.0.46
+      '@feathersjs/errors': 5.0.46
+      '@feathersjs/feathers': 5.0.46
+      mongodb: 6.20.0(@aws-sdk/credential-providers@3.1083.0)(socks@2.8.9)
+
   '@feathersjs/rest-client@5.0.46':
     dependencies:
       '@feathersjs/commons': 5.0.46
@@ -8764,9 +8928,9 @@ snapshots:
   '@feathersjs/schema@5.0.44(typescript@6.0.2)':
     dependencies:
       '@feathersjs/adapter-commons': 5.0.44
-      '@feathersjs/commons': 5.0.44
+      '@feathersjs/commons': 5.0.46
       '@feathersjs/errors': 5.0.44
-      '@feathersjs/feathers': 5.0.44
+      '@feathersjs/feathers': 5.0.46
       '@feathersjs/hooks': 0.9.0
       '@types/json-schema': 7.0.15
       ajv: 8.18.0
@@ -8815,7 +8979,7 @@ snapshots:
 
   '@feathersjs/transport-commons@5.0.44':
     dependencies:
-      '@feathersjs/commons': 5.0.44
+      '@feathersjs/commons': 5.0.46
       '@feathersjs/errors': 5.0.46
       '@feathersjs/feathers': 5.0.46
       encodeurl: 2.0.0
@@ -8964,7 +9128,7 @@ snapshots:
     dependencies:
       '@aws-sdk/client-s3': 3.1083.0
       '@aws-sdk/s3-request-presigner': 3.1083.0
-      '@feathersjs/commons': 5.0.44
+      '@feathersjs/commons': 5.0.46
       '@feathersjs/errors': 5.0.46
       debug: 4.4.3
       lodash: 4.18.1
@@ -8985,14 +9149,14 @@ snapshots:
     dependencies:
       '@casl/ability': 6.8.1
       '@casl/mongoose': 7.2.2(@casl/ability@6.8.1)(mongoose@8.24.1(@aws-sdk/credential-providers@3.1083.0)(socks@2.8.9))
-      '@feathersjs/authentication': 5.0.44(typescript@6.0.2)
+      '@feathersjs/authentication': 5.0.46(typescript@6.0.2)
       '@feathersjs/authentication-local': 5.0.46(typescript@6.0.2)
       '@feathersjs/authentication-oauth': 5.0.46(typescript@6.0.2)
       '@feathersjs/configuration': 5.0.44(typescript@6.0.2)
-      '@feathersjs/errors': 5.0.44
-      '@feathersjs/express': 5.0.44(typescript@6.0.2)
-      '@feathersjs/feathers': 5.0.44
-      '@feathersjs/schema': 5.0.44(typescript@6.0.2)
+      '@feathersjs/errors': 5.0.46
+      '@feathersjs/express': 5.0.46(typescript@6.0.2)
+      '@feathersjs/feathers': 5.0.46
+      '@feathersjs/schema': 5.0.46(typescript@6.0.2)
       '@feathersjs/socketio': 5.0.44
       '@kalisio/feathers-import-export': 1.4.1
       '@kalisio/feathers-s3': 1.6.0
@@ -9000,9 +9164,9 @@ snapshots:
       '@turf/bbox': 6.5.0
       '@weacast/core': 2.3.1(typescript@6.0.2)
       abort-controller: 3.0.0
-      ajv: 8.18.0
-      ajv-formats: 2.1.1(ajv@8.18.0)
-      ajv-keywords: 5.1.0(ajv@8.18.0)
+      ajv: 8.20.0
+      ajv-formats: 2.1.1(ajv@8.20.0)
+      ajv-keywords: 5.1.0(ajv@8.20.0)
       compression: 1.8.1
       cors: 2.8.6
       cron: 1.8.2
@@ -9211,6 +9375,24 @@ snapshots:
   '@mongodb-js/saslprep@1.4.12':
     dependencies:
       sparse-bitfield: 3.0.3
+
+  '@msgpackr-extract/msgpackr-extract-darwin-arm64@3.0.4':
+    optional: true
+
+  '@msgpackr-extract/msgpackr-extract-darwin-x64@3.0.4':
+    optional: true
+
+  '@msgpackr-extract/msgpackr-extract-linux-arm64@3.0.4':
+    optional: true
+
+  '@msgpackr-extract/msgpackr-extract-linux-arm@3.0.4':
+    optional: true
+
+  '@msgpackr-extract/msgpackr-extract-linux-x64@3.0.4':
+    optional: true
+
+  '@msgpackr-extract/msgpackr-extract-win32-x64@3.0.4':
+    optional: true
 
   '@napi-rs/wasm-runtime@1.1.4(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)':
     dependencies:
@@ -10223,7 +10405,7 @@ snapshots:
 
   '@weacast/core@2.3.1(typescript@6.0.2)':
     dependencies:
-      '@feathersjs/authentication': 5.0.44(typescript@6.0.2)
+      '@feathersjs/authentication': 5.0.46(typescript@6.0.2)
       '@feathersjs/authentication-local': 5.0.46(typescript@6.0.2)
       '@feathersjs/authentication-oauth': 5.0.46(typescript@6.0.2)
       '@feathersjs/client': 5.0.46(typescript@6.0.2)
@@ -10314,9 +10496,9 @@ snapshots:
       indent-string: 4.0.0
     optional: true
 
-  ajv-formats@2.1.1(ajv@8.18.0):
+  ajv-formats@2.1.1(ajv@8.20.0):
     optionalDependencies:
-      ajv: 8.18.0
+      ajv: 8.20.0
 
   ajv-formats@3.0.1(ajv@8.18.0):
     optionalDependencies:
@@ -10326,9 +10508,9 @@ snapshots:
     optionalDependencies:
       ajv: 8.20.0
 
-  ajv-keywords@5.1.0(ajv@8.18.0):
+  ajv-keywords@5.1.0(ajv@8.20.0):
     dependencies:
-      ajv: 8.18.0
+      ajv: 8.20.0
       fast-deep-equal: 3.1.3
 
   ajv@6.14.0:
@@ -10727,6 +10909,18 @@ snapshots:
     dependencies:
       semver: 7.7.4
 
+  bullmq@5.71.1:
+    dependencies:
+      cron-parser: 4.9.0
+      ioredis: 5.10.1
+      msgpackr: 1.11.5
+      node-abort-controller: 3.1.1
+      semver: 7.7.4
+      tslib: 2.8.1
+      uuid: 11.1.0
+    transitivePeerDependencies:
+      - supports-color
+
   bytes@3.1.2: {}
 
   cac@6.7.14: {}
@@ -11093,6 +11287,10 @@ snapshots:
   crc@3.8.0:
     dependencies:
       buffer: 5.7.1
+
+  cron-parser@4.9.0:
+    dependencies:
+      luxon: 3.7.2
 
   cron@1.8.2:
     dependencies:
@@ -11651,7 +11849,7 @@ snapshots:
       '@socket.io/component-emitter': 3.1.2
       debug: 4.4.3
       engine.io-parser: 5.2.3
-      ws: 8.21.0
+      ws: 8.21.1
       xmlhttprequest-ssl: 2.1.2
     transitivePeerDependencies:
       - bufferutil
@@ -12303,8 +12501,8 @@ snapshots:
 
   feathers-mongodb-management@2.0.1:
     dependencies:
-      '@feathersjs/adapter-commons': 5.0.44
-      '@feathersjs/commons': 5.0.44
+      '@feathersjs/adapter-commons': 5.0.46
+      '@feathersjs/commons': 5.0.46
       '@feathersjs/errors': 5.0.46
       '@feathersjs/feathers': 5.0.46
       debug: 4.4.3
@@ -13625,6 +13823,8 @@ snapshots:
     dependencies:
       vue: 3.5.40(typescript@6.0.2)
 
+  luxon@3.7.2: {}
+
   magic-string@0.30.21:
     dependencies:
       '@jridgewell/sourcemap-codec': 1.5.5
@@ -14117,6 +14317,22 @@ snapshots:
 
   ms@2.1.3: {}
 
+  msgpackr-extract@3.0.4:
+    dependencies:
+      node-gyp-build-optional-packages: 5.2.2
+    optionalDependencies:
+      '@msgpackr-extract/msgpackr-extract-darwin-arm64': 3.0.4
+      '@msgpackr-extract/msgpackr-extract-darwin-x64': 3.0.4
+      '@msgpackr-extract/msgpackr-extract-linux-arm': 3.0.4
+      '@msgpackr-extract/msgpackr-extract-linux-arm64': 3.0.4
+      '@msgpackr-extract/msgpackr-extract-linux-x64': 3.0.4
+      '@msgpackr-extract/msgpackr-extract-win32-x64': 3.0.4
+    optional: true
+
+  msgpackr@1.11.5:
+    optionalDependencies:
+      msgpackr-extract: 3.0.4
+
   nanoid@3.3.11: {}
 
   nanoid@3.3.16: {}
@@ -14149,6 +14365,8 @@ snapshots:
     dependencies:
       semver: 7.7.4
 
+  node-abort-controller@3.1.1: {}
+
   node-addon-api@4.3.0: {}
 
   node-addon-api@7.1.1: {}
@@ -14172,6 +14390,11 @@ snapshots:
       node-fetch: 2.7.0(encoding@0.1.13)
     transitivePeerDependencies:
       - encoding
+
+  node-gyp-build-optional-packages@5.2.2:
+    dependencies:
+      detect-libc: 2.1.2
+    optional: true
 
   node-gyp@8.4.1:
     dependencies:
@@ -15532,7 +15755,7 @@ snapshots:
       formidable: 1.2.6
       methods: 1.1.2
       mime: 2.6.0
-      qs: 6.14.2
+      qs: 6.15.3
       readable-stream: 3.6.2
       semver: 7.7.4
     transitivePeerDependencies:
