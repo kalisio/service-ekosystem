@@ -50,9 +50,7 @@ done
 ## Test requirements
 ##
 
-if [ "$RUN_SONAR" = true ]; then
-    . "$WORKSPACE_DIR/development/workspaces/services/services.sh" service-ekosystem
-fi
+. "$WORKSPACE_DIR/development/workspaces/services/services.sh" service-ekosystem
 
 
 ## Determine which packages need to be run test
