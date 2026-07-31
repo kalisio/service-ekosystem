@@ -1,0 +1,14 @@
+{
+    "type": "Feature",
+    "properties": {
+      "name": "featurename"
+    },
+    "geometry": {
+      "type": "Point",
+      "coordinates": [
+        -1.424805,
+        43.595556
+      ]
+    },
+    "layer": "663505dba7fdc7a10a15cfcd"
+  }

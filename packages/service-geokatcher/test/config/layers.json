@@ -1,0 +1,325 @@
+[
+  {
+    "name": "Layers.HUBEAU_HYDRO",
+    "description": "Layers.HUBEAU_HYDRO_DESCRIPTION",
+    "i18n": {
+      "fr": {
+        "Layers": {
+          "HUBEAU_HYDRO": "Hub'Eau Hydrométrie",
+          "HUBEAU_HYDRO_DESCRIPTION": "Observations hydrométriques"
+        },
+        "Legend": {
+          "HUBEAU_HYDRO_OBSERVATIONS_LABEL": "Hub'Eau - Observations",
+          "HUBEAU_HYDRO_STATIONS_LABEL": "Hub'Eau - Stations",
+          "HUBEAU_HYDRO_MEASUREMENT": "Dernière mesure : Hauteur d'eau (H) / Débit (Q)",
+          "HUBEAU_HYDRO_OLD_MEASUREMENT": "Mesure datée de plus de 30 minutes",
+          "HUBEAU_HYDRO_STATION": "Station"
+        },
+        "Variables": {
+          "H": "Niveau d'eau",
+          "Q": "Débit d'eau",
+          "HP_RNN": "Niveau d'eau - Prévision RNN",
+          "HP_XGB": "Niveau d'eau - Prévision XGB"
+        }
+      },
+      "en": {
+        "Layers": {
+          "HUBEAU_HYDRO": "Hub'Eau Hydrometry",
+          "HUBEAU_HYDRO_DESCRIPTION": "Hydrometric observations"
+        },
+        "Legend": {
+          "HUBEAU_HYDRO_OBSERVATIONS_LABEL": "Hub'Eau - Observations",
+          "HUBEAU_HYDRO_STATIONS_LABEL": "Hub'Eau - Stations",
+          "HUBEAU_HYDRO_MEASUREMENT": "Last measurement: Water height (H) / Flow rate (Q)",
+          "HUBEAU_HYDRO_OLD_MEASUREMENT": "Measurement dated more than 30 minutes ago",
+          "HUBEAU_HYDRO_STATION": "Station"
+        },
+        "Variables": {
+          "H": "Water level",
+          "Q": "Water flow rate",
+          "HP_RNN": "Water level - RNN prediction",
+          "HP_XGB": "Water level - XGB prediction"
+        }
+      }
+    },
+    "tags": [
+      "hydrography",
+      "measure"
+    ],
+    "legend": [
+      {
+        "type": "symbols",
+        "label": "Legend.HUBEAU_HYDRO_OBSERVATIONS_LABEL",
+        "minZoom": 11,
+        "content": {
+          "observations": [
+            {
+              "symbol": {
+                "media/KShape": {
+                  "options": {
+                    "shape": "circle",
+                    "color": "#00a9ce",
+                    "radius": 10,
+                    "icon": {
+                      "classes": "fa fa-tint",
+                      "color": "white",
+                      "size": 10
+                    }
+                  }
+                }
+              },
+              "label": "Legend.HUBEAU_HYDRO_MEASUREMENT"
+            }
+          ],
+          "exceptions": [
+            {
+              "symbol": {
+                "media/KShape": {
+                  "options": {
+                    "shape": "circle",
+                    "color": "black",
+                    "radius": 10,
+                    "icon": {
+                      "classes": "fa fa-tint",
+                      "color": "white",
+                      "size": 10
+                    }
+                  }
+                }
+              },
+              "label": "Legend.HUBEAU_HYDRO_OLD_MEASUREMENT"
+            }
+          ]
+        }
+      },
+      {
+        "type": "symbols",
+        "label": "Legend.HUBEAU_HYDRO_STATIONS_LABEL",
+        "maxZoom": 10,
+        "content": {
+          "stations": [
+            {
+              "symbol": {
+                "media/KShape": {
+                  "options": {
+                    "shape": "circle",
+                    "color": "white",
+                    "radius": 10,
+                    "stroke": {
+                      "color": "black",
+                      "width": 2
+                    },
+                    "icon": {
+                      "classes": "fa fa-tint",
+                      "color": "black",
+                      "size": 10
+                    }
+                  }
+                }
+              },
+              "label": "Legend.HUBEAU_HYDRO_STATION"
+            }
+          ]
+        }
+      }
+    ],
+    "attribution": "",
+    "type": "OverlayLayer",
+    "service": "hubeau-hydro-observations",
+    "dbName": "data",
+    "probeService": "hubeau-hydro-stations",
+    "featureId": "code_station",
+    "featureLabel": "name",
+    "from": "P-7D",
+    "to": "PT-10M",
+    "every": "PT10M",
+    "queryFrom": "PT-30M",
+    "variables": [
+      {
+        "name": "H",
+        "label": "Variables.H",
+        "unit": "m",
+        "range": [
+          0,
+          10
+        ],
+        "step": 0.1,
+        "chartjs": {
+          "backgroundColor": "rgba(63, 63, 191, 128)",
+          "borderColor": "rgb(63, 63, 191)",
+          "fill": false
+        }
+      },
+      {
+        "name": "Q",
+        "label": "Variables.Q",
+        "unit": "m^3/s",
+        "range": [
+          0,
+          1000
+        ],
+        "step": 10,
+        "chartjs": {
+          "backgroundColor": "rgba(54, 162, 235, 128)",
+          "borderColor": "rgb(54, 162, 235)",
+          "fill": false
+        }
+      },
+      {
+        "name": "HP_RNN",
+        "label": "Variables.HP_RNN",
+        "unit": "m",
+        "range": [
+          0,
+          10
+        ],
+        "step": 0.1,
+        "runTimes": true,
+        "chartjs": {
+          "backgroundColor": "rgba(65, 105, 225, 128)",
+          "borderColor": "rgb(65, 105, 225)",
+          "fill": false,
+          "borderDash": [
+            10,
+            10
+          ]
+        }
+      },
+      {
+        "name": "HP_XGB",
+        "label": "Variables.HP_XGB",
+        "unit": "m",
+        "range": [
+          0,
+          10
+        ],
+        "step": 0.1,
+        "runTimes": true,
+        "chartjs": {
+          "backgroundColor": "rgba(65, 105, 225, 128)",
+          "borderColor": "rgb(65, 105, 225)",
+          "fill": false,
+          "borderDash": [
+            10,
+            10
+          ]
+        }
+      }
+    ],
+    "leaflet": {
+      "type": "geoJson",
+      "realtime": true,
+      "tiled": true,
+      "minZoom": 8,
+      "minFeatureZoom": 11,
+      "cluster": {
+        "maxClusterRadius": 40,
+        "disableClusteringAtZoom": 18
+      },
+      "style": {
+        "point": {
+          "marker": "circle",
+          "radius": 15,
+          "opacity": 1,
+          "color": "<% if (_.has(properties, 'H') || _.has(properties, 'Q') || _.has(feature, 'time.H') || _.has(feature, 'time.Q')) { %>#00a9ce<% }\n                    else if (feature.measureRequestIssued) { %>black<% }\n                    else { %>white<% } %>",
+          "stroke": {
+            "color": "<% if (_.has(properties, 'H') || _.has(properties, 'Q') || _.has(feature, 'time.H') || _.has(feature, 'time.Q')) { %>transparent<% }\n                      else if (feature.measureRequestIssued) { %>white<% }\n                      else { %>black<% } %>",
+            "width": 2
+          },
+          "icon": {
+            "color": "<% if (_.has(properties, 'H') || _.has(properties, 'Q') || _.has(feature, 'time.H') || _.has(feature, 'time.Q'))  { %>white<% }\n                      else if (feature.measureRequestIssued) { %>white<% }\n                      else { %>black<% } %>",
+            "classes": "fas fa-tint"
+          }
+        }
+      },
+      "template": [
+        "style.point.color",
+        "style.point.stroke.color",
+        "style.point.icon.color",
+        "style.point.text.label"
+      ],
+      "popup": {
+        "pick": [
+          "name"
+        ]
+      },
+      "tooltip": {
+        "template": "<% if (_.has(properties, 'H')) { %>H = <%= Units.format(properties.H, 'm', 'm') %></br><% }\n                   if (_.has(feature, 'time.H')) { %><%= Time.format(feature.time.H, 'time.long') + ' - ' + Time.format(feature.time.H, 'date.short') %></br><% }\n                   if (_.has(properties, 'Q')) { %>Q = <%= Units.format(properties.Q, 'm^3/s') %></br><% }\n                   if (_.has(feature, 'time.Q')) { %><%= Time.format(feature.time.Q, 'time.long') + ' - ' + Time.format(feature.time.Q, 'date.short') %></br><% } %>"
+      }
+    },
+    "cesium": {
+      "type": "geoJson",
+      "realtime": true,
+      "cluster": {
+        "pixelRange": 50
+      },
+      "marker-symbol": "water",
+      "marker-color": "#00a9ce",
+      "popup": {
+        "pick": [
+          "name"
+        ]
+      },
+      "tooltip": {
+        "template": "<% if (_.has(properties, 'H')) { %>H = <%= Units.format(properties.H, 'm', 'm') %>\n<% }if (_.has(feature, 'time.H')) { %><%= Time.format(feature.time.H, 'time.long') + ' - ' + Time.format(feature.time.H, 'date.short') %>\n<% }if (_.has(properties, 'Q')) { %>Q = <%= Units.format(properties.Q, 'm^3/s') %>\n<% }if (_.has(feature, 'time.Q')) { %><%= Time.format(feature.time.Q, 'time.long') + ' - ' + Time.format(feature.time.Q, 'date.short') %>\n<% } %>"
+      }
+    },
+    "updatedAt": "2024-05-02T09:13:41.935Z"
+  },
+  {
+    "_id": "663505edc4224540960899ac",
+    "name": "zone",
+    "type": "OverlayLayer",
+    "icon": "insert_drive_file",
+    "scope": "user",
+    "isDataEditable": true,
+    "featureId": "",
+    "leaflet": {
+      "type": "geoJson",
+      "isVisible": true,
+      "realtime": true,
+      "source": "/api/features"
+    },
+    "cesium": {
+      "type": "geoJson",
+      "isVisible": true,
+      "realtime": true,
+      "source": "/api/features"
+    },
+    "service": "features",
+    "createdAt": "2024-04-16T13:54:17.568Z",
+    "updatedAt": "2024-04-24T13:57:05.906Z",
+    "baseQuery": {
+      "layer": "663505edc4224540960899ac"
+    },
+    "description": ""
+  },
+  {
+    "_id": "663505dba7fdc7a10a15cfcd",
+    "name": "target",
+    "type": "OverlayLayer",
+    "icon": "insert_drive_file",
+    "scope": "user",
+    "isDataEditable": true,
+    "featureId": "",
+    "leaflet": {
+      "type": "geoJson",
+      "isVisible": true,
+      "realtime": true,
+      "source": "/api/features"
+    },
+    "cesium": {
+      "type": "geoJson",
+      "isVisible": true,
+      "realtime": true,
+      "source": "/api/features"
+    },
+    "service": "features",
+    "createdAt": "2024-04-16T13:54:17.568Z",
+    "updatedAt": "2024-04-24T13:57:05.906Z",
+    "baseQuery": {
+      "layer": "663505dba7fdc7a10a15cfcd"
+    },
+    "description": ""
+  }
+]

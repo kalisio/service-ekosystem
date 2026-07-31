@@ -5,9 +5,9 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "node --watch src/main.js",
+    "dev": "node --watch src/bin.js",
     "lint": "standard --fix",
-    "test": "vitest run --coverage"
+    "test": "bash -c 'source ../../../development/workspaces/services/services.sh service-geokatcher && export NODE_CONFIG_DIR=./test/config && vitest run --coverage'"
   },
   "keywords": [
     "kalisio"
@@ -31,27 +31,23 @@
   "dependencies": {
     "@feathersjs/commons": "catalog:",
     "@feathersjs/configuration": "catalog:",
+    "@feathersjs/errors": "catalog:",
     "@feathersjs/express": "catalog:",
     "@feathersjs/feathers": "catalog:",
     "@feathersjs/mongodb": "catalog:",
     "@kalisio/feathers-distributed": "catalog:",
-    "@mapbox/mbtiles": "catalog:",
-    "@mapbox/vtquery": "catalog:",
-    "is-docker": "catalog:",
+    "ajv": "catalog:",
+    "ajv-formats": "catalog:",
     "cors": "catalog:",
+    "cron": "catalog:",
     "debug": "catalog:",
     "fs-extra": "catalog:",
-    "glob": "catalog:",
+    "is-docker": "catalog:",
     "lodash": "catalog:",
     "sift": "catalog:",
-    "minimatch": "catalog:",
     "mongodb": "catalog:",
-    "bullmq": "catalog:",
-    "node-geocoder": "catalog:",
     "winston": "catalog:",
-    "winston-daily-rotate-file": "catalog:",
-    "zlib": "catalog:",
-    "zod": "catalog:"
+    "winston-daily-rotate-file": "catalog:"
   },
   "devDependencies": {
     "@kalisio/kdk": "catalog:",

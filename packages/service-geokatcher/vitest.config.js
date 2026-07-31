@@ -8,6 +8,12 @@ const __dirname = dirname(fileURLToPath(import.meta.url))
 export default mergeConfig(baseConfig, defineConfig({
   root: __dirname,
   test: {
-    name: 'service-geokatcher'
+    name: 'service-geokatcher',
+    exclude: [
+      '**/node_modules/**',
+      'test/init.test.js',
+      'test/kano.test.js',
+      'test/geokatchertest-suites/**'
+    ]
   }
 }))

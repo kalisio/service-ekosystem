@@ -1,0 +1,649 @@
+[
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "crs": {
+            "type": "name",
+            "properties": {
+              "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+            }
+          },
+          "coordinates": [
+            -0.03461211731828853,
+            44.579311753537446
+          ]
+        },
+        "properties": {
+          "code_regime_station": 1,
+          "code_cours_eau": "O---0000",
+          "date_maj_ref_alti_station": "2023-10-03",
+          "descriptif_station": null,
+          "libelle_cours_eau": "La Garonne",
+          "code_site": "O9190010",
+          "coordonnee_y_station": 6391321,
+          "code_systeme_alti_site": 1,
+          "code_sandre_reseau_station": [
+            "POH002",
+            "POH035",
+            "POH112",
+            "POH901",
+            "RIC020",
+            "RIC069",
+            "RIC119",
+            "RIC169",
+            "RIC319",
+            "RIC269"
+          ],
+          "code_region": "75",
+          "code_commune_station": "33352",
+          "type_station": "LIMNI",
+          "coordonnee_x_station": 459138,
+          "code_projection": 26,
+          "commentaire_influence_locale_station": null,
+          "code_finalite_station": 0,
+          "type_loi_station": 0,
+          "libelle_departement": "GIRONDE",
+          "libelle_station": "La Garonne à la Réole",
+          "code_departement": "33",
+          "date_fermeture_station": null,
+          "qualification_donnees_station": 16,
+          "libelle_site": "La Garonne à la Réole",
+          "influence_locale_station": 2,
+          "date_activation_ref_alti_station": "2017-04-11",
+          "altitude_ref_alti_station": 6251,
+          "code_station": "#O919001001",
+          "date_debut_ref_alti_station": "1990-01-01",
+          "en_service": true,
+          "date_ouverture_station": "1990-01-01",
+          "commentaire_station": null,
+          "libelle_commune": "REOLE",
+          "uri_cours_eau": "http://id.eaufrance.fr/CEA/O---0000",
+          "date_maj_station": "2023-10-03",
+          "latitude_station": 44.579311753537446,
+          "type_contexte_loi_stat_station": 1,
+          "libelle_region": "NOUVELLE-AQUITAINE",
+          "longitude_station": -0.03461211731828853,
+          "name": "La Garonne à la Réole"
+        },
+        "_id": "660c0495444574ba1dff87ac"
+      },
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "crs": {
+            "type": "name",
+            "properties": {
+              "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+            }
+          },
+          "coordinates": [
+            -0.10581623894195226,
+            44.52063640833143
+          ]
+        },
+        "properties": {
+          "code_regime_station": 1,
+          "code_cours_eau": "O9401030",
+          "date_maj_ref_alti_station": null,
+          "descriptif_station": null,
+          "libelle_cours_eau": null,
+          "code_site": "O9195617",
+          "coordonnee_y_station": 6385028,
+          "code_systeme_alti_site": null,
+          "code_sandre_reseau_station": null,
+          "code_region": "75",
+          "code_commune_station": "33508",
+          "type_station": "LIMNI",
+          "coordonnee_x_station": 453233,
+          "code_projection": 26,
+          "commentaire_influence_locale_station": null,
+          "code_finalite_station": null,
+          "type_loi_station": 2,
+          "libelle_departement": "GIRONDE",
+          "libelle_station": "[La Bassanne] à Savignac",
+          "code_departement": "33",
+          "date_fermeture_station": null,
+          "qualification_donnees_station": 16,
+          "libelle_site": "[La Bassanne] à Savignac",
+          "influence_locale_station": 2,
+          "date_activation_ref_alti_station": null,
+          "altitude_ref_alti_station": null,
+          "code_station": "#O919561701",
+          "date_debut_ref_alti_station": null,
+          "en_service": true,
+          "date_ouverture_station": "1998-05-14",
+          "commentaire_station": null,
+          "libelle_commune": "SAVIGNAC",
+          "uri_cours_eau": "http://id.eaufrance.fr/CEA/O9401030",
+          "date_maj_station": "2021-05-12",
+          "latitude_station": 44.52063640833143,
+          "type_contexte_loi_stat_station": 1,
+          "libelle_region": "NOUVELLE-AQUITAINE",
+          "longitude_station": -0.10581623894195226,
+          "name": "[La Bassanne] à Savignac"
+        },
+        "_id": "660c0495444574ba1dff87ad"
+      },
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "crs": {
+            "type": "name",
+            "properties": {
+              "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+            }
+          },
+          "coordinates": [
+            -0.0749863247655289,
+            44.5245001220127
+          ]
+        },
+        "properties": {
+          "code_regime_station": 1,
+          "code_cours_eau": "O9405051",
+          "date_maj_ref_alti_station": null,
+          "descriptif_station": null,
+          "libelle_cours_eau": null,
+          "code_site": "O9196210",
+          "coordonnee_y_station": 6385361,
+          "code_systeme_alti_site": null,
+          "code_sandre_reseau_station": [
+            "POH002",
+            "POH112",
+            "POH035",
+            "POH901"
+          ],
+          "code_region": "75",
+          "code_commune_station": "33331",
+          "type_station": "LIMNI",
+          "coordonnee_x_station": 455698,
+          "code_projection": 26,
+          "commentaire_influence_locale_station": null,
+          "code_finalite_station": 12,
+          "type_loi_station": 2,
+          "libelle_departement": "GIRONDE",
+          "libelle_station": "[La Cadanne] à Pondaurat",
+          "code_departement": "33",
+          "date_fermeture_station": null,
+          "qualification_donnees_station": 20,
+          "libelle_site": "[La Cadanne] à Pondaurat",
+          "influence_locale_station": 1,
+          "date_activation_ref_alti_station": null,
+          "altitude_ref_alti_station": null,
+          "code_station": "#O919621001",
+          "date_debut_ref_alti_station": null,
+          "en_service": false,
+          "date_ouverture_station": "1969-10-03",
+          "commentaire_station": null,
+          "libelle_commune": "PONDAURAT",
+          "uri_cours_eau": "http://id.eaufrance.fr/CEA/O9405051",
+          "date_maj_station": "2021-01-19",
+          "latitude_station": 44.5245001220127,
+          "type_contexte_loi_stat_station": 1,
+          "libelle_region": "NOUVELLE-AQUITAINE",
+          "longitude_station": -0.0749863247655289,
+          "name": "[La Cadanne] à Pondaurat"
+        },
+        "_id": "660c0495444574ba1dff87ae"
+      },
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "crs": {
+            "type": "name",
+            "properties": {
+              "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+            }
+          },
+          "coordinates": [
+            -0.03359565229516541,
+            44.63189932744386
+          ]
+        },
+        "properties": {
+          "code_regime_station": 1,
+          "code_cours_eau": "O9--0250",
+          "date_maj_ref_alti_station": null,
+          "descriptif_station": null,
+          "libelle_cours_eau": "Le Dropt",
+          "code_site": "O9372510",
+          "coordonnee_y_station": 6397155,
+          "code_systeme_alti_site": null,
+          "code_sandre_reseau_station": [
+            "RIC069",
+            "RIC319",
+            "POH002",
+            "POH035",
+            "POH112",
+            "POH901",
+            "BSH002",
+            "BSH058",
+            "BSH102",
+            "BSH158"
+          ],
+          "code_region": "75",
+          "code_commune_station": "33250",
+          "type_station": "LIMNI",
+          "coordonnee_x_station": 459443,
+          "code_projection": 26,
+          "commentaire_influence_locale_station": "Soutien d'étiage par réservoirs de crues.",
+          "code_finalite_station": null,
+          "type_loi_station": 2,
+          "libelle_departement": "GIRONDE",
+          "libelle_station": "Le Dropt à Loubens",
+          "code_departement": "33",
+          "date_fermeture_station": null,
+          "qualification_donnees_station": 20,
+          "libelle_site": "Le Dropt à Loubens et à Saint-Sulpice-de-Guilleragues",
+          "influence_locale_station": 2,
+          "date_activation_ref_alti_station": null,
+          "altitude_ref_alti_station": null,
+          "code_station": "#O937251002",
+          "date_debut_ref_alti_station": null,
+          "en_service": true,
+          "date_ouverture_station": "2001-06-26",
+          "commentaire_station": null,
+          "libelle_commune": "LOUBENS",
+          "uri_cours_eau": "http://id.eaufrance.fr/CEA/O9--0250",
+          "date_maj_station": "2020-07-08",
+          "latitude_station": 44.63189932744386,
+          "type_contexte_loi_stat_station": 1,
+          "libelle_region": "NOUVELLE-AQUITAINE",
+          "longitude_station": -0.03359565229516541,
+          "name": "Le Dropt à Loubens"
+        },
+        "_id": "660c0495444574ba1dff87b0"
+      },
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "crs": {
+            "type": "name",
+            "properties": {
+              "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+            }
+          },
+          "coordinates": [
+            -0.16117491773990525,
+            44.47432337224992
+          ]
+        },
+        "properties": {
+          "code_regime_station": 1,
+          "code_cours_eau": "O94-0400",
+          "date_maj_ref_alti_station": null,
+          "descriptif_station": null,
+          "libelle_cours_eau": "Le Beuve",
+          "code_site": "O9424010",
+          "coordonnee_y_station": 6380062,
+          "code_systeme_alti_site": null,
+          "code_sandre_reseau_station": [
+            "BSH102",
+            "BSH158",
+            "POH002",
+            "POH035",
+            "POH112",
+            "POH901",
+            "RIC069",
+            "RIC319"
+          ],
+          "code_region": "75",
+          "code_commune_station": "33216",
+          "type_station": "LIMNI",
+          "coordonnee_x_station": 448631,
+          "code_projection": 26,
+          "commentaire_influence_locale_station": "Cours d'eau réalimenté.",
+          "code_finalite_station": 12,
+          "type_loi_station": 2,
+          "libelle_departement": "GIRONDE",
+          "libelle_station": "Le Beuve à Lados",
+          "code_departement": "33",
+          "date_fermeture_station": null,
+          "qualification_donnees_station": 20,
+          "libelle_site": "Le Beuve à Lados",
+          "influence_locale_station": 2,
+          "date_activation_ref_alti_station": null,
+          "altitude_ref_alti_station": null,
+          "code_station": "#O942401001",
+          "date_debut_ref_alti_station": null,
+          "en_service": true,
+          "date_ouverture_station": "2001-11-22",
+          "commentaire_station": "Seuil de contrôle le 17/10/2001.",
+          "libelle_commune": "LADOS",
+          "uri_cours_eau": "http://id.eaufrance.fr/CEA/O94-0400",
+          "date_maj_station": "2023-04-11",
+          "latitude_station": 44.47432337224992,
+          "type_contexte_loi_stat_station": 1,
+          "libelle_region": "NOUVELLE-AQUITAINE",
+          "longitude_station": -0.16117491773990525,
+          "name": "Le Beuve à Lados"
+        },
+        "_id": "660c0495444574ba1dff87b1"
+      },
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "crs": {
+            "type": "name",
+            "properties": {
+              "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+            }
+          },
+          "coordinates": [
+            -0.23800547339357922,
+            44.557767082154896
+          ]
+        },
+        "properties": {
+          "code_regime_station": 1,
+          "code_cours_eau": "O---0000",
+          "date_maj_ref_alti_station": "2018-03-21",
+          "descriptif_station": null,
+          "libelle_cours_eau": "La Garonne",
+          "code_site": "O9450010",
+          "coordonnee_y_station": 6389571,
+          "code_systeme_alti_site": 3,
+          "code_sandre_reseau_station": [
+            "POH002",
+            "POH035",
+            "POH112",
+            "POH901",
+            "RIC069",
+            "RIC319"
+          ],
+          "code_region": "75",
+          "code_commune_station": "33227",
+          "type_station": "LIMNI",
+          "coordonnee_x_station": 442905,
+          "code_projection": 26,
+          "commentaire_influence_locale_station": null,
+          "code_finalite_station": 2,
+          "type_loi_station": null,
+          "libelle_departement": "GIRONDE",
+          "libelle_station": "La Garonne à Langon - Airbus",
+          "code_departement": "33",
+          "date_fermeture_station": null,
+          "qualification_donnees_station": 16,
+          "libelle_site": "La Garonne à Langon",
+          "influence_locale_station": 0,
+          "date_activation_ref_alti_station": "2018-03-21",
+          "altitude_ref_alti_station": 200,
+          "code_station": "#O945001002",
+          "date_debut_ref_alti_station": "2017-04-04",
+          "en_service": true,
+          "date_ouverture_station": "2017-04-04",
+          "commentaire_station": null,
+          "libelle_commune": "LANGON",
+          "uri_cours_eau": "http://id.eaufrance.fr/CEA/O---0000",
+          "date_maj_station": "2020-06-26",
+          "latitude_station": 44.557767082154896,
+          "type_contexte_loi_stat_station": null,
+          "libelle_region": "NOUVELLE-AQUITAINE",
+          "longitude_station": -0.23800547339357922,
+          "name": "La Garonne à Langon - Airbus"
+        },
+        "_id": "660c0495444574ba1dff87b2"
+      },
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "crs": {
+            "type": "name",
+            "properties": {
+              "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+            }
+          },
+          "coordinates": [
+            -0.3429805616557375,
+            44.410375829053955
+          ]
+        },
+        "properties": {
+          "code_regime_station": 1,
+          "code_cours_eau": "O95-0400",
+          "date_maj_ref_alti_station": null,
+          "descriptif_station": null,
+          "libelle_cours_eau": "Le Ciron",
+          "code_site": "O9564010",
+          "coordonnee_y_station": 6373560,
+          "code_systeme_alti_site": null,
+          "code_sandre_reseau_station": [
+            "POH112",
+            "POH002",
+            "POH035",
+            "POH901"
+          ],
+          "code_region": "75",
+          "code_commune_station": "33336",
+          "type_station": "LIMNI",
+          "coordonnee_x_station": 433882,
+          "code_projection": 26,
+          "commentaire_influence_locale_station": null,
+          "code_finalite_station": 12,
+          "type_loi_station": 2,
+          "libelle_departement": "GIRONDE",
+          "libelle_station": "Le Ciron à Préchac",
+          "code_departement": "33",
+          "date_fermeture_station": null,
+          "qualification_donnees_station": 20,
+          "libelle_site": "Le Ciron à Préchac",
+          "influence_locale_station": 1,
+          "date_activation_ref_alti_station": null,
+          "altitude_ref_alti_station": null,
+          "code_station": "#O956401001",
+          "date_debut_ref_alti_station": null,
+          "en_service": true,
+          "date_ouverture_station": "2001-07-16",
+          "commentaire_station": "Pas de contrôle.",
+          "libelle_commune": "PRECHAC",
+          "uri_cours_eau": "http://id.eaufrance.fr/CEA/O95-0400",
+          "date_maj_station": "2022-03-07",
+          "latitude_station": 44.410375829053955,
+          "type_contexte_loi_stat_station": 1,
+          "libelle_region": "NOUVELLE-AQUITAINE",
+          "longitude_station": -0.3429805616557375,
+          "name": "Le Ciron à Préchac"
+        },
+        "_id": "660c0495444574ba1dff87b3"
+      },
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "crs": {
+            "type": "name",
+            "properties": {
+              "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+            }
+          },
+          "coordinates": [
+            -0.3659568460893154,
+            44.454086405584896
+          ]
+        },
+        "properties": {
+          "code_regime_station": 1,
+          "code_cours_eau": "O95-0400",
+          "date_maj_ref_alti_station": null,
+          "descriptif_station": null,
+          "libelle_cours_eau": "Le Ciron",
+          "code_site": "O9570001",
+          "coordonnee_y_station": 6378489,
+          "code_systeme_alti_site": null,
+          "code_sandre_reseau_station": [
+            "BSH102",
+            "BSH158",
+            "POH002",
+            "POH035",
+            "POH112",
+            "POH901",
+            "RIC069",
+            "RIC319"
+          ],
+          "code_region": "75",
+          "code_commune_station": "33547",
+          "type_station": "LIMNI",
+          "coordonnee_x_station": 432261,
+          "code_projection": 26,
+          "commentaire_influence_locale_station": null,
+          "code_finalite_station": null,
+          "type_loi_station": null,
+          "libelle_departement": "GIRONDE",
+          "libelle_station": "Le Ciron à Villandraut",
+          "code_departement": "33",
+          "date_fermeture_station": null,
+          "qualification_donnees_station": 16,
+          "libelle_site": "Le Ciron à Villandraut",
+          "influence_locale_station": null,
+          "date_activation_ref_alti_station": null,
+          "altitude_ref_alti_station": null,
+          "code_station": "#O957000101",
+          "date_debut_ref_alti_station": null,
+          "en_service": true,
+          "date_ouverture_station": "2020-11-03",
+          "commentaire_station": null,
+          "libelle_commune": "VILLANDRAUT",
+          "uri_cours_eau": "http://id.eaufrance.fr/CEA/O95-0400",
+          "date_maj_station": "2023-04-11",
+          "latitude_station": 44.454086405584896,
+          "type_contexte_loi_stat_station": null,
+          "libelle_region": "NOUVELLE-AQUITAINE",
+          "longitude_station": -0.3659568460893154,
+          "name": "Le Ciron à Villandraut"
+        },
+        "_id": "660c0495444574ba1dff87b4"
+      },
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "crs": {
+            "type": "name",
+            "properties": {
+              "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+            }
+          },
+          "coordinates": [
+            -0.32422331770689944,
+            44.63555063479543
+          ]
+        },
+        "properties": {
+          "code_regime_station": 1,
+          "code_cours_eau": "O---0000",
+          "date_maj_ref_alti_station": "2023-10-03",
+          "descriptif_station": null,
+          "libelle_cours_eau": "La Garonne",
+          "code_site": "O9600010",
+          "coordonnee_y_station": 6398488,
+          "code_systeme_alti_site": 1,
+          "code_sandre_reseau_station": [
+            "POH002",
+            "POH035",
+            "POH112",
+            "POH901",
+            "RIC069",
+            "RIC319",
+            "RIC020",
+            "RIC119",
+            "RIC269"
+          ],
+          "code_region": "75",
+          "code_commune_station": "33081",
+          "type_station": "LIMNI",
+          "coordonnee_x_station": 436427,
+          "code_projection": 26,
+          "commentaire_influence_locale_station": null,
+          "code_finalite_station": null,
+          "type_loi_station": 0,
+          "libelle_departement": "GIRONDE",
+          "libelle_station": "La Garonne à Cadillac",
+          "code_departement": "33",
+          "date_fermeture_station": null,
+          "qualification_donnees_station": 16,
+          "libelle_site": "La Garonne à Cadillac",
+          "influence_locale_station": 2,
+          "date_activation_ref_alti_station": "2017-04-11",
+          "altitude_ref_alti_station": -232,
+          "code_station": "#O960001001",
+          "date_debut_ref_alti_station": "1990-01-01",
+          "en_service": true,
+          "date_ouverture_station": "2013-09-06",
+          "commentaire_station": "Déplacement de l'échelle 100m en aval",
+          "libelle_commune": "CADILLAC",
+          "uri_cours_eau": "http://id.eaufrance.fr/CEA/O---0000",
+          "date_maj_station": "2023-10-03",
+          "latitude_station": 44.63555063479543,
+          "type_contexte_loi_stat_station": 1,
+          "libelle_region": "NOUVELLE-AQUITAINE",
+          "longitude_station": -0.32422331770689944,
+          "name": "La Garonne à Cadillac"
+        },
+        "_id": "660c0495444574ba1dff87b5"
+      },
+      {
+        "type": "Feature",
+        "geometry": {
+          "type": "Point",
+          "crs": {
+            "type": "name",
+            "properties": {
+              "name": "urn:ogc:def:crs:OGC:1.3:CRS84"
+            }
+          },
+          "coordinates": [
+            -0.37312995719078174,
+            44.59895369949387
+          ]
+        },
+        "properties": {
+          "code_regime_station": 1,
+          "code_cours_eau": "O9621070",
+          "date_maj_ref_alti_station": null,
+          "descriptif_station": null,
+          "libelle_cours_eau": null,
+          "code_site": "O9620531",
+          "coordonnee_y_station": 6394591,
+          "code_systeme_alti_site": null,
+          "code_sandre_reseau_station": null,
+          "code_region": "75",
+          "code_commune_station": "33205",
+          "type_station": "LIMNI",
+          "coordonnee_x_station": 432378,
+          "code_projection": 26,
+          "commentaire_influence_locale_station": "Source.",
+          "code_finalite_station": null,
+          "type_loi_station": 2,
+          "libelle_departement": "GIRONDE",
+          "libelle_station": "[Le ruisseau des Hountettes] à Illats [source du Lavoir]",
+          "code_departement": "33",
+          "date_fermeture_station": null,
+          "qualification_donnees_station": 16,
+          "libelle_site": "[Le ruisseau des Hountettes] à Illats [source du Lavoir]",
+          "influence_locale_station": 1,
+          "date_activation_ref_alti_station": null,
+          "altitude_ref_alti_station": null,
+          "code_station": "#O962053101",
+          "date_debut_ref_alti_station": null,
+          "en_service": true,
+          "date_ouverture_station": "2000-05-17",
+          "commentaire_station": null,
+          "libelle_commune": "ILLATS",
+          "uri_cours_eau": "http://id.eaufrance.fr/CEA/O9621070",
+          "date_maj_station": "2021-05-12",
+          "latitude_station": 44.59895369949387,
+          "type_contexte_loi_stat_station": 1,
+          "libelle_region": "NOUVELLE-AQUITAINE",
+          "longitude_station": -0.37312995719078174,
+          "name": "[Le ruisseau des Hountettes] à Illats [source du Lavoir]"
+        },
+        "_id": "660c0495444574ba1dff87b6"
+      }
+    ]

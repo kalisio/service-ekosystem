@@ -87,9 +87,12 @@ catalogs:
     '@vitest/coverage-v8':
       specifier: ~4.1.4
       version: 4.1.4
-    bullmq:
-      specifier: ~5.71.1
-      version: 5.71.1
+    ajv:
+      specifier: ~8.18.0
+      version: 8.18.0
+    ajv-formats:
+      specifier: ~3.0.1
+      version: 3.0.1
     compression:
       specifier: ~1.8.1
       version: 1.8.1
@@ -99,6 +102,9 @@ catalogs:
     cors:
       specifier: ~2.8.6
       version: 2.8.6
+    cron:
+      specifier: ~4.4.0
+      version: 4.4.0
     cross-env:
       specifier: ~10.1.0
       version: 10.1.0
@@ -312,6 +318,9 @@ importers:
       '@feathersjs/configuration':
         specifier: 'catalog:'
         version: 5.0.44(typescript@6.0.2)
+      '@feathersjs/errors':
+        specifier: 'catalog:'
+        version: 5.0.44
       '@feathersjs/express':
         specifier: 'catalog:'
         version: 5.0.44(typescript@6.0.2)
@@ -324,42 +333,33 @@ importers:
       '@kalisio/feathers-distributed':
         specifier: 'catalog:'
         version: 2.4.0
-      '@mapbox/mbtiles':
+      ajv:
         specifier: 'catalog:'
-        version: 0.12.1
-      '@mapbox/vtquery':
+        version: 8.18.0
+      ajv-formats:
         specifier: 'catalog:'
-        version: 0.6.0(encoding@0.1.13)
-      bullmq:
-        specifier: 'catalog:'
-        version: 5.71.1
+        version: 3.0.1(ajv@8.18.0)
       cors:
         specifier: 'catalog:'
         version: 2.8.6
+      cron:
+        specifier: 'catalog:'
+        version: 4.4.0
       debug:
         specifier: 'catalog:'
         version: 4.4.3
       fs-extra:
         specifier: 'catalog:'
         version: 8.1.0
-      glob:
-        specifier: 'catalog:'
-        version: 13.0.6
       is-docker:
         specifier: 'catalog:'
         version: 2.2.1
       lodash:
         specifier: 'catalog:'
         version: 4.18.1
-      minimatch:
-        specifier: 'catalog:'
-        version: 10.2.5
       mongodb:
         specifier: 'catalog:'
         version: 6.20.0(@aws-sdk/credential-providers@3.1083.0)(socks@2.8.9)
-      node-geocoder:
-        specifier: 'catalog:'
-        version: https://codeload.github.com/nchaulet/node-geocoder/tar.gz/f66ea8db928d780b5d4268938909f86fba503eef(encoding@0.1.13)
       sift:
         specifier: 'catalog:'
         version: 17.1.3
@@ -369,12 +369,6 @@ importers:
       winston-daily-rotate-file:
         specifier: 'catalog:'
         version: 4.7.1(winston@3.19.0)
-      zlib:
-        specifier: 'catalog:'
-        version: 1.0.5
-      zod:
-        specifier: 'catalog:'
-        version: 4.4.3
     devDependencies:
       '@kalisio/kdk':
         specifier: 'catalog:'
@@ -1716,36 +1710,6 @@ packages:
   '@mongodb-js/saslprep@1.4.12':
     resolution: {integrity: sha512-QAfAMwNgnYxZ2C6D1HgeP7Gc4i/uvJRim415PCIL9ptRxWMNbWeLBYb2/9R4pGKny/s1FVu2JA2cxCUBUOggrA==}
 
-  '@msgpackr-extract/msgpackr-extract-darwin-arm64@3.0.4':
-    resolution: {integrity: sha512-LCkGo6JDfaBhgST7UpPWgNgLINpcpabaHfyz5OBx75nUYxBsaEPxjnyNjWpeb/xBup/682QnBfRBy2/LvPutZQ==}
-    cpu: [arm64]
-    os: [darwin]
-
-  '@msgpackr-extract/msgpackr-extract-darwin-x64@3.0.4':
-    resolution: {integrity: sha512-zExlW9zUJKZH/tOtVMttwjKa4Xm/3KcNjnE3dPN92uCktwavMxpgCA3MoJK/DOnTWsQgo224OaST27/mPNAf+w==}
-    cpu: [x64]
-    os: [darwin]
-
-  '@msgpackr-extract/msgpackr-extract-linux-arm64@3.0.4':
-    resolution: {integrity: sha512-dgX0P/9wGPJeHFBG+ZmhgE6bmtMt7NP5CRBGyyktpopdk/mW4POnrpQsSLtKI1dwpc+pPLuXHDh6vvskyQE/sw==}
-    cpu: [arm64]
-    os: [linux]
-
-  '@msgpackr-extract/msgpackr-extract-linux-arm@3.0.4':
-    resolution: {integrity: sha512-Tg3yX65f5GbtXLkrYEHE5oibZG9epyYWas7FogTTEJeDEF9JlXJzKgXaNhT3UXlTOeA+AfZpYZYZ0uPj7Cfquw==}
-    cpu: [arm]
-    os: [linux]
-
-  '@msgpackr-extract/msgpackr-extract-linux-x64@3.0.4':
-    resolution: {integrity: sha512-8TNXMEjJc3QEy7R/x1INhgiU+XakDAFUzBhaz7+Rbrs8NH5UQeHQxxmzsSBJGyV6I1jW79undiQm8tOI+D+8FQ==}
-    cpu: [x64]
-    os: [linux]
-
-  '@msgpackr-extract/msgpackr-extract-win32-x64@3.0.4':
-    resolution: {integrity: sha512-CmCXPQrkbwExx3j946/PtHWHbYJiCRBRDl4BlkRQcJB/YOwQxJRTpoo7aTsortjgoJ1x7opzTSxn7C+ASSLVjQ==}
-    cpu: [x64]
-    os: [win32]
-
   '@napi-rs/wasm-runtime@1.1.4':
     resolution: {integrity: sha512-3NQNNgA1YSlJb/kMH1ildASP9HW7/7kYnRI2szWJaofaS1hWmbGI4H+d3+22aGzXXN9IJ+n+GiFVcGipJP18ow==}
     peerDependencies:
@@ -2526,6 +2490,9 @@ packages:
   '@types/linkify-it@5.0.0':
     resolution: {integrity: sha512-sVDA58zAw4eWAffKOaQH5/5j3XeayukzDk+ewSsnv3p4yJEZHCCzMDiZM8e0OUrRvmpGZ85jf4yDHkHsgBNr9Q==}
 
+  '@types/luxon@3.7.2':
+    resolution: {integrity: sha512-gW+Oib+vUtGJBtNC8V9Reww0oIpusw+4m81uncg9REGZAJfqOQHfo/nkabnc7w0QReXyPqjrbWMJk6NuAkiX3Q==}
+
   '@types/markdown-it@14.1.2':
     resolution: {integrity: sha512-promo4eFwuiW+TfGxhi+0x3czqTYJkG8qB17ZUJiVF10Xm7NLVRSLUsfRTU/6h1e24VvRnXCx+hG7li58lkzog==}
 
@@ -3162,9 +3129,6 @@ packages:
   builtins@5.1.0:
     resolution: {integrity: sha512-SW9lzGTLvWTP1AY8xeAMZimqDrIaSdLQUcVr9DMef51niJ022Ri87SwRRKYm4A6iHfkPaiVUu/Duw2Wc4J7kKg==}
 
-  bullmq@5.71.1:
-    resolution: {integrity: sha512-kOBfdcsHmO6wwmIjpersoVdYQ7jkjTgky4Yop0loc7QwSdgxliSzD69U9ijZuRrkyCJwz5p5eqxeGeQkJ0YGZQ==}
-
   bytes@3.1.2:
     resolution: {integrity: sha512-/Nf7TyzTx6S3yRJObOAV7956r8cr2+Oj8AC5dt8wSP3BQAoeX58NoHyCU8P8zGkNXStjTSi6fzO6F0pBdcYbEg==}
     engines: {node: '>= 0.8'}
@@ -3648,12 +3612,12 @@ packages:
   crc@3.8.0:
     resolution: {integrity: sha512-iX3mfgcTMIq3ZKLIsVFAbv7+Mc10kxabAGQb8HvjA1o3T1PIYprbakQ65d3I+2HGHt6nSKkM9PYjgoJO2KcFBQ==}
 
-  cron-parser@4.9.0:
-    resolution: {integrity: sha512-p0SaNjrHOnQeR8/VnfGbmg9te2kfyYSQ7Sc/j/6DtPL3JQvKxmjO9TSjNFpujqV3vEYYBvNNvXSxzyksBWAx1Q==}
-    engines: {node: '>=12.0.0'}
-
   cron@1.8.2:
     resolution: {integrity: sha512-Gk2c4y6xKEO8FSAUTklqtfSr7oTq0CiPQeLBG5Fl0qoXpZyMcj1SG59YL+hqq04bu6/IuEA7lMkYDAplQNKkyg==}
+
+  cron@4.4.0:
+    resolution: {integrity: sha512-fkdfq+b+AHI4cKdhZlppHveI/mgz2qpiYxcm+t5E5TsxX7QrLS1VE0+7GENEk9z0EeGPcpSciGv6ez24duWhwQ==}
+    engines: {node: '>=18.x'}
 
   cross-env@10.1.0:
     resolution: {integrity: sha512-GsYosgnACZTADcmEyJctkJIoqAhHjttw7RsFrVoJNXbsWWqaq6Ym+7kZjq6mS45O0jij6vtiReppKQEtqWy6Dw==}
@@ -6031,13 +5995,6 @@ packages:
   ms@2.1.3:
     resolution: {integrity: sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==}
 
-  msgpackr-extract@3.0.4:
-    resolution: {integrity: sha512-4kmO/MdyUIkLIvTPr8VHLil4AtoKIoniWPIEk5+CDy0xnWC84azhSFmuJ7PxZdsYtiP5kEeQsORAVIeMgxT+Hw==}
-    hasBin: true
-
-  msgpackr@1.11.5:
-    resolution: {integrity: sha512-UjkUHN0yqp9RWKy0Lplhh+wlpdt9oQBYgULZOiFhV3VclSF1JnSQWZ5r9gORQlNYaUKQoR8itv7g7z1xDDuACA==}
-
   nanoid@3.3.11:
     resolution: {integrity: sha512-N8SpfPUnUp1bK+PMYW8qSWdl9U+wwNWI4QKxOYDy9JAro3WMX7p2OeVRF9v+347pnakNevPmiHhNmZ2HbFA76w==}
     engines: {node: ^10 || ^12 || ^13.7 || ^14 || >=15.0.1}
@@ -6085,9 +6042,6 @@ packages:
     resolution: {integrity: sha512-KdHvFWZjEKDf0cakgFjebl371GPsISX2oZHcuyKqM7DtogIsHrqKeLTo8wBHxaXRAQlY2PsPlZmfo+9ZCxEREQ==}
     engines: {node: '>=10'}
 
-  node-abort-controller@3.1.1:
-    resolution: {integrity: sha512-AGK2yQKIjRuqnc6VkX2Xj5d+QW8xZ87pa1UK6yA6ouUyuxfHuMP6umE5QK7UmTeOAymo+Zx1Fxiuw9rVx8taHQ==}
-
   node-addon-api@4.3.0:
     resolution: {integrity: sha512-73sE9+3UaLYYFmDsFZnqCInzPyh3MqIwZO9cw58yIqAZhONrrabrYyYe3TuIqtIiOuTXVhsGau8hcrhhwSsDIQ==}
 
@@ -6111,10 +6065,6 @@ packages:
     resolution: {tarball: https://codeload.github.com/nchaulet/node-geocoder/tar.gz/f66ea8db928d780b5d4268938909f86fba503eef}
     version: 4.4.1
     engines: {node: '>=18'}
-
-  node-gyp-build-optional-packages@5.2.2:
-    resolution: {integrity: sha512-s+w+rBWnpTMwSFbaE0UXsRlg7hU4FjekKU4eyAih5T8nJuNZT1nNsskXpxmeqSK9UzkBl6UgRlnKc8hz8IEqOw==}
-    hasBin: true
 
   node-gyp@8.4.1:
     resolution: {integrity: sha512-olTJRgUtAb/hOXG0E93wZDs5YiJlgbXxTwQAFHyNlRsXQnYzUaF2aGgujZbw+hR8aF4ZG/rST57bWMWD16jr9w==}
@@ -8750,7 +8700,7 @@ snapshots:
   '@feathersjs/authentication@5.0.44(typescript@6.0.2)':
     dependencies:
       '@feathersjs/commons': 5.0.46
-      '@feathersjs/errors': 5.0.44
+      '@feathersjs/errors': 5.0.46
       '@feathersjs/feathers': 5.0.46
       '@feathersjs/hooks': 0.9.0
       '@feathersjs/schema': 5.0.44(typescript@6.0.2)
@@ -8929,12 +8879,12 @@ snapshots:
     dependencies:
       '@feathersjs/adapter-commons': 5.0.44
       '@feathersjs/commons': 5.0.46
-      '@feathersjs/errors': 5.0.44
+      '@feathersjs/errors': 5.0.46
       '@feathersjs/feathers': 5.0.46
       '@feathersjs/hooks': 0.9.0
       '@types/json-schema': 7.0.15
-      ajv: 8.18.0
-      ajv-formats: 3.0.1(ajv@8.18.0)
+      ajv: 8.20.0
+      ajv-formats: 3.0.1(ajv@8.20.0)
       json-schema-to-ts: 3.1.1
       typescript: 6.0.2
 
@@ -9375,24 +9325,6 @@ snapshots:
   '@mongodb-js/saslprep@1.4.12':
     dependencies:
       sparse-bitfield: 3.0.3
-
-  '@msgpackr-extract/msgpackr-extract-darwin-arm64@3.0.4':
-    optional: true
-
-  '@msgpackr-extract/msgpackr-extract-darwin-x64@3.0.4':
-    optional: true
-
-  '@msgpackr-extract/msgpackr-extract-linux-arm64@3.0.4':
-    optional: true
-
-  '@msgpackr-extract/msgpackr-extract-linux-arm@3.0.4':
-    optional: true
-
-  '@msgpackr-extract/msgpackr-extract-linux-x64@3.0.4':
-    optional: true
-
-  '@msgpackr-extract/msgpackr-extract-win32-x64@3.0.4':
-    optional: true
 
   '@napi-rs/wasm-runtime@1.1.4(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)':
     dependencies:
@@ -10133,6 +10065,8 @@ snapshots:
       '@types/koa': 3.0.3
 
   '@types/linkify-it@5.0.0': {}
+
+  '@types/luxon@3.7.2': {}
 
   '@types/markdown-it@14.1.2':
     dependencies:
@@ -10909,18 +10843,6 @@ snapshots:
     dependencies:
       semver: 7.7.4
 
-  bullmq@5.71.1:
-    dependencies:
-      cron-parser: 4.9.0
-      ioredis: 5.10.1
-      msgpackr: 1.11.5
-      node-abort-controller: 3.1.1
-      semver: 7.7.4
-      tslib: 2.8.1
-      uuid: 11.1.0
-    transitivePeerDependencies:
-      - supports-color
-
   bytes@3.1.2: {}
 
   cac@6.7.14: {}
@@ -11288,13 +11210,14 @@ snapshots:
     dependencies:
       buffer: 5.7.1
 
-  cron-parser@4.9.0:
-    dependencies:
-      luxon: 3.7.2
-
   cron@1.8.2:
     dependencies:
       moment-timezone: 0.5.48
+
+  cron@4.4.0:
+    dependencies:
+      '@types/luxon': 3.7.2
+      luxon: 3.7.2
 
   cross-env@10.1.0:
     dependencies:
@@ -12474,7 +12397,7 @@ snapshots:
 
   feathers-hooks-common@8.2.1(@feathersjs/feathers@5.0.44):
     dependencies:
-      '@feathersjs/errors': 5.0.44
+      '@feathersjs/errors': 5.0.46
       '@feathersjs/feathers': 5.0.44
       ajv: 6.14.0
       debug: 4.4.3
@@ -14317,22 +14240,6 @@ snapshots:
 
   ms@2.1.3: {}
 
-  msgpackr-extract@3.0.4:
-    dependencies:
-      node-gyp-build-optional-packages: 5.2.2
-    optionalDependencies:
-      '@msgpackr-extract/msgpackr-extract-darwin-arm64': 3.0.4
-      '@msgpackr-extract/msgpackr-extract-darwin-x64': 3.0.4
-      '@msgpackr-extract/msgpackr-extract-linux-arm': 3.0.4
-      '@msgpackr-extract/msgpackr-extract-linux-arm64': 3.0.4
-      '@msgpackr-extract/msgpackr-extract-linux-x64': 3.0.4
-      '@msgpackr-extract/msgpackr-extract-win32-x64': 3.0.4
-    optional: true
-
-  msgpackr@1.11.5:
-    optionalDependencies:
-      msgpackr-extract: 3.0.4
-
   nanoid@3.3.11: {}
 
   nanoid@3.3.16: {}
@@ -14365,8 +14272,6 @@ snapshots:
     dependencies:
       semver: 7.7.4
 
-  node-abort-controller@3.1.1: {}
-
   node-addon-api@4.3.0: {}
 
   node-addon-api@7.1.1: {}
@@ -14390,11 +14295,6 @@ snapshots:
       node-fetch: 2.7.0(encoding@0.1.13)
     transitivePeerDependencies:
       - encoding
-
-  node-gyp-build-optional-packages@5.2.2:
-    dependencies:
-      detect-libc: 2.1.2
-    optional: true
 
   node-gyp@8.4.1:
     dependencies:

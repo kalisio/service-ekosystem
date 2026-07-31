@@ -1,14 +1,14 @@
 // Application hooks that run for the monitor service
-import { parseQuery, escapeToBSON, unescapeFromBSON, stopMonitor, startMonitor, runEvaluation, validateMonitorStructure, resetMonitor, checkIfNameAlreadyExists, checkIfMonitorExists } from '../../hooks/hooks.monitors.js'
+import { parseQuery, escapeToBSON, unescapeFromBSON, stopMonitor, startMonitor, runEvaluation, validateMonitorStructure, resetMonitor, checkIfNameAlreadyExists, checkIfMonitorExists, setTimestamps } from '../../hooks/hooks.monitors.js'
 
 export default {
   before: {
     all: [],
     find: [parseQuery],
     get: [parseQuery],
-    create: [validateMonitorStructure, runEvaluation, checkIfNameAlreadyExists, startMonitor],
-    update: [checkIfMonitorExists, validateMonitorStructure, checkIfNameAlreadyExists, runEvaluation, escapeToBSON, resetMonitor],
-    patch: [checkIfMonitorExists, validateMonitorStructure, checkIfNameAlreadyExists, runEvaluation, escapeToBSON, resetMonitor],
+    create: [validateMonitorStructure, setTimestamps, runEvaluation, checkIfNameAlreadyExists, startMonitor],
+    update: [checkIfMonitorExists, validateMonitorStructure, setTimestamps, checkIfNameAlreadyExists, runEvaluation, escapeToBSON, resetMonitor],
+    patch: [checkIfMonitorExists, validateMonitorStructure, setTimestamps, checkIfNameAlreadyExists, runEvaluation, escapeToBSON, resetMonitor],
     remove: []
   },
 

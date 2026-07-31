@@ -1,12 +1,10 @@
-import { mongoose } from 'mongoose'
-import { unescape } from 'mongo-escape'
+import { unescape } from '../common/mongo-escape.js'
 import { stripSlashes } from '@feathersjs/commons'
 import makeDebug from 'debug'
-import { find } from 'mingo'
-import fetch from 'node-fetch'
+import sift from 'sift'
 
 import _ from 'lodash'
-import cron from 'node-cron'
+import { CronJob } from 'cron'
 
 const debug = makeDebug('geokatcher:models:monitors')
 const monitorsModel = {
@@ -23,60 +21,20 @@ const monitorsModel = {
      * @returns {Object}  The mongoose model created
      */
   createModel (app) {
-    const Schema = mongoose.Schema
-    const monitorsSchema = new Schema(
-      {
-        target: {
-          name: { type: String, required: true },
-          filter: { type: Object, required: false },
-          layerInfo: { type: Object, required: false }
-        },
-        zone: {
-          name: { type: String, required: true },
-          filter: { type: Object, required: false },
-          layerInfo: { type: Object, required: false }
-        },
-        monitor: {
-          name: { type: String, required: true },
-          description: { type: String, required: false },
-          type: { type: String, required: true },
-          trigger: { type: Object, required: true },
-          enabled: { type: Boolean, required: true },
-          lastRun: { type: Object, required: false },
-          evaluation: {
-            alertOn: { type: String, required: true },
-            type: { type: String, required: true },
-            maxDistance: { type: Number, required: false, min: 0 },
-            minDistance: { type: Number, required: false, min: 0 }
-          },
-          action: { type: Object, required: false }
-
-        }
-
-      },
-      {
-        timestamps: true,
-        versionKey: false
-      }
-    )
-
     this.app = app
-    this.model = mongoose.model('monitors', monitorsSchema)
-    // app.set('monitorsModel', Model);
+    this.model = app.get('mongoClient').then(db => db.collection('monitors'))
     return this.model
   },
 
-  /**
-   * Start the existing monitors that are enabled
-   */
-  startExistingMonitors () {
-    this.model.find({ 'monitor.enabled': true }).then((monitors) => {
-      monitors.forEach(async (monitorObject) => {
-        // if the monitor is enabled and not already running
-        if (!(this.activeMonitors[monitorObject._id])) {
-          await this.startMonitor(monitorObject.toObject())
-        }
-      })
+  // Start the existing monitors that are enabled
+  async startExistingMonitors () {
+    const collection = await this.model
+    const monitors = await collection.find({ 'monitor.enabled': true }).toArray()
+    monitors.forEach(async (monitorObject) => {
+      // if the monitor is enabled and not already running
+      if (!(this.activeMonitors[monitorObject._id])) {
+        await this.startMonitor(monitorObject)
+      }
     })
   },
 
@@ -187,12 +145,14 @@ const monitorsModel = {
         this.activeMonitors[monitorObject._id].cron.stop()
       }
 
-      const cronjob = cron.schedule(
-        monitorObject.monitor.trigger,
-        async () => {
+      // `start: true` schedules the job as soon as it is created
+      const cronjob = CronJob.from({
+        cronTime: monitorObject.monitor.trigger,
+        onTick: async () => {
           await runMonitor.bind(this)(monitorObject)
-        }
-      )
+        },
+        start: true
+      })
 
       this.activeMonitors[monitorObject._id] = { cron: cronjob, monitor: monitorObject }
     }
@@ -420,7 +380,7 @@ async function handleServiceEvents (monitorsModel, data, event) {
     const dataElement = data.layer === monitor.monitor.target.layerInfo.layerId ? monitor.monitor.target : monitor.monitor.zone
     const dataFilter = unescape(dataElement.filter) ?? {}
     // if the data matches the filter, we run the monitor
-    if (find([data], dataFilter).all().length > 0) {
+    if ([data].filter(sift(dataFilter)).length > 0) {
       await runMonitor.bind(monitorsModel)(monitor.monitor)
     }
   }
@@ -469,7 +429,9 @@ async function runMonitor (monitorObject) {
   monitorObject.monitor.lastRun.date = new Date()
 
   // Update the monitor object in the database
-  await this.model.updateOne({ _id: monitorObject._id }, monitorObject)
+  const collection = await this.model
+  const { _id, ...fieldsToSet } = monitorObject
+  await collection.updateOne({ _id }, { $set: fieldsToSet })
 }
 
 export default monitorsModel

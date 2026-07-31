@@ -1,4 +1,4 @@
-import { mongoose } from 'mongoose'
+import { ObjectId } from 'mongodb'
 
 /**
  * Generates a new MongoDB ObjectId.
@@ -6,11 +6,11 @@ import { mongoose } from 'mongoose'
  * @returns {ObjectId} - A new MongoDB ObjectId.
  */
 export function generateObjectId () {
-  return new mongoose.Types.ObjectId()
+  return new ObjectId()
 }
 
 export function convertToObjectId (id) {
-  return new mongoose.Types.ObjectId(id)
+  return new ObjectId(id)
 }
 
 /**
@@ -20,5 +20,5 @@ export function convertToObjectId (id) {
  * @returns {boolean} - True if the value is a valid ObjectId, false otherwise.
  */
 export function isObjectId (id) {
-  return mongoose.Types.ObjectId.isValid(id)
+  return ObjectId.isValid(id)
 }

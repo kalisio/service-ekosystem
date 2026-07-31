@@ -13,7 +13,7 @@ import hooks from './hooks.js'
 import routes from './routes.js'
 import middlewares from './middlewares.js'
 
-import mongoose from 'mongoose'
+import { MongoClient } from 'mongodb'
 import services from './services/index.js'
 
 // Initialize debugger to be used in feathers
@@ -44,8 +44,7 @@ export async function createServer () {
   })
 
   // Set up database
-  mongoose.Promise = global.Promise
-  mongoose.connect(app.get('dbUrl'))
+  app.set('mongoClient', MongoClient.connect(app.get('dbUrl')).then(client => client.db()))
 
   // Set up json parser
   app.use(express.json())

@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import { escape, unescape } from 'mongo-escape'
+import { escape, unescape } from '../common/mongo-escape.js'
 import { generateObjectId, isObjectId } from '../common/helper.js'
 import monitorsModel from '../models/monitors.model.js'
 import ferrors from '@feathersjs/errors'
@@ -59,7 +59,7 @@ export async function checkIfMonitorExists (hook) {
 }
 
 /**
- * Validate the structure of the monitor object with a Joi schema
+ * Validate the structure of the monitor object against its JSON schema
  * @param {Hook} hook Hook object
  * @returns {Promise<Hook>}
  * @throws {BadRequest} if the monitor object is not valid
@@ -96,6 +96,15 @@ export async function validateMonitorStructure (hook) {
   return hook
 }
 
+// Stamp the creation and modification dates. The database driver doesn't manage them,
+// so they're set here: createdAt only on creation, updatedAt on every write.
+export function setTimestamps (hook) {
+  const now = new Date()
+  if (hook.method === 'create') hook.data.createdAt = now
+  hook.data.updatedAt = now
+  return hook
+}
+
 /**
  * Escape the data object to be saved in the mongoDB database
  * @param {Hook} hook Hook object
@@ -105,7 +114,7 @@ export async function validateMonitorStructure (hook) {
  */
 export function escapeToBSON (hook) {
   const data = _.get(hook, 'data', {})
-  _.set(hook, data, escape(data))
+  hook.data = escape(data)
   return hook
 }
 
