@@ -1,0 +1,468 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "service-geokatcher",
+    "description": "geoKatcher monitors geofences between two layers of geospatial data. It exposes a `monitor` service to create, read, update and delete monitors, and a healthcheck endpoint. Layers and features are retrieved from a Kano instance discovered over feathers-distributed.",
+    "version": "1.0.0"
+  },
+   "security": [
+    { "bearerAuth": [] }
+  ],
+  "tags": [
+    {
+      "name": "Health",
+      "description": "Service status"
+    },
+    {
+      "name": "Monitors",
+      "description": "Create, read, update and delete geofence monitors"
+    }
+  ],
+  "paths": {
+    "/healthcheck": {
+      "get": {
+        "tags": ["Health"],
+        "summary": "Service health check",
+        "operationId": "healthcheck",
+        "description": "Returns the service name and its version. The version can be overridden at build time with the `VERSION` environment variable, and a `buildNumber` is added when `BUILD_NUMBER` is set.",
+        "responses": {
+          "200": {
+            "description": "Service is up",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["name", "version"],
+                  "properties": {
+                    "name": { "type": "string", "example": "geokatcher" },
+                    "version": { "type": "string", "example": "1.0.0" },
+                    "buildNumber": { "type": "string", "example": "42" }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/monitor": {
+      "get": {
+        "tags": ["Monitors"],
+        "summary": "List monitors",
+        "operationId": "findMonitors",
+        "description": "Returns the stored monitors. Feathers query parameters are supported through the query string (e.g. `?monitor.name=my-monitor`). Pagination is disabled, so the response is a plain array.",
+        "responses": {
+          "200": {
+            "description": "The matching monitors",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Monitor" }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Monitors"],
+        "summary": "Create a monitor",
+        "operationId": "createMonitor",
+        "description": "Validates the monitor structure, then runs the evaluation once before saving. If either fails, nothing is persisted and the error is returned.\n\nSet `monitor.type` to `dryRun` to test a monitor without persisting it, running its action or emitting events: `name` and `trigger` are then optional and the response is a `DryRunResult` instead of a stored monitor.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/MonitorInput" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The created monitor, or a dry-run result when `monitor.type` is `dryRun`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "oneOf": [
+                    { "$ref": "#/components/schemas/Monitor" },
+                    { "$ref": "#/components/schemas/DryRunResult" }
+                  ]
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "409": { "$ref": "#/components/responses/Conflict" },
+          "500": { "$ref": "#/components/responses/ServerError" }
+        }
+      }
+    },
+    "/monitor/{id}": {
+      "parameters": [
+        { "$ref": "#/components/parameters/MonitorId" }
+      ],
+      "get": {
+        "tags": ["Monitors"],
+        "summary": "Get a monitor by id",
+        "operationId": "getMonitor",
+        "responses": {
+          "200": {
+            "description": "The monitor",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Monitor" }
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      },
+      "put": {
+        "tags": ["Monitors"],
+        "summary": "Replace a monitor",
+        "operationId": "updateMonitor",
+        "description": "Full update: the whole monitor is replaced, so nothing is inherited. `monitor.name` and `monitor.enabled` must be provided explicitly, and `monitor.type` may only be `cron` or `event` (not `dryRun`). The structure is validated and re-evaluated before saving.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/MonitorInput" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The updated monitor",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Monitor" }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "409": { "$ref": "#/components/responses/Conflict" },
+          "500": { "$ref": "#/components/responses/ServerError" }
+        }
+      },
+      "patch": {
+        "tags": ["Monitors"],
+        "summary": "Partially update a monitor",
+        "operationId": "patchMonitor",
+        "description": "Partial update: only the supplied fields change, the rest are inherited from the stored monitor. Two exceptions, because a section that *is* supplied only inherits its `name`:\n\n- when updating a layer element (`target` or `zone`), its `filter` must be provided again to be kept, otherwise it is dropped;\n- when updating `monitor.action`, its `additionalProperties` must be provided again to be kept, otherwise it is dropped.\n\nThese constraints only apply to the part actually being updated.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/MonitorInput" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The patched monitor",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Monitor" }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "409": { "$ref": "#/components/responses/Conflict" },
+          "500": { "$ref": "#/components/responses/ServerError" }
+        }
+      },
+      "delete": {
+        "tags": ["Monitors"],
+        "summary": "Delete a monitor",
+        "operationId": "removeMonitor",
+        "description": "Stops the monitor's schedule/listeners and removes it from the database.",
+        "responses": {
+          "200": {
+            "description": "The deleted monitor",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Monitor" }
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Paste a Kalisio JWT access token to authorize requests sent through the API gateway."
+      }
+    },
+    "parameters": {
+      "MonitorId": {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "description": "The service-generated monitor id.",
+        "schema": { "type": "string" },
+        "example": "6644cf4f83bf298f8a8bb1ba"
+      }
+    },
+    "schemas": {
+      "LayerElement": {
+        "type": "object",
+        "description": "A layer the monitor watches. `target` and `zone` share this exact shape. The layer can be a user-defined layer (e.g. `layer1`) or a built-in one (e.g. `hubeau_hydro`).",
+        "required": ["name"],
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The name (or id) of the layer to monitor.",
+            "example": "layer1"
+          },
+          "filter": {
+            "type": "object",
+            "description": "Optional MongoDB query selecting a subset of the layer's features.",
+            "default": {},
+            "example": { "properties.name": "layer1featureA" }
+          },
+          "layerInfo": {
+            "$ref": "#/components/schemas/LayerInfo"
+          }
+        }
+      },
+      "LayerInfo": {
+        "type": "object",
+        "readOnly": true,
+        "description": "Generated by the service to determine which Kano service to query. Ignored if provided by the client.",
+        "properties": {
+          "kanoService": { "type": "string", "example": "features" },
+          "layerId": { "type": "string", "example": "663e3593fb7a85c83f5084fe" }
+        }
+      },
+      "Evaluation": {
+        "type": "object",
+        "description": "What operation the monitor evaluates between the target and the zone.",
+        "required": ["type"],
+        "additionalProperties": false,
+        "properties": {
+          "alertOn": {
+            "type": "string",
+            "enum": ["data", "noData"],
+            "default": "data",
+            "description": "Alert when matching features are found (`data`) or when none are found (`noData`)."
+          },
+          "type": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The evaluation operator. Supported values: `geoWithin` (zone inside target), `geoIntersects` (target and zone intersect), `near` (target and zone are close).",
+            "example": "geoIntersects"
+          },
+          "maxDistance": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Maximum distance, in meters, for a `near` evaluation."
+          },
+          "minDistance": {
+            "type": "number",
+            "minimum": 0,
+            "description": "Minimum distance, in meters, for a `near` evaluation."
+          }
+        }
+      },
+      "Action": {
+        "type": "object",
+        "description": "What happens when the monitor's alert status changes. Even with `no-webhook`, the monitor still emits an event on its feathers service on every status change.",
+        "additionalProperties": false,
+        "default": { "type": "no-webhook", "cooldown": 60 },
+        "properties": {
+          "type": {
+            "type": "string",
+            "enum": ["no-webhook", "slack-webhook", "crisis-webhook", "custom-request"],
+            "default": "no-webhook",
+            "description": "The kind of action to run."
+          },
+          "cooldown": {
+            "type": "number",
+            "minimum": 0,
+            "default": 60,
+            "description": "Seconds to wait before re-sending a \"still firing\" alert."
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Target URL of the action. Required for every type except `no-webhook`."
+          },
+          "additionalProperties": {
+            "type": "object",
+            "description": "Type-specific payload. Required for `crisis-webhook` (see CrisisWebhookProperties) and `custom-request` (see CustomRequestProperties); forbidden for `no-webhook` and `slack-webhook`.",
+            "oneOf": [
+              { "$ref": "#/components/schemas/CrisisWebhookProperties" },
+              { "$ref": "#/components/schemas/CustomRequestProperties" }
+            ]
+          }
+        }
+      },
+      "CrisisWebhookProperties": {
+        "type": "object",
+        "description": "`monitor.action.additionalProperties` when `action.type` is `crisis-webhook`.",
+        "required": ["organisation", "token", "data"],
+        "additionalProperties": false,
+        "properties": {
+          "organisation": { "type": "string", "minLength": 1, "description": "The organisation id." },
+          "token": { "type": "string", "minLength": 1, "description": "Token used to interact with the crisis service." },
+          "data": {
+            "type": "object",
+            "required": ["template"],
+            "additionalProperties": false,
+            "properties": {
+              "template": { "type": "string", "minLength": 1, "description": "The crisis alert template (id or name)." },
+              "name": { "description": "Alert name. Defaults to the monitor name." },
+              "description": { "description": "Alert description. Defaults to the monitor description." }
+            }
+          }
+        }
+      },
+      "CustomRequestProperties": {
+        "type": "object",
+        "description": "`monitor.action.additionalProperties` when `action.type` is `custom-request`. Supports `%monitorName%` and `%monitorStatus%` templating in `url`, `headers` and `body`.",
+        "required": ["method"],
+        "additionalProperties": false,
+        "properties": {
+          "method": {
+            "type": "string",
+            "enum": ["get", "post", "put", "delete"],
+            "description": "HTTP method of the outgoing request."
+          },
+          "headers": { "type": "object", "default": {}, "description": "Request headers, sent as-is." },
+          "body": { "type": "object", "default": {}, "description": "Request body, sent as-is." }
+        }
+      },
+      "MonitorElement": {
+        "type": "object",
+        "description": "The monitor's own settings.",
+        "required": ["type", "evaluation"],
+        "additionalProperties": false,
+        "properties": {
+          "name": { "type": "string", "minLength": 1, "description": "The monitor name. Required except for a `dryRun`." },
+          "description": { "type": "string", "default": "", "description": "Free-text description." },
+          "enabled": { "type": "boolean", "default": true, "description": "Whether the monitor is active." },
+          "type": {
+            "type": "string",
+            "enum": ["event", "cron", "dryRun"],
+            "description": "`event` (triggered by feathers events), `cron` (scheduled) or `dryRun` (create-only, not persisted)."
+          },
+          "trigger": {
+            "description": "What triggers the monitor, depending on `type`: an array of event names when `type` is `event`, a valid cron expression (string) when `type` is `cron`. Not required for `dryRun`.",
+            "oneOf": [
+              { "type": "array", "items": { "type": "string" }, "example": ["patched"] },
+              { "type": "string", "example": "0 */5 * * * *" }
+            ]
+          },
+          "evaluation": { "$ref": "#/components/schemas/Evaluation" },
+          "action": { "$ref": "#/components/schemas/Action" },
+          "lastRun": { "$ref": "#/components/schemas/LastRun" }
+        }
+      },
+      "MonitorInput": {
+        "type": "object",
+        "description": "The payload of a monitor. `target` and `zone` are the two layers being compared; `monitor` holds the settings.\n\nField requirements vary by operation: on **create** `monitor.type` may be `event`, `cron` or `dryRun`; on **PUT** it must be `event` or `cron` and `monitor.name`/`monitor.enabled` are required; on **PATCH** every field is optional and missing ones are inherited from the stored monitor.\n\nOrder matters for performance: the target's feature geometries are used to build the queries, the zone is then queried. Make the target the layer with the fewest features (after filters).",
+        "required": ["target", "zone", "monitor"],
+        "additionalProperties": false,
+        "properties": {
+          "target": { "$ref": "#/components/schemas/LayerElement" },
+          "zone": { "$ref": "#/components/schemas/LayerElement" },
+          "monitor": { "$ref": "#/components/schemas/MonitorElement" }
+        }
+      },
+      "LastRun": {
+        "type": "object",
+        "readOnly": true,
+        "description": "Written by the service after each run of the monitor. Ignored if provided by the client.",
+        "properties": {
+          "date": { "type": "string", "format": "date-time", "description": "When the monitor last ran." },
+          "lastActionRun": { "type": "number", "description": "Timestamp of the last action run." },
+          "alert": { "type": "string", "enum": ["firing", "not firing"], "description": "Last alert status." },
+          "status": {
+            "type": "object",
+            "description": "Outcome of the last run. On failure, `success` is `false` and `error` describes the problem.",
+            "properties": {
+              "success": { "type": "boolean", "example": true },
+              "error": {
+                "type": "object",
+                "properties": {
+                  "message": { "type": "string", "example": "Layer not found" },
+                  "data": { "type": "object", "example": { "layer": "layer3" } }
+                }
+              }
+            }
+          }
+        }
+      },
+      "Monitor": {
+        "type": "object",
+        "description": "A stored monitor as returned by the service. It is a MonitorInput enriched with the server-generated fields (`_id`, `target.layerInfo`, `zone.layerInfo`, `monitor.lastRun`, `createdAt`, `updatedAt`), which are ignored if sent by the client.",
+        "allOf": [
+          { "$ref": "#/components/schemas/MonitorInput" },
+          {
+            "type": "object",
+            "properties": {
+              "_id": { "type": "string", "readOnly": true, "example": "6644cf4f83bf298f8a8bb1ba" },
+              "createdAt": { "type": "string", "format": "date-time", "readOnly": true },
+              "updatedAt": { "type": "string", "format": "date-time", "readOnly": true }
+            }
+          }
+        ]
+      },
+      "DryRunResult": {
+        "type": "object",
+        "description": "Returned by a create whose `monitor.type` is `dryRun`. Nothing is persisted.",
+        "properties": {
+          "monitorObject": {
+            "allOf": [{ "$ref": "#/components/schemas/MonitorInput" }],
+            "description": "The normalised monitor object that would have been stored."
+          },
+          "result": {
+            "type": "object",
+            "description": "The features returned by the evaluation."
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "description": "Feathers error payload.",
+        "properties": {
+          "name": { "type": "string", "example": "BadRequest" },
+          "message": { "type": "string", "example": "\"monitor.evaluation.type\" is required" },
+          "code": { "type": "integer", "example": 400 },
+          "className": { "type": "string", "example": "bad-request" },
+          "data": { "type": "object" }
+        }
+      }
+    },
+    "responses": {
+      "BadRequest": {
+        "description": "The monitor structure is not valid.",
+        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+      },
+      "NotFound": {
+        "description": "The monitor does not exist, or a layer was not found during evaluation.",
+        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+      },
+      "Conflict": {
+        "description": "A monitor with the same name already exists.",
+        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+      },
+      "ServerError": {
+        "description": "A Kano service error, or any other unexpected error.",
+        "content": { "application/json": { "schema": { "$ref": "#/components/schemas/Error" } } }
+      }
+    }
+  }
+}
