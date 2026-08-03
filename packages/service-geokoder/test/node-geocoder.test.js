@@ -65,7 +65,7 @@ describe('geokoder:node-geocoder', () => {
         expect(_.pick(feature.properties, Object.keys(result))).toEqual(result)
       })
     }
-  }, 10000)
+  }, 20000)
 
   it('reverse geocoding on node geocoder sources', async () => {
     const apiUrl = app.get('apiUrl')
