@@ -9,9 +9,7 @@ let consumer
 
 describe('Distribution tests', () => {
   beforeAll(async () => {
-    server = createServer()
-    server.app.set('port', 0)
-    await server.run()
+    server = await createServer({ port: 0 })
 
     consumer = feathers()
     consumer.configure(distribution({

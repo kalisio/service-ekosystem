@@ -2,7 +2,6 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { globSync } from 'glob'
 import { config } from '@kalisio/kdk-map-api'
-import { logger } from './logger.js'
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 const kargoDomain = (process.env.SUBDOMAIN ? process.env.SUBDOMAIN : 'test.kalisio.xyz')
@@ -10,17 +9,8 @@ const wmtsUrl = (process.env.API_GATEWAY_URL ? process.env.API_GATEWAY_URL + '/w
 const tmsUrl = (process.env.API_GATEWAY_URL ? process.env.API_GATEWAY_URL + '/tms/1.0.0' : 'https://mapcache.' + kargoDomain + '/mapcache/tms/1.0.0')
 const wmsUrl = (process.env.API_GATEWAY_URL ? process.env.API_GATEWAY_URL + '/wms' : 'https://mapcache.' + kargoDomain + '/mapcache')
 const wcsUrl = (process.env.API_GATEWAY_URL ? process.env.API_GATEWAY_URL + '/wcs' : 'https://mapserver.' + kargoDomain + '/cgi-bin/ows')
-let k2Url = (process.env.API_GATEWAY_URL ? process.env.API_GATEWAY_URL + '/k2' : 'https://k2.' + kargoDomain)
-let s3Url = (process.env.API_GATEWAY_URL ? process.env.API_GATEWAY_URL + '/s3' : 'https://s3.eu-central-1.amazonaws.com')
-
-if (process.env.K2_URL) {
-  k2Url = process.env.K2_URL
-  logger.info(`Using custom K2 URL ${k2Url}`)
-}
-if (process.env.S3_URL) {
-  s3Url = process.env.S3_URL
-  logger.info(`Using custom S3 URL ${s3Url}`)
-}
+const k2Url = process.env.K2_URL || (process.env.API_GATEWAY_URL ? process.env.API_GATEWAY_URL + '/k2' : 'https://k2.' + kargoDomain)
+const s3Url = process.env.S3_URL || (process.env.API_GATEWAY_URL ? process.env.API_GATEWAY_URL + '/s3' : 'https://s3.eu-central-1.amazonaws.com')
 
 export async function loadLayers (app) {
   if (!process.env.LAYERS_FILTER) process.env.LAYERS_FILTER = '*'

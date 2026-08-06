@@ -42,6 +42,7 @@
     "@kalisio/feathers-distributed": "catalog:",
     "@kalisio/kdk-core-api": "link:../../../kdk-ekosystem/packages/kdk-core-api",
     "@kalisio/kdk-map-api": "link:../../../kdk-ekosystem/packages/kdk-map-api",
+    "debug": "catalog:",
     "glob": "catalog:",
     "winston": "catalog:"
   },

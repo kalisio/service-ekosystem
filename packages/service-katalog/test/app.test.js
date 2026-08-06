@@ -12,14 +12,11 @@ let appUrl
 
 describe('Katalog application tests', () => {
   beforeAll(async () => {
-    server = createServer()
+    server = await createServer({ port: 0 })
     app = server.app
-    app.set('port', 0)
-
-    await server.run()
 
     // Fallback to 3030 if server.address() is unavailable for some reason
-    const addr = app.server ? app.server.address() : null
+    const addr = server.address()
     const port = addr ? addr.port : 3030
     appUrl = `http://${app.get('host') || 'localhost'}:${port}`
   }, 60000)

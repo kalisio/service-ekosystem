@@ -1,9 +1,14 @@
+#!/usr/bin/env node
+
 import { createServer } from './server.js'
-import { logger } from './logger.js'
 
-process.on('unhandledRejection', reason => logger.error('Unhandled Rejection %O', reason))
+async function run () {
+  try {
+    await createServer()
+  } catch (error) {
+    console.trace('Failed to start server', error)
+    process.exit(1)
+  }
+}
 
-const server = createServer()
-server.run()
-
-export default server
+run()

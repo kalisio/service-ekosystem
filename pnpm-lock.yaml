@@ -581,6 +581,9 @@ importers:
       '@kalisio/kdk-map-api':
         specifier: link:../../../kdk-ekosystem/packages/kdk-map-api
         version: link:../../../kdk-ekosystem/packages/kdk-map-api
+      debug:
+        specifier: 'catalog:'
+        version: 4.4.3
       glob:
         specifier: 'catalog:'
         version: 13.0.6
