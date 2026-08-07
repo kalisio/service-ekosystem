@@ -12,7 +12,7 @@ import distribution, { finalize } from '@kalisio/feathers-distributed'
 import { kdk } from '@kalisio/kdk/core.api.js'
 import { createFeaturesService, createCatalogService } from '@kalisio/kdk/map.api.js'
 import { getCollectionName } from '../src/utils.js'
-import createServer from '../src/main.js'
+import { createServer } from '../src/server.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const modelsPath = path.join(__dirname, 'models')

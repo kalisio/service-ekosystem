@@ -36,4 +36,4 @@ USER node
 WORKDIR /kfs
 EXPOSE 8081
 
-CMD ["node", "src/server.js"]
+CMD ["node", "src/main.js"]
