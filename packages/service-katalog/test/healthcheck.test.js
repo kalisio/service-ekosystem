@@ -7,13 +7,12 @@ describe('healthcheck', () => {
 
   beforeAll(async () => {
     // Let the OS pick a free port so the test does not clash with a running service
-    server = await createServer({ port: 0 })
+    server = await createServer({ port: 0, distribution: false })
     baseUrl = `http://localhost:${server.address().port}${server.app.get('apiPath')}`
   })
 
   afterAll(async () => {
-    await server.app.teardown()
-    server.close()
+    if (server) await server.app.teardown()
   })
 
   it('returns service name and version', async () => {

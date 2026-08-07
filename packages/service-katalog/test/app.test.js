@@ -12,7 +12,7 @@ let appUrl
 
 describe('Katalog application tests', () => {
   beforeAll(async () => {
-    server = await createServer({ port: 0 })
+    server = await createServer({ port: 0, distribution: false })
     app = server.app
 
     // Fallback to 3030 if server.address() is unavailable for some reason
