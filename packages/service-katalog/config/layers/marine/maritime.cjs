@@ -6,8 +6,8 @@ module.exports = function ({ wmtsUrl, tmsUrl, wmsUrl, wcsUrl, k2Url, s3Url }) {
       i18n: {
         fr: {
           Layers: {
-            ESPACES_MARITIMES: 'Espaces Maritimes',
-            ESPACES_MARITIMES_DESCRIPTION: 'Délimitation des espaces maritimes (ZEE, mer territoriale, zone contiguë...)',
+            ESPACES_MARITIMES: 'Espaces maritimes France (SHOM)',
+            ESPACES_MARITIMES_DESCRIPTION: 'Espaces maritimes sous juridiction française - édition 2022 (SHOM)',
             ESPACES_MARITIMES_ZEE: 'Zone Économique Exclusive (ZEE)',
             ESPACES_MARITIMES_MER_TERRITORIALE: 'Mer territoriale (12 nm)',
             ESPACES_MARITIMES_ZONE_CONTIGUE: 'Zone contiguë (24 nm)',
@@ -16,8 +16,8 @@ module.exports = function ({ wmtsUrl, tmsUrl, wmsUrl, wcsUrl, k2Url, s3Url }) {
         },
         en: {
           Layers: {
-            ESPACES_MARITIMES: 'Maritime Spaces',
-            ESPACES_MARITIMES_DESCRIPTION: 'Delimitation of maritime spaces (EEZ, territorial sea, contiguous zone...)',
+            ESPACES_MARITIMES: 'French maritime areas (SHOM)',
+            ESPACES_MARITIMES_DESCRIPTION: 'Maritime areas under French jurisdiction - 2022 edition (SHOM)',
             ESPACES_MARITIMES_ZEE: 'Exclusive Economic Zone (EEZ)',
             ESPACES_MARITIMES_MER_TERRITORIALE: 'Territorial sea (12 nm)',
             ESPACES_MARITIMES_ZONE_CONTIGUE: 'Contiguous zone (24 nm)',
@@ -35,8 +35,8 @@ module.exports = function ({ wmtsUrl, tmsUrl, wmsUrl, wcsUrl, k2Url, s3Url }) {
         content: {
           symbols: [
             { symbol: { 'media/KShape': { options: { shape: 'rect', color: '#6A0DAD', opacity: 0.5 } } }, label: 'Layers.ESPACES_MARITIMES_MER_TERRITORIALE' },
-            { symbol: { 'media/KShape': { options: { shape: 'rect', color: '#1565C0', opacity: 0.5 } } }, label: 'Layers.ESPACES_MARITIMES_ZEE' },
             { symbol: { 'media/KShape': { options: { shape: 'rect', color: '#0D1B6E', opacity: 0.5 } } }, label: 'Layers.ESPACES_MARITIMES_ZONE_CONTIGUE' },
+            { symbol: { 'media/KShape': { options: { shape: 'rect', color: '#1565C0', opacity: 0.5 } } }, label: 'Layers.ESPACES_MARITIMES_ZEE' },
             { symbol: { 'media/KShape': { options: { shape: 'rect', color: '#FFD600', opacity: 0.5 } } }, label: 'Layers.ESPACES_MARITIMES_PLATEAU_CONTINENTAL' }
           ]
         }
@@ -58,28 +58,28 @@ module.exports = function ({ wmtsUrl, tmsUrl, wmsUrl, wcsUrl, k2Url, s3Url }) {
       i18n: {
         fr: {
           Layers: {
-            DELIMITATIONS_MARITIMES: 'Délimitations Maritimes',
-            DELIMITATIONS_MARITIMES_DESCRIPTION: 'Lignes de délimitation des espaces maritimes (ligne de base, mer territoriale, ZEE...)',
+            DELIMITATIONS_MARITIMES: 'Délimitations maritimes France (SHOM)',
+            DELIMITATIONS_MARITIMES_DESCRIPTION: 'Délimitations des espaces maritimes sous juridiction française - édition 2022 (SHOM)',
             DELIMITATIONS_MARITIMES_LIGNE_BASE: 'Ligne de base droite',
             DELIMITATIONS_MARITIMES_MER_TERRITORIALE: 'Mer territoriale',
             DELIMITATIONS_MARITIMES_ZONE_CONTIGUE: 'Zone contiguë',
             DELIMITATIONS_MARITIMES_ZEE: 'Zone économique exclusive',
-            DELIMITATIONS_MARITIMES_PLATEAU_CONTINENTAL: 'Plateau continental',
-            DELIMITATIONS_MARITIMES_EAUX_INTERIEURES: 'Eaux intérieures',
-            DELIMITATIONS_MARITIMES_ZPE: 'Zone de protection écologique'
+            DELIMITATIONS_MARITIMES_ACCORD: 'Délimitations établies par un accord entre Etats',
+            DELIMITATIONS_MARITIMES_REVENDIQUEE: 'Délimitations revendiquées',
+            DELIMITATIONS_MARITIMES_PLATEAU_CONTINENTAL: 'Plateau continental'
           }
         },
         en: {
           Layers: {
-            DELIMITATIONS_MARITIMES: 'Maritime Boundaries',
-            DELIMITATIONS_MARITIMES_DESCRIPTION: 'Maritime boundary lines (baseline, territorial sea, EEZ...)',
+            DELIMITATIONS_MARITIMES: 'French maritime boundaries (SHOM)',
+            DELIMITATIONS_MARITIMES_DESCRIPTION: 'Boundaries of maritime areas under French jurisdiction - 2022 edition (SHOM)',
             DELIMITATIONS_MARITIMES_LIGNE_BASE: 'Straight baseline',
             DELIMITATIONS_MARITIMES_MER_TERRITORIALE: 'Territorial sea',
             DELIMITATIONS_MARITIMES_ZONE_CONTIGUE: 'Contiguous zone',
             DELIMITATIONS_MARITIMES_ZEE: 'Exclusive Economic Zone',
-            DELIMITATIONS_MARITIMES_PLATEAU_CONTINENTAL: 'Continental shelf',
-            DELIMITATIONS_MARITIMES_EAUX_INTERIEURES: 'Internal waters',
-            DELIMITATIONS_MARITIMES_ZPE: 'Ecological protection zone'
+            DELIMITATIONS_MARITIMES_ACCORD: 'Boundaries established by agreement between States',
+            DELIMITATIONS_MARITIMES_REVENDIQUEE: 'Claimed boundaries',
+            DELIMITATIONS_MARITIMES_PLATEAU_CONTINENTAL: 'Continental shelf'
           }
         }
       },
@@ -95,8 +95,9 @@ module.exports = function ({ wmtsUrl, tmsUrl, wmsUrl, wcsUrl, k2Url, s3Url }) {
             { symbol: { 'media/KShape': { options: { shape: 'line', color: '#e74c3c', opacity: 1 } } }, label: 'Layers.DELIMITATIONS_MARITIMES_LIGNE_BASE' }, // STSLNE
             { symbol: { 'media/KShape': { options: { shape: 'line', color: '#2980b9', opacity: 1 } } }, label: 'Layers.DELIMITATIONS_MARITIMES_MER_TERRITORIALE' }, // marlim_12M
             { symbol: { 'media/KShape': { options: { shape: 'line', color: '#27ae60', opacity: 1 } } }, label: 'Layers.DELIMITATIONS_MARITIMES_ZONE_CONTIGUE' }, // marlim_24M
-            { symbol: { 'media/KShape': { options: { shape: 'line', color: '#f39c12', opacity: 1 } } }, label: 'Layers.DELIMITATIONS_MARITIMES_ZEE' }, // marbdy_accord
-            { symbol: { 'media/KShape': { options: { shape: 'line', color: '#d35400', opacity: 1 } } }, label: 'Layers.DELIMITATIONS_MARITIMES_ZPE' }, // marbdy_revendiquee
+            { symbol: { 'media/KShape': { options: { shape: 'line', color: '#f39c12', opacity: 1 } } }, label: 'Layers.DELIMITATIONS_MARITIMES_ZEE' }, // marlim_200M
+            { symbol: { 'media/KShape': { options: { shape: 'line', color: '#434364', opacity: 1 } } }, label: 'Layers.DELIMITATIONS_MARITIMES_ACCORD' }, // marbdy_accord
+            { symbol: { 'media/KShape': { options: { shape: 'line', color: '#d35400', opacity: 1 } } }, label: 'Layers.DELIMITATIONS_MARITIMES_REVENDIQUEE' }, // marbdy_revendiquee
             { symbol: { 'media/KShape': { options: { shape: 'line', color: '#8e44ad', opacity: 1 } } }, label: 'Layers.DELIMITATIONS_MARITIMES_PLATEAU_CONTINENTAL' } // marlim_pc
           ]
         }
@@ -111,13 +112,14 @@ module.exports = function ({ wmtsUrl, tmsUrl, wmsUrl, wcsUrl, k2Url, s3Url }) {
             dataLayer: 'delmar',
             symbolizer: {
               type: 'LineSymbolizer',
-              color: `<% if      (properties.type === 'STSLNE')              { %>rgba(231,  76,  60, 1)<%
-                      } else if (properties.type === 'marlim_12M')           { %>rgba( 41, 128, 185, 1)<%
-                      } else if (properties.type === 'marlim_24M')           { %>rgba( 39, 174,  96, 1)<%
-                      } else if (properties.type === 'marbdy_accord')        { %>rgba(243, 156,  18, 1)<%
-                      } else if (properties.type === 'marbdy_revendiquee')   { %>rgba(211,  84,   0, 1)<%
-                      } else if (properties.type === 'marlim_pc')            { %>rgba(142,  68, 173, 1)<%
-                      } else                                                  { %>rgba(153, 153, 153, 1)<% } %>`,
+              color: `<% if      (properties.type === 'STSLNE')              { %>#e74c3c<%
+                      } else if (properties.type === 'marlim_12M')           { %>#2980b9<%
+                      } else if (properties.type === 'marlim_24M')           { %>#27ae60<%
+                      } else if (properties.type === 'marlim_200M')          { %>#f39c12<%
+                      } else if (properties.type === 'marbdy_accord')        { %>#434364<%
+                      } else if (properties.type === 'marbdy_revendiquee')   { %>#d35400<%
+                      } else if (properties.type === 'marlim_pc')            { %>#8e44ad<%
+                      } else                                                 { %>#999999<% } %>`,
               width: 2,
               opacity: 1
             }
