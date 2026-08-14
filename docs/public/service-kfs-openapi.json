@@ -8,11 +8,8 @@
     "description" : "OGC API - Features standard",
     "url": "http://www.opengis.net/doc/IS/ogcapi-features-1/1.0"
   },
-  "servers" : [
-    {
-      "url" : "http://localhost:8081/api",
-      "description" : "This server"
-    }
+   "security": [
+    { "bearerAuth": [] }
   ],
   "tags" : [
     {
@@ -713,27 +710,6 @@
           }
         }
       }
-    },
-    "securitySchemes" : {
-      "jwtInQuery" : {
-        "type" : "apiKey",
-        "description" : "API key to authorize requests from query.",
-        "in" : "query",
-        "name" : "jwt"
-      },
-      "jwtInHeader" : {
-        "type" : "http",
-        "description" : "API bearer key to authorize requests from header.",
-        "scheme" : "bearer",
-        "bearerFormat" : "JWT"
-      }
     }
-  },
-  "security": [
-    {
-      "jwtInQuery" : []
-    }, {
-      "jwtInHeader" : []
-    }
-  ]
+  }
 }

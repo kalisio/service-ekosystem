@@ -136,8 +136,8 @@ catalogs:
       specifier: ~13.0.1
       version: 13.0.6
     helmet:
-      specifier: ~3.5.0
-      version: 3.5.0
+      specifier: ~8.3.0
+      version: 8.3.0
     husky:
       specifier: ~9.1.7
       version: 9.1.7
@@ -216,9 +216,15 @@ catalogs:
     vitepress:
       specifier: ~1.6.3
       version: 1.6.4
+    vitepress-openapi:
+      specifier: ~0.2.1
+      version: 0.2.1
     vitepress-plugin-mermaid:
       specifier: ~2.0.16
       version: 2.0.17
+    vitepress-theme-kalisio:
+      specifier: github:kalisio/vitepress-theme-kalisio
+      version: 1.0.0
     vitest:
       specifier: ~4.1.4
       version: 4.1.4
@@ -304,10 +310,10 @@ importers:
         version: 2.0.17(mermaid@10.8.0)(vitepress@1.6.4(@algolia/client-search@5.56.0)(axios@1.15.0)(jwt-decode@4.0.0)(postcss@8.5.19)(search-insights@2.17.3)(typescript@6.0.2))
     devDependencies:
       vitepress-openapi:
-        specifier: ^0.2.1
+        specifier: 'catalog:'
         version: 0.2.1(vitepress@1.6.4(@algolia/client-search@5.56.0)(axios@1.15.0)(jwt-decode@4.0.0)(postcss@8.5.19)(search-insights@2.17.3)(typescript@6.0.2))(vue@3.5.40(typescript@6.0.2))
       vitepress-theme-kalisio:
-        specifier: github:kalisio/vitepress-theme-kalisio
+        specifier: 'catalog:'
         version: https://codeload.github.com/kalisio/vitepress-theme-kalisio/tar.gz/a4f9731485a6d227ee0451e0fcd76ddd867f80b2(vitepress-openapi@0.2.1(vitepress@1.6.4(@algolia/client-search@5.56.0)(axios@1.15.0)(jwt-decode@4.0.0)(postcss@8.5.19)(search-insights@2.17.3)(typescript@6.0.2))(vue@3.5.40(typescript@6.0.2)))
 
   packages/service-geokatcher:
@@ -447,7 +453,7 @@ importers:
         version: 13.0.6
       helmet:
         specifier: 'catalog:'
-        version: 3.5.0
+        version: 8.3.0
       lodash:
         specifier: 'catalog:'
         version: 4.18.1
@@ -652,7 +658,7 @@ importers:
         version: 8.1.0
       helmet:
         specifier: 'catalog:'
-        version: 3.5.0
+        version: 8.3.0
       is-docker:
         specifier: 'catalog:'
         version: 2.2.1
@@ -4881,6 +4887,10 @@ packages:
   helmet@5.1.1:
     resolution: {integrity: sha512-/yX0oVZBggA9cLJh8aw3PPCfedBnbd7J2aowjzsaWwZh7/UFY0nccn/aHAggIgWUFfnykX8GKd3a1pSbrmlcVQ==}
     engines: {node: '>=12.0.0'}
+
+  helmet@8.3.0:
+    resolution: {integrity: sha512-Qgpiaws3Sm30Av8Eah6sjMCZZwjlBu+E68rhpCWBshY1lb09HtLwj5GviX0OyQIn+ulUS0iX0AxN5n3tLZzz1w==}
+    engines: {node: '>=18.0.0'}
 
   hide-powered-by@1.0.0:
     resolution: {integrity: sha512-x3IRfbNpJL6yAv0/w6orSgmswTv/m7xVgX0/mPNhtPDAyZhttfS3maOjHVcC6kuOxbFc6ZO8bDKZd/hwBFU+Jw==}
@@ -12941,6 +12951,8 @@ snapshots:
       - supports-color
 
   helmet@5.1.1: {}
+
+  helmet@8.3.0: {}
 
   hide-powered-by@1.0.0: {}
 
