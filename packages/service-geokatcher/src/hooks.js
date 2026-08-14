@@ -25,7 +25,8 @@ export default {
     all: [
       async (context) => {
         if (context.error && process.env.NODE_ENV !== 'test') {
-          context.app.logger.error(`ERROR HOOK: Error in service [${context.path}]: ${context.error.message}${context.error.data ? `:\ndata : ${JSON.stringify(context.error.data)}` : ''}\n ${context.error.stack}`)
+          const errorData = context.error.data ? `:\ndata : ${JSON.stringify(context.error.data)}` : ''
+          context.app.logger.error(`ERROR HOOK: Error in service [${context.path}]: ${context.error.message}${errorData}\n ${context.error.stack}`)
         }
       }
     ],

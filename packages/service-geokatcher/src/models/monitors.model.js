@@ -42,7 +42,7 @@ const monitorsModel = {
     * Evaluate the monitor object
     * @param {Object} monitorObject  The monitor object to evaluate, it will be modified by the function, the lastRun object will be updated
     * @param {Boolean} throwError  If true, the function will throw an error if the evaluation fails, if false, the error will be caught and specified in the lastRun object
-    * @returns {Object}  The data that match the evaluation
+    * @returns {Promise<Object>}  The data that match the evaluation
     */
   async evaluate (monitorObject, throwError = false) {
     const data = {}

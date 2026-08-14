@@ -38,10 +38,9 @@ export async function createServer () {
   })
 
   // Top-level error handler
-  process.on('unhandledRejection', (reason, p) => {
-    console.log(reason, p)
+  process.on('unhandledRejection', (reason, p) =>
     app.logger.error('Unhandled Rejection: ', reason)
-  })
+  )
 
   // Set up database
   app.set('mongoClient', MongoClient.connect(app.get('dbUrl')).then(client => client.db()))

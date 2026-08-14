@@ -6,7 +6,7 @@ async function run () {
   try {
     await createServer()
   } catch (error) {
-    console.error(error)
+    console.trace('Failed to start server', error)
     process.exit(1)
   }
 }

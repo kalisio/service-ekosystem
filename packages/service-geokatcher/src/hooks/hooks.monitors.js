@@ -182,18 +182,14 @@ export async function startMonitor (hook) {
 export function stopMonitor (hook) {
   if (Array.isArray(hook.result)) {
     hook.result.forEach((result) => {
-      if (hook.event === 'removed' && result.monitor.enabled) {
-        monitorsModel.stopMonitor(result)
-      } else if (['patch', 'update'].includes(hook.method) && result.monitor && result.monitor.enabled) {
+      if ((hook.event === 'removed' || ['patch', 'update'].includes(hook.method)) && result.monitor?.enabled) {
         monitorsModel.stopMonitor(result)
       }
     })
-  } else {
-    if (hook.event === 'removed' && hook.result.monitor.enabled) {
-      monitorsModel.stopMonitor(hook.result)
-    } else if (['patch', 'update'].includes(hook.method) && hook.data.monitor && hook.data.monitor.enabled) {
-      monitorsModel.stopMonitor(hook.data)
-    }
+  } else if (hook.event === 'removed' && hook.result.monitor?.enabled) {
+    monitorsModel.stopMonitor(hook.result)
+  } else if (['patch', 'update'].includes(hook.method) && hook.data.monitor?.enabled) {
+    monitorsModel.stopMonitor(hook.data)
   }
   return hook
 }
