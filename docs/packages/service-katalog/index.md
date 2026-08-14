@@ -58,11 +58,20 @@ flowchart LR
 
 | File | Responsibility |
 | --- | --- |
-| [`src/main.js`](https://github.com/kalisio/service-ekosystem/blob/master/packages/service-katalog/src/main.js) | Entry point — creates the server and calls `run()`. |
-| [`src/server.js`](https://github.com/kalisio/service-ekosystem/blob/master/packages/service-katalog/src/server.js) | `Server` class: builds the KDK app, configures distribution, loads the catalog and starts listening. |
+| [`src/main.js`](https://github.com/kalisio/service-ekosystem/blob/master/packages/service-katalog/src/main.js) | Entry point — calls `createServer()` and exits on failure. |
+| [`src/server.js`](https://github.com/kalisio/service-ekosystem/blob/master/packages/service-katalog/src/server.js) | `createServer(config)` factory: builds the KDK app, configures distribution, loads the catalog, registers the services and starts listening. |
 | [`src/layers.js`](https://github.com/kalisio/service-ekosystem/blob/master/packages/service-katalog/src/layers.js) | `loadLayers` / `loadCategories` / `loadSublegends` — glob and evaluate the `config/**/*.cjs` files. |
-| [`src/services/index.js`](https://github.com/kalisio/service-ekosystem/blob/master/packages/service-katalog/src/services/index.js) | Registers the `catalog` service from `@kalisio/kdk-map-api`. |
-| [`src/logger.js`](https://github.com/kalisio/service-ekosystem/blob/master/packages/service-katalog/src/logger.js) | Winston logger configuration. |
+| [`src/routes.js`](https://github.com/kalisio/service-ekosystem/blob/master/packages/service-katalog/src/routes.js) | Plain HTTP routes — currently the `healthcheck` endpoint. |
+| [`src/hooks.js`](https://github.com/kalisio/service-ekosystem/blob/master/packages/service-katalog/src/hooks.js) | Application-level Feathers hooks running for every service (empty for now). |
+| [`src/channels.js`](https://github.com/kalisio/service-ekosystem/blob/master/packages/service-katalog/src/channels.js) | Real-time event channels. |
+| [`src/middlewares.js`](https://github.com/kalisio/service-ekosystem/blob/master/packages/service-katalog/src/middlewares.js) | `notFound` and `errorHandler` Express middlewares — always configured last. |
+
+The `catalog` service itself is not declared locally: it comes from
+[`@kalisio/kdk-map-api`](https://github.com/kalisio/kdk-ekosystem/tree/master/packages/kdk-map-api),
+along with the Winston logger which is set up by `createApplication` from the `logs` configuration key.
+
+`createServer(config)` accepts an object whose keys override the loaded configuration — the tests use it
+to pick a free port and to disable distribution (`createServer({ port: 0, distribution: false })`).
 
 ### Startup flow
 
@@ -70,7 +79,7 @@ On `server.run()` the service performs the following steps:
 
 ```mermaid
 sequenceDiagram
-  participant S as Server.run()
+  participant S as createServer()
   participant DB as MongoDB
   participant FS as config/*.cjs
   participant KDK as kdk-map-api
@@ -85,11 +94,17 @@ sequenceDiagram
   S->>KDK: createCatalogService()
   S->>KDK: createDefaultCatalogLayers()
   S->>KDK: createCatalogFeaturesServices()
+  S->>S: hooks, channels, routes, middlewares
   S->>S: app.listen(port)
   Note over S,D: service is now published on the bus
   C->>D: discover service by key "katalog"
   D-->>C: api/catalog (remote service)
 ```
+
+`createDefaultCatalogLayers` creates each configured layer in MongoDB if it is missing, and replaces
+it otherwise — so the configuration files are the source of truth on every restart, while anything
+added through the API in the meantime is preserved. `createCatalogFeaturesServices` then registers a
+feature service for every layer declaring a `service` property.
 
 ### Configuration files
 
@@ -100,14 +115,20 @@ each exporting a function that returns an array of definitions:
 ```
 config/
 ├── default.cjs              # app + distribution configuration
-├── layers/                  # 26 files grouped by theme
+├── layers/                  # 28 files grouped by theme
 │   ├── basemap/             # ign, osm, cesium, imagery, k2
-│   ├── weather/             # forecast, awc, weatherlink, meteofrance, …
+│   ├── weather/             # forecast, awc, weatherlink, meteofrance, meteoradar
 │   ├── hydrography/         # hubeau, flood, vigicrues
 │   ├── administrative/      # osm-boundaries, adminexpress, demography
-│   └── …
-├── categories/              # how layers are grouped in the UI
-└── sublegends/              # extra legend entries
+│   ├── atmospheric/         # icos, openaq
+│   ├── fire/                # firms
+│   ├── infrastructure/      # centipede, rte
+│   ├── lab/                 # lab
+│   ├── marine/              # maritime, openseamap
+│   ├── radioactivity/       # openradiation, teleray
+│   └── shot/                # mapillary, panoramax
+├── categories/              # 14 files — how layers are grouped in the UI
+└── sublegends/              # 11 files — extra legend entries
 ```
 
 The loaders glob every `*.cjs` file in the corresponding directory and call it with a
@@ -164,7 +185,7 @@ pnpm dev      # start in watch mode (node --watch src/main.js)
 pnpm build    # produce the dist/ bundle with Vite
 ```
 
-By default the service listens on **port 8187** and connects to
+By default the service listens on **port 8187**, exposes its API under `/api` and connects to
 `mongodb://127.0.0.1:27017/katalog`.
 
 ## Configuration
@@ -177,11 +198,18 @@ overridden by environment variables.
 
 | Key | Default | Description |
 | --- | --- | --- |
-| `apiPath` | `/api` | Base path for services (the catalog is exposed at `api/catalog`). |
+| `apiPath` | `/api` | Base path for services (the catalog is exposed at `api/catalog`), from `API_PREFIX`. |
 | `host` | `localhost` | Bind host (`HOSTNAME` env var). |
 | `port` | `8187` | Listening port (`PORT` env var). |
+| `baseUrl` | `http://localhost:8187/api` | Public URL of the API (`BASE_URL` env var). |
+| `https` | `null` | Set it to `{ key, cert }` to serve over HTTPS instead of HTTP. |
 | `db.url` | `mongodb://127.0.0.1:27017/katalog` | MongoDB connection string. |
-| `paginate` | `{ default: 10, max: 50 }` | Default pagination for `find`. |
+| `paginate` | `{ default: 10, max: 50 }` | Application-wide pagination. The `catalog` service overrides it with `{ default: 1000, max: 1000 }`, and the layer feature services with `{ default: 5000, max: 5000 }`. |
+| `origins` | `['http://localhost:3030']` | CORS origins. |
+| `logs` | Console + daily rotating file | Winston transports, the files being written to `logs/` for 30 days. |
+
+The service does not configure `authentication`: reached directly on its own port, the API answers
+without a token. Access control is expected to be enforced by the API gateway in front of it.
 
 ### Feathers Distributed
 
@@ -241,6 +269,11 @@ Here are the environment variables you can use to customize the service:
 | --- | --- | --- |
 | `HOSTNAME` | The hostname to be used when exposing the service | `localhost` |
 | `PORT` | The port to be used when exposing the service | `8187` |
+| `API_PREFIX` | The path prefix under which the services are exposed | `/api` |
+| `BASE_URL` | The URL used when exposing the service | built from `HOSTNAME`, `PORT` and `API_PREFIX` |
+| `NODE_ENV` | Set it to `development` to enable verbose logging | |
+| `VERSION` | Overrides the version reported by `healthcheck` | package version |
+| `BUILD_NUMBER` | When set, added as `buildNumber` to the `healthcheck` response | |
 | `SUBDOMAIN` | The base domain used to build the default map URLs (e.g. `wmtsUrl = https://mapcache.<SUBDOMAIN>/mapcache/wmts/1.0.0`) | `test.kalisio.xyz` |
 | `API_GATEWAY_URL` | When set, all map URLs are derived from this single gateway instead of the per-service hosts (e.g. `wmtsUrl = <API_GATEWAY_URL>/wmts/1.0.0`) | |
 | `K2_URL` | Explicit override for the K2 endpoint | derived from `SUBDOMAIN` / `API_GATEWAY_URL` |
@@ -258,6 +291,22 @@ LAYERS_FILTER='WIND*'             # only layers whose name starts with WIND
 LAYERS_FILTER='* -WIND_TILED'     # every layer except WIND_TILED
 ```
 
+## API
+
+Beside the distribution bus, **service-katalog** exposes its content over HTTP under the API prefix
+(`/api` by default):
+
+- a **`healthcheck`** endpoint returning the service name and its version;
+- the **`catalog`** service, providing full CRUD over the layers, categories and sublegends
+  (`GET`, `POST`, `PUT`, `PATCH`, `DELETE` on `api/catalog`);
+- one **feature service per layer** declaring a `service` property, exposing the layer's GeoJSON
+  features under `api/<service>` — e.g. `api/hubeau-hydro-observations`.
+
+The full request/response schema — the catalog object structure, the query parameters accepted by
+`find` and the error codes — is documented on the [API reference](./service-katalog-openapi) page.
+The spec deliberately declares no server, so pick **your own instance URL** in the server selector
+before sending a request from that page.
+
 ## Deploying
 
 This service is designed to be deployed using the [Kargo](https://github.com/kalisio/kargo)
@@ -273,15 +322,20 @@ instance (see [`config/test.json`](https://github.com/kalisio/service-ekosystem/
 pnpm test     # vitest run --coverage
 ```
 
-Two suites are provided:
+Three suites are provided:
 
 - [`test/app.test.js`](https://github.com/kalisio/service-ekosystem/blob/master/packages/service-katalog/test/app.test.js) —
   boots the server and checks that unknown routes return a 404 JSON error and that the
   `catalog` service is populated with layers on startup.
+- [`test/healthcheck.test.js`](https://github.com/kalisio/service-ekosystem/blob/master/packages/service-katalog/test/healthcheck.test.js) —
+  checks the `healthcheck` endpoint, including the `buildNumber` added when `BUILD_NUMBER` is set.
 - [`test/distribution.test.js`](https://github.com/kalisio/service-ekosystem/blob/master/packages/service-katalog/test/distribution.test.js) —
   spins up a remote consumer and verifies service discovery over `feathers-distributed`,
   layer/category/sublegend queries, full CRUD via distribution, and that a consumer with
   the wrong key cannot discover the services.
+
+The first two boot the server with `createServer({ port: 0, distribution: false })`, so they need
+MongoDB but no free fixed port and no distribution bus.
 
 ## License
 
