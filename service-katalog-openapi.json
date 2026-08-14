@@ -1,0 +1,715 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "service-katalog",
+    "description": "Catalog of map layers, categories and sublegends for KDK-based applications.\n\nThe `catalog` service is a [Feathers](https://feathersjs.com/) service exposed over REST under the API prefix (`/api` by default): `find`, `get`, `create`, `update`, `patch` and `remove` map to the usual HTTP verbs. Layers are stored in MongoDB, while categories and sublegends declared in the configuration files are merged into `find` results at runtime.\n\nIn addition, a feature service is created dynamically for every layer declaring a `service` (or `probeService`) property, exposing the layer's GeoJSON features under `/{featureService}`.\n",
+    "version": "1.0.0"
+  },
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "tags": [
+    {
+      "name": "Health",
+      "description": "Service status"
+    },
+    {
+      "name": "Catalog",
+      "description": "Layers, categories and sublegends"
+    },
+    {
+      "name": "Features",
+      "description": "GeoJSON features of the layers declaring a service"
+    }
+  ],
+  "paths": {
+    "/healthcheck": {
+      "get": {
+        "tags": ["Health"],
+        "summary": "Service health check",
+        "operationId": "healthcheck",
+        "description": "Returns the service name and its version. The version can be overridden at build time with the `VERSION` environment variable, and a `buildNumber` is added to the response when `BUILD_NUMBER` is set.",
+        "security": [],
+        "responses": {
+          "200": {
+            "description": "Service is up",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["name", "version"],
+                  "properties": {
+                    "name": {
+                      "type": "string",
+                      "example": "katalog"
+                    },
+                    "version": {
+                      "type": "string",
+                      "example": "0.0.0"
+                    },
+                    "buildNumber": {
+                      "type": "string",
+                      "example": "42"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/catalog": {
+      "get": {
+        "tags": ["Catalog"],
+        "summary": "List catalog objects",
+        "operationId": "findCatalog",
+        "description": "Returns a paginated list of catalog objects.\n\nWithout a `type` query parameter only **layers** are returned — the service implicitly applies `type: { $nin: ['Context', 'Service', 'Category', 'Sublegend'] }`. Query `type=Category` or `type=Sublegend` to retrieve the categories and sublegends injected from the configuration files, which are merged with any user-defined ones stored in MongoDB.\n\nAny MongoDB query operator enabled on the service can be used, e.g. `tags[$in][]=hydrography`.\n",
+        "parameters": [
+          {
+            "name": "type",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "enum": ["BaseLayer", "OverlayLayer", "TerrainLayer", "Category", "Sublegend"]
+            },
+            "description": "Filter on the object type. Defaults to every layer type.",
+            "example": "OverlayLayer"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Exact match on the object name (i18n key).",
+            "example": "Layers.OSM_BRIGHT"
+          },
+          {
+            "name": "tags[$in][]",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "style": "form",
+            "explode": true,
+            "description": "Return the layers carrying at least one of these tags.",
+            "example": ["hydrography"]
+          },
+          {
+            "name": "$limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 1000,
+              "default": 1000
+            },
+            "description": "Maximum number of objects returned. `$limit=0` returns only the total count — and skips the merge of the configured categories/sublegends.",
+            "example": 10
+          },
+          {
+            "name": "$skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Number of objects to skip.",
+            "example": 0
+          },
+          {
+            "name": "$sort[name]",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "enum": [1, -1]
+            },
+            "description": "Sort on a property, `1` ascending and `-1` descending.",
+            "example": 1
+          },
+          {
+            "name": "$select[]",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "style": "form",
+            "explode": true,
+            "description": "Restrict the returned properties.",
+            "example": ["name", "type", "tags"]
+          },
+          {
+            "name": "$search",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Fuzzy, diacritic-insensitive search on the `name` and `label` properties.",
+            "example": "osm"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated list of catalog objects",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CatalogPage"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Catalog"],
+        "summary": "Create a catalog object",
+        "operationId": "createCatalog",
+        "description": "Creates a layer, a category or a sublegend. The `name` has to be unique for a given `type`. `createdAt` and `updatedAt` are set by the service.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CatalogObjectInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "The created object",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CatalogObject"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "An object with the same name and type already exists",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/catalog/{id}": {
+      "parameters": [
+        {
+          "name": "id",
+          "in": "path",
+          "required": true,
+          "schema": {
+            "type": "string"
+          },
+          "description": "MongoDB identifier of the catalog object.",
+          "example": "65f1c0b5e1c2a30012a4b8d1"
+        }
+      ],
+      "get": {
+        "tags": ["Catalog"],
+        "summary": "Read a catalog object",
+        "operationId": "getCatalog",
+        "responses": {
+          "200": {
+            "description": "The requested object",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CatalogObject"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No object with this identifier",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Catalog"],
+        "summary": "Replace a catalog object",
+        "operationId": "updateCatalog",
+        "description": "Replaces the whole object. This is the operation used on startup to refresh the layers declared in the configuration files. Renaming a layer also updates the categories and contexts referencing it.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CatalogObjectInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The updated object",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CatalogObject"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No object with this identifier",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": ["Catalog"],
+        "summary": "Update some properties of a catalog object",
+        "operationId": "patchCatalog",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "description": "The properties to update.",
+                "example": {
+                  "tags": ["hydrography", "measure"]
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The updated object",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CatalogObject"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No object with this identifier",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Catalog"],
+        "summary": "Remove a catalog object",
+        "operationId": "removeCatalog",
+        "description": "Removes the object and drops its name from the categories, contexts and projects referencing it.",
+        "responses": {
+          "200": {
+            "description": "The removed object",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CatalogObject"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No object with this identifier",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/{featureService}": {
+      "get": {
+        "tags": ["Features"],
+        "summary": "List the features of a layer",
+        "operationId": "findFeatures",
+        "description": "Feature services are **created dynamically**, one per layer declaring a `service` (or `probeService`) property — the path segment is the value of that property, e.g. `hubeau-hydro-observations` or `admin-express`. Query the catalog with `$select[]=service` to list the ones available on a given instance.\n\nThese services are paginated with a default and maximum page size of 5000.\n",
+        "parameters": [
+          {
+            "name": "featureService",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The layer's `service` property.",
+            "example": "admin-express"
+          },
+          {
+            "name": "$limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 5000,
+              "default": 5000
+            },
+            "description": "Maximum number of features returned.",
+            "example": 10
+          },
+          {
+            "name": "$skip",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "description": "Number of features to skip.",
+            "example": 0
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Paginated list of GeoJSON features",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FeaturePage"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No feature service registered under this path",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "Paste a Kalisio JWT access token to authorize requests sent through the API gateway. The service itself does not configure authentication: reached directly on its own port it answers without a token."
+      }
+    },
+    "schemas": {
+      "I18n": {
+        "type": "object",
+        "description": "Translations keyed by locale then namespace, used to resolve the `name` and `description` keys.",
+        "example": {
+          "fr": {
+            "Layers": {
+              "OSM_BRIGHT": "Plan",
+              "OSM_BRIGHT_DESCRIPTION": "Données OpenStreetMap (style clair)"
+            }
+          },
+          "en": {
+            "Layers": {
+              "OSM_BRIGHT": "Plan",
+              "OSM_BRIGHT_DESCRIPTION": "OpenStreeMap data (bright style)"
+            }
+          }
+        }
+      },
+      "CatalogObjectInput": {
+        "type": "object",
+        "required": ["name", "type"],
+        "description": "A layer, a category or a sublegend. Only the common properties are described here — the rendering options (`leaflet`, `cesium`, …) are free-form and depend on the layer type.",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Unique name for a given type, usually an i18n key.",
+            "example": "Layers.OSM_BRIGHT"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["BaseLayer", "OverlayLayer", "TerrainLayer", "Category", "Sublegend"],
+            "example": "BaseLayer"
+          },
+          "description": {
+            "type": "string",
+            "description": "i18n key of the description.",
+            "example": "Layers.OSM_BRIGHT_DESCRIPTION"
+          },
+          "i18n": {
+            "$ref": "#/components/schemas/I18n"
+          },
+          "tags": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Used by the categories and sublegends to group the layers.",
+            "example": ["street"]
+          },
+          "icon": {
+            "type": "string",
+            "example": "streetview"
+          },
+          "iconUrl": {
+            "type": "string",
+            "example": "https://mapcache.test.kalisio.xyz/mapcache/tms/1.0.0/osm-bright@GLOBAL_WEBMERCATOR/0/0/0.png"
+          },
+          "attribution": {
+            "type": "string",
+            "example": "OpenStreetMap © OpenStreetMap contributors, ODbL license"
+          },
+          "service": {
+            "type": "string",
+            "description": "When set, a feature service is created under this path for the layer's features.",
+            "example": "hubeau-hydro-observations"
+          },
+          "probeService": {
+            "type": "string",
+            "description": "Companion service holding the static probe locations of a measure layer.",
+            "example": "hubeau-hydro-stations"
+          },
+          "featureLabel": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            ],
+            "description": "Feature property (or properties) holding the human-readable label. Also used by service-geokoder to expose the layer as a geocoding source.",
+            "example": "name"
+          },
+          "baseQuery": {
+            "type": "object",
+            "description": "Query always applied when reading the layer's features.",
+            "example": {
+              "properties.type": "station"
+            }
+          },
+          "leaflet": {
+            "type": "object",
+            "description": "2D rendering options.",
+            "example": {
+              "type": "tileLayer",
+              "isVisible": true,
+              "source": "https://mapcache.test.kalisio.xyz/mapcache/tms/1.0.0/osm-bright@GLOBAL_WEBMERCATOR/{z}/{x}/{y}.png",
+              "maxZoom": 21,
+              "tms": true
+            }
+          },
+          "cesium": {
+            "type": "object",
+            "description": "3D rendering options.",
+            "example": {
+              "type": "TileMapService",
+              "url": "https://mapcache.test.kalisio.xyz/mapcache/tms/1.0.0/osm-bright@GLOBAL_WEBMERCATOR",
+              "maximumLevel": 18
+            }
+          },
+          "options": {
+            "type": "object",
+            "description": "Category and sublegend options — mostly the `filter` selecting the layers they group.",
+            "example": {
+              "exclusive": false,
+              "filter": {
+                "type": "OverlayLayer",
+                "tags": {
+                  "$in": ["hydrography"]
+                }
+              }
+            }
+          }
+        }
+      },
+      "CatalogObject": {
+        "allOf": [
+          {
+            "type": "object",
+            "required": ["_id"],
+            "properties": {
+              "_id": {
+                "type": "string",
+                "description": "MongoDB identifier. Absent from the categories and sublegends coming from the configuration files.",
+                "example": "65f1c0b5e1c2a30012a4b8d1"
+              },
+              "createdAt": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2026-08-14T09:12:33.041Z"
+              },
+              "updatedAt": {
+                "type": "string",
+                "format": "date-time",
+                "example": "2026-08-14T09:12:33.041Z"
+              }
+            }
+          },
+          {
+            "$ref": "#/components/schemas/CatalogObjectInput"
+          }
+        ]
+      },
+      "CatalogPage": {
+        "type": "object",
+        "required": ["total", "limit", "skip", "data"],
+        "properties": {
+          "total": {
+            "type": "integer",
+            "description": "Number of objects matching the query in the database.",
+            "example": 96
+          },
+          "limit": {
+            "type": "integer",
+            "example": 1000
+          },
+          "skip": {
+            "type": "integer",
+            "example": 0
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CatalogObject"
+            }
+          }
+        }
+      },
+      "Feature": {
+        "type": "object",
+        "required": ["type", "geometry", "properties"],
+        "properties": {
+          "_id": {
+            "type": "string",
+            "example": "65f1c0b5e1c2a30012a4b8f7"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["Feature"]
+          },
+          "geometry": {
+            "type": "object",
+            "required": ["type", "coordinates"],
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": ["Point", "LineString", "Polygon", "MultiPoint", "MultiLineString", "MultiPolygon"]
+              },
+              "coordinates": {
+                "description": "GeoJSON coordinates, longitude first.",
+                "example": [1.9373, 43.2996]
+              }
+            }
+          },
+          "properties": {
+            "type": "object",
+            "description": "Layer-dependent feature properties.",
+            "example": {
+              "name": "Carcassonne",
+              "code": "11069"
+            }
+          },
+          "time": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Measure timestamp, on the layers holding time series.",
+            "example": "2026-08-14T09:00:00.000Z"
+          }
+        }
+      },
+      "FeaturePage": {
+        "type": "object",
+        "required": ["total", "limit", "skip", "data"],
+        "properties": {
+          "total": {
+            "type": "integer",
+            "example": 34968
+          },
+          "limit": {
+            "type": "integer",
+            "example": 5000
+          },
+          "skip": {
+            "type": "integer",
+            "example": 0
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Feature"
+            }
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "NotFound"
+          },
+          "message": {
+            "type": "string",
+            "example": "No record found for id '65f1c0b5e1c2a30012a4b8d1'"
+          },
+          "code": {
+            "type": "integer",
+            "example": 404
+          },
+          "className": {
+            "type": "string",
+            "example": "not-found"
+          }
+        }
+      }
+    }
+  }
+}
