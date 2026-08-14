@@ -21,22 +21,22 @@ describe('geokoder:mbtiles', () => {
   })
 
   it('initialize the service', async () => {
-    server = await createServer({ port: 8453, apiUrl: 'http://localhost:8453/api' })
+    server = await createServer({ port: 8453, baseUrl: 'http://localhost:8453/api' })
     expect(server).toBeDefined()
     app = server.app
     expect(app).toBeDefined()
   }, 10000)
 
   it('mbtiles sources appear in capabilities', async () => {
-    const apiUrl = app.get('apiUrl')
-    let response = await fetch(`${apiUrl}/capabilities/forward`)
+    const baseUrl = app.get('baseUrl')
+    let response = await fetch(`${baseUrl}/capabilities/forward`)
     let body = await response.json()
     expect(body.geocoders).toBeDefined()
     expect(body.geocoders.includes('mairies:mairies')).toBe(false)
     expect(body.geocoders.includes('epci:epci50m')).toBe(false)
     expect(body.geocoders.includes('carcassonne:commune')).toBe(false)
 
-    response = await fetch(`${apiUrl}/capabilities/reverse`)
+    response = await fetch(`${baseUrl}/capabilities/reverse`)
     body = await response.json()
     expect(body.geocoders).toBeDefined()
     expect(body.geocoders.includes('mairies:mairies')).toBe(true)
@@ -45,9 +45,9 @@ describe('geokoder:mbtiles', () => {
   }, 10000)
 
   it('reverse geocoding on mbtiles sources', async () => {
-    const apiUrl = app.get('apiUrl')
+    const baseUrl = app.get('baseUrl')
     for (const location of locations) {
-      const response = await fetch(`${apiUrl}/reverse?lat=${location.lat}&lon=${location.lon}&distance=${location.distance}&sources=${location.sources}`)
+      const response = await fetch(`${baseUrl}/reverse?lat=${location.lat}&lon=${location.lon}&distance=${location.distance}&sources=${location.sources}`)
       const body = await response.json()
       expect(body.length).toBe(location.results.length)
       body.forEach((feature) => {

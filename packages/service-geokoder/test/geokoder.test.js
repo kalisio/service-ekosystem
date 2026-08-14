@@ -34,12 +34,12 @@ describe('geokoder:geokoder', () => {
   })
 
   it('initialize the services', async () => {
-    remoteServer = await createServer({ port: 8450, apiUrl: 'http://localhost:8450/api' })
+    remoteServer = await createServer({ port: 8450, baseUrl: 'http://localhost:8450/api' })
     remoteApp = remoteServer.app
     expect(remoteApp).toBeDefined()
     server = await createServer({
       port: 8451,
-      apiUrl: 'http://localhost:8451/api',
+      baseUrl: 'http://localhost:8451/api',
       distribution: {},
       providers: {
         Geokoder: {
@@ -54,9 +54,9 @@ describe('geokoder:geokoder', () => {
   }, 15000)
 
   it('geokoder proxy sources appear in capabilities', async () => {
-    const apiUrl = app.get('apiUrl')
+    const baseUrl = app.get('baseUrl')
     // Forward capabilities
-    let response = await fetch(`${apiUrl}/capabilities/forward`)
+    let response = await fetch(`${baseUrl}/capabilities/forward`)
     let body = await response.json()
     console.log(body)
     expect(body.geocoders).toBeDefined()
@@ -67,7 +67,7 @@ describe('geokoder:geokoder', () => {
     expect(body.geocoders.includes('remote:carcassonne:commune')).toBe(false)
     expect(body.geocoders.includes('remote:carcassonne:departement')).toBe(false)
     // Reverse capabilities
-    response = await fetch(`${apiUrl}/capabilities/reverse`)
+    response = await fetch(`${baseUrl}/capabilities/reverse`)
     body = await response.json()
     console.log(body)
     expect(body.geocoders).toBeDefined()
@@ -80,11 +80,11 @@ describe('geokoder:geokoder', () => {
   }, 10000)
 
   it('forward geocoding through geokoder proxy', async () => {
-    const apiUrl = app.get('apiUrl')
+    const baseUrl = app.get('baseUrl')
     for (const search of searches) {
       const params = [`q=${search.pattern}`, `sources=${search.sources}`, 'limit=2']
       if (search.viewbox) params.push(`viewbox=${search.viewbox}`)
-      const response = await fetch(`${apiUrl}/forward?${params.join('&')}`)
+      const response = await fetch(`${baseUrl}/forward?${params.join('&')}`)
       const body = await response.json()
       expect(body.length).toBe(search.results.length)
       body.forEach((feature, index) => {
@@ -95,9 +95,9 @@ describe('geokoder:geokoder', () => {
   }, 30000)
 
   it('reverse geocoding through geokoder proxy', async () => {
-    const apiUrl = app.get('apiUrl')
+    const baseUrl = app.get('baseUrl')
     for (const location of locations) {
-      const response = await fetch(`${apiUrl}/reverse?lat=${location.lat}&lon=${location.lon}&limit=2&sources=${location.sources}`)
+      const response = await fetch(`${baseUrl}/reverse?lat=${location.lat}&lon=${location.lon}&limit=2&sources=${location.sources}`)
       const body = await response.json()
       expect(body.length).toBe(location.results.length)
       body.forEach((feature, index) => {

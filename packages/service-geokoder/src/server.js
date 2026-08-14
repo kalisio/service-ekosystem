@@ -1,63 +1,73 @@
-import fs from 'fs-extra'
+import fs from 'node:fs'
+import https from 'node:https'
 import _ from 'lodash'
 import makeDebug from 'debug'
 import winston from 'winston'
 import 'winston-daily-rotate-file'
+import compress from 'compression'
 import cors from 'cors'
+import helmet from 'helmet'
 import feathers from '@feathersjs/feathers'
 import configuration from '@feathersjs/configuration'
 import express from '@feathersjs/express'
 import distribution, { finalize } from '@kalisio/feathers-distributed'
 import { Providers } from './providers.js'
 import hooks from './hooks.js'
-import routes from './routes.js'
 import channels from './channels.js'
+import routes from './routes.js'
 import middlewares from './middlewares.js'
+
+const { rest } = express
 
 // Initialize debugger to be used in feathers
 feathers.setDebug(makeDebug)
 
 const debug = makeDebug('geokoder:server')
 
-export async function createServer (configOverride = {}) {
+export async function createServer (config = {}) {
   const app = express(feathers())
 
-  // Configure the app
-  app.configure(configuration())
-  Object.keys(configOverride).forEach(key => {
-    app.set(key, configOverride[key])
-  })
+  // Override Feathers configure that do not manage async operations,
+  // here we also simply call the function given as parameter but await for it
+  app.configure = async function (fn) {
+    await fn.call(this, this)
+    return this
+  }
+  await app.configure(configuration())
+  Object.keys(config).forEach(key => app.set(key, config[key]))
 
-  // Get distributed services
-  app.configure(distribution(app.get('distribution')))
+  // Setup distribution
+  const distributionConfig = app.get('distribution')
+  if (distributionConfig) await app.configure(distribution(distributionConfig))
 
+  // Enable CORS, security, compression, and body parsing
   app.use(cors(app.get('cors')))
+  app.use(helmet(app.get('helmet')))
+  app.use(compress(app.get('compression')))
+  const bodyParserConfig = app.get('bodyParser')
+  app.use(express.json(bodyParserConfig?.json))
+  app.use(express.urlencoded({ extended: true, ...bodyParserConfig?.urlencoded }))
 
-  // Register hooks
-  app.hooks(hooks)
-  // Set up real-time event channels
-  app.configure(channels)
-  // Configure API routes
-  app.configure(routes)
-  // Configure middlewares - always has to be last
-  app.configure(middlewares)
+  // Setup plugins and providers
+  await app.configure(rest())
 
-  // Logger
+  // Setup logger
   const logConfig = app.get('logs')
-  const logPath = _.get(logConfig, 'DailyRotateFile.dirname')
+  const logPath = logConfig?.DailyRotateFile?.dirname || 'logs'
   // This will ensure the log directory does exist
-  fs.ensureDirSync(logPath)
+  fs.mkdirSync(logPath, { recursive: true })
   app.logger = winston.createLogger({
     level: (process.env.NODE_ENV === 'development' ? 'verbose' : 'info'),
     transports: [
-      new winston.transports.Console(_.get(logConfig, 'Console')),
-      new winston.transports.DailyRotateFile(_.get(logConfig, 'DailyRotateFile'))
+      new winston.transports.Console(logConfig.Console),
+      new winston.transports.DailyRotateFile(logConfig.DailyRotateFile)
     ]
   })
-  // Top-level error handler
-  process.on('unhandledRejection', (reason, p) => {
+
+  // Handle top lever errors
+  process.on('unhandledRejection', (reason, p) =>
     app.logger.error('Unhandled Rejection: ', reason)
-  })
+  )
   process.on('SIGINT', async () => {
     app.logger.info('Received SIGINT signal running teardown')
     await app.teardown()
@@ -69,15 +79,41 @@ export async function createServer (configOverride = {}) {
     process.exit(0)
   })
 
-  const port = app.get('port')
-  app.logger.info('Configuring HTTP server at port ' + port.toString())
-  const server = await app.listen(port)
-  server.on('close', () => finalize(app))
-  server.app = app
-  server.app.logger.info('Server started listening')
-
+  // Setup the geocoding providers, this has to be done before the routes are
+  // able to serve any request as they dispatch to the providers
   await Providers.initialize(app)
   debug('Providers initialized', _.map(Providers.get(app), 'name'))
+
+  // Register hooks
+  app.hooks(hooks)
+  // Set up real-time event channels
+  await app.configure(channels)
+  // Configure API routes
+  await app.configure(routes)
+  // Configure middlewares - always has to be last
+  await app.configure(middlewares)
+
+  // Last lauch server
+  const httpsConfig = app.get('https')
+  let server
+  if (httpsConfig) {
+    const port = httpsConfig.port || app.get('port')
+    server = https.createServer({
+      key: fs.readFileSync(httpsConfig.key),
+      cert: fs.readFileSync(httpsConfig.cert)
+    }, app)
+    app.logger.info('Configuring HTTPS server at port ' + port.toString())
+    server = await server.listen(port)
+  } else {
+    const port = app.get('port')
+    app.logger.info('Configuring HTTP server at port ' + port.toString())
+    server = await app.listen(port)
+  }
+  server.on('close', () => {
+    if (distributionConfig) finalize(app)
+  })
+  server.app = app
+  server.app.logger.info('Server started listening')
 
   return server
 }

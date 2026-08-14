@@ -8,7 +8,9 @@ const commonHooks = require('feathers-hooks-common')
 const host = process.env.HOSTNAME || 'localhost'
 const port = process.env.PORT || 8080
 const apiPath = process.env.API_PREFIX || '/api'
-const apiUrl = process.env.API_URL || `http://${host}:${port}${apiPath}`
+/* please refer to https://web.dev/articles/how-to-use-local-https for setup */
+const https = null
+const baseUrl = process.env.BASE_URL || process.env.API_URL || (https ? `https://${host}:${port}${apiPath}` : `http://${host}:${port}${apiPath}`)
 
 const i18n = {}
 glob.sync(path.join(__dirname, 'i18n/**/*.cjs')).forEach(i18nFile => {
@@ -18,7 +20,8 @@ glob.sync(path.join(__dirname, 'i18n/**/*.cjs')).forEach(i18nFile => {
 module.exports = {
   host,
   port,
-  apiUrl,
+  https,
+  baseUrl,
   apiPath,
   paginate: {
     default: {
