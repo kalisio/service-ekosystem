@@ -75,7 +75,7 @@ to pick a free port and to disable distribution (`createServer({ port: 0, distri
 
 ### Startup flow
 
-On `server.run()` the service performs the following steps:
+On `createServer()` the service performs the following steps:
 
 ```mermaid
 sequenceDiagram

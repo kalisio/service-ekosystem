@@ -161,7 +161,14 @@ And the response looks like:
 
 ### healthcheck (GET)
 
-Check for the health of the service
+Check for the health of the service. It answers `{ "isRunning": true }` as soon as the server accepts
+connections — it reports neither a name nor a version, unlike the other services of the ekosystem.
+
+### API reference
+
+The full request/response schema — every body property, the response codes and the error payloads —
+is documented on the [API reference](./service-kapture-openapi) page. That spec declares no server,
+so pick **your own instance URL** in the server selector before sending a request from that page.
 
 ## Configuring
 
@@ -173,8 +180,11 @@ Here are the environment variables you can use to customize the service:
 | `APP_URL` | The app url | - |
 | `APP_JWT` | The app token to get connected | * |
 | `BODY_LIMIT` | The size limit of the request body | `100kb` |
-| `DELAY` | The waiting delay before capturing the screen (in milliseconds) | '1000' |
-| `NETWORK_IDLE_TIMEOUT` | Maximum time to wait for the network idle (in milliseconds) | '90000' |
+| `PORT` | The port to be used when exposing the service | `3000` |
+| `DELAY` | The waiting delay before capturing the screen (in milliseconds) | `2000` |
+| `PAGE_SETUP_DELAY` | The waiting delay after navigation, letting the activity set itself up (in milliseconds) | `2000` |
+| `UPLOAD_FILE_DELAY` | The waiting delay after uploading the imported data (in milliseconds) | `2000` |
+| `NETWORK_IDLE_TIMEOUT` | Maximum time to wait for the network idle (in milliseconds) | `100000` |
 | `DEBUG` | The namespaces to enable debug output. Set it to `kapture:*` to enable full debug output. | 
 
 ## Building
