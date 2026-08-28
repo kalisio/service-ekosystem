@@ -43,7 +43,6 @@
     "cron": "catalog:",
     "debug": "catalog:",
     "fs-extra": "catalog:",
-    "is-docker": "catalog:",
     "lodash": "catalog:",
     "sift": "catalog:",
     "mongodb": "catalog:",

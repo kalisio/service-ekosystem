@@ -2,15 +2,18 @@
   "name": "service-ekosystem",
   "description": "A suite of cloud services for geospatial platforms",
   "type": "module",
-  "packageManager": "pnpm@10.1.0",
+  "packageManager": "pnpm@10.34.5",
   "scripts": {
-    "build": "pnpm --filter=./packages/service-* build",
+    "build": "pnpm -r --filter './packages/*' build",
     "build:service-geokoder": "pnpm --filter @kalisio/service-geokoder build",
     "build:service-k2": "pnpm --filter @kalisio/service-k2 build",
     "build:service-kapture": "pnpm --filter @kalisio/service-kapture build",
     "build:service-katalog": "pnpm --filter @kalisio/service-katalog build",
     "build:service-kfs": "pnpm --filter @kalisio/service-kfs build",
+    "prebump": "changeset",
     "bump": "changeset version",
+    "clear": "pnpm -r exec rimraf node_modules dist coverage",
+    "docs:prepare": "pnpm --filter './examples/*' build",
     "docs:build": "pnpm --filter docs run build",
     "docs:dev": "pnpm --filter docs run dev",
     "inspect": "pnpm knip",
@@ -22,16 +25,15 @@
     "lint:service-katalog": "pnpm --filter @kalisio/service-katalog lint",
     "lint:service-kfs": "pnpm --filter @kalisio/service-kfs lint",
     "lint:service-trakkar": "pnpm --filter @kalisio/service-trakkar lint",
-    "posttest": "pnpm lcov-result-merger --prepend-source-files 'packages/*/coverage/lcov.info' coverage/lcov.info",
-    "prebump": "changeset",
     "prepare": "husky",
-    "pretest": "mkdir -p coverage",
     "release:service-geokoder": "pnpm --filter @kalisio/service-geokoder release",
     "release:service-k2": "pnpm --filter @kalisio/service-k2 release",
     "release:service-kapture": "pnpm --filter @kalisio/service-kapture release",
     "release:service-katalog": "pnpm --filter @kalisio/service-katalog release",
     "release:service-kfs": "pnpm --filter @kalisio/service-kfs release",
+    "pretest": "mkdir -p coverage",
     "test": "bash -c 'source ../../../development/workspaces/services/services.sh service-ekosystem && pnpm -r --workspace-concurrency=1 test'",
+    "posttest": "pnpm lcov-result-merger --prepend-source-files 'packages/*/coverage/lcov.info' coverage/lcov.info",
     "test:service-geokatcher": "pnpm --filter @kalisio/service-geokatcher test",
     "test:service-geokoder": "pnpm --filter @kalisio/service-geokoder test",
     "test:service-k2": "pnpm --filter @kalisio/service-k2 test",
@@ -41,22 +43,32 @@
     "test:service-trakkar": "pnpm --filter @kalisio/service-trakkar test"
   },
   "keywords": [
-    "kalisio"
+    "kalisio",
+    "ekosystem",
+    "service-geokatcher",
+    "service-geokoder",
+    "service-k2",
+    "service-kapture",
+    "service-katalog",
+    "service-kfs",
+    "service-trakkar"
   ],
   "author": {
-    "name": "KALISIO <contact@kalisio.com>",
-    "url": "https://github.com/kalisio"
+    "name": "KALISIO",
+    "email": "contact@kalisio.com",
+    "url": "https://github.com/kalisio",
+    "logo": "https://kalisio.github.io/kalisioscope/kalisio/kalisio-logo-light.svg"
   },
   "contributors": [],
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git://github.com/kalisio/service-ekosystem.git"
+    "url": "git+https://github.com/kalisio/service-ekosystem.git"
   },
   "bugs": {
     "url": "https://github.com/kalisio/service-ekosystem/issues"
   },
-  "homepage": "git://github.com/kalisio/service-ekosystem#readme",
+  "homepage": "https://github.com/kalisio/service-ekosystem#readme",
   "devDependencies": {
     "@changesets/cli": "catalog:",
     "@vitest/coverage-v8": "catalog:",
@@ -65,20 +77,22 @@
     "knip": "catalog:",
     "lcov-result-merger": "catalog:",
     "lint-staged": "catalog:",
+    "rimraf": "catalog:",
     "standard": "catalog:",
     "vite": "catalog:",
-    "vite-bundle-visualizer": "catalog:",
     "vitest": "catalog:"
-  },
-  "metaCatalog": {
-    "version": "0.10.0",
-    "syncedAt": "2026-08-14T10:20:06.383Z"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
-      "sqlite3",
       "@mapbox/vtquery",
-      "puppeteer"
+      "esbuild",
+      "puppeteer",
+      "sqlite3",
+      "vue-demi"
     ]
+  },
+  "metaCatalog": {
+    "version": "0.10.0",
+    "syncedAt": "2026-08-28T15:21:38.803Z"
   }
 }

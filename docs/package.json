@@ -1,7 +1,7 @@
 {
   "name": "docs",
-  "description": "A suite of cloud services for geospatial platforms - Documentation",
-  "packageManager": "pnpm@10.1.0",
+  "description": "service-ekosystem docs",
+  "packageManager": "pnpm@10.34.5",
   "type": "module",
   "private": true,
   "scripts": {
@@ -9,22 +9,18 @@
     "dev": "vitepress dev"
   },
   "author": {
-    "name": "KALISIO <contact@kalisio.com>",
+    "name": "KALISIO",
+    "email": "contact@kalisio.com",
     "url": "https://github.com/kalisio"
   },
   "contributors": [],
   "license": "MIT",
-  "dependencies": {
-    "keycloak-js": "catalog:",
-    "lodash": "catalog:",
+  "devDependencies": {
+    "@kalisio/vitepress-theme": "catalog:",
     "mermaid": "catalog:",
-    "moment": "catalog:",
     "quasar": "catalog:",
     "vitepress": "catalog:",
-    "vitepress-plugin-mermaid": "catalog:"
-  },
-  "devDependencies": {
-    "vitepress-openapi": "catalog:",
-    "vitepress-theme-kalisio": "catalog:"
+    "vitepress-plugin-mermaid": "catalog:",
+    "vue": "catalog:"
   }
 }

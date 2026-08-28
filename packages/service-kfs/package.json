@@ -42,7 +42,6 @@
     "@turf/helpers": "catalog:",
     "@turf/invariant": "catalog:",
     "compression": "catalog:",
-    "is-docker":"catalog:",
     "cors": "catalog:",
     "debug": "catalog:",
     "envsub": "catalog:",

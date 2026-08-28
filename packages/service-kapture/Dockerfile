@@ -12,7 +12,7 @@ FROM node:${NODE_VERSION}-${DEBIAN_VERSION}-slim AS builder
 
 WORKDIR /app
 
-RUN corepack enable && corepack prepare pnpm@10.1.0 --activate
+RUN corepack enable && corepack prepare pnpm@10.34.5 --activate
 
 # The runtime image provides Chrome via apt, so skip Puppeteer's Chromium download
 ENV PUPPETEER_SKIP_DOWNLOAD=true

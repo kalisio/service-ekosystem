@@ -5,7 +5,7 @@ FROM node:${NODE_VERSION}-${DEBIAN_VERSION}-slim AS builder
 
 WORKDIR /app
 
-RUN corepack enable && corepack prepare pnpm@10.1.0 --activate
+RUN corepack enable && corepack prepare pnpm@10.34.5 --activate
 
 # Outils de compilation pour les modules natifs
 RUN apt-get update && apt-get install -y --no-install-recommends \
