@@ -40,11 +40,11 @@ catalogs:
       specifier: ~5.0.44
       version: 5.0.44
     '@kalisio/common-core':
-      specifier: ~0.9.0
-      version: 0.9.0
+      specifier: ~0.10.0
+      version: 0.10.0
     '@kalisio/common-geospatial':
-      specifier: ~0.9.0
-      version: 0.9.0
+      specifier: ~0.10.0
+      version: 0.10.0
     '@kalisio/feathers-distributed':
       specifier: ~2.4.0
       version: 2.4.0
@@ -461,7 +461,7 @@ importers:
     dependencies:
       '@kalisio/common-geospatial':
         specifier: 'catalog:'
-        version: 0.9.0(@kalisio/common-core@0.9.0(lodash-es@4.18.1)(mathjs@15.1.1)(moment@2.30.1)(sanitize-html@2.17.4)(sift@17.1.3))(@logtape/logtape@0.7.2)(@turf/buffer@7.3.5)(@turf/convex@7.3.5)(@turf/helpers@7.3.5)(@turf/meta@7.3.5)(heap-js@2.7.1)(proj4@2.20.9(geotiff@3.0.5))
+        version: 0.10.0(@kalisio/common-core@0.10.0(@xmldom/xmldom@0.9.12)(ajv@8.20.0)(lodash-es@4.18.1)(mathjs@15.2.0)(moment@2.30.1)(sanitize-html@2.17.4)(sift@17.1.3))(@turf/buffer@7.3.5)(@turf/convex@7.3.5)(@turf/helpers@7.3.5)(@turf/meta@7.3.5)(@xmldom/xmldom@0.9.12)(heap-js@2.7.1)(proj4@2.20.9(geotiff@3.0.5))
       '@mapbox/mbtiles':
         specifier: 'catalog:'
         version: 0.12.1
@@ -500,10 +500,10 @@ importers:
     dependencies:
       '@kalisio/common-core':
         specifier: 'catalog:'
-        version: 0.9.0(lodash-es@4.18.1)(mathjs@15.2.0)(moment@2.30.1)(sanitize-html@2.17.4)(sift@17.1.3)
+        version: 0.10.0(@xmldom/xmldom@0.9.12)(ajv@8.20.0)(lodash-es@4.18.1)(mathjs@15.2.0)(moment@2.30.1)(sanitize-html@2.17.4)(sift@17.1.3)
       '@kalisio/common-geospatial':
         specifier: 'catalog:'
-        version: 0.9.0(@kalisio/common-core@0.9.0(lodash-es@4.18.1)(mathjs@15.2.0)(moment@2.30.1)(sanitize-html@2.17.4)(sift@17.1.3))(@logtape/logtape@0.7.2)(@turf/buffer@7.3.5)(@turf/convex@7.3.5)(@turf/helpers@7.3.5)(@turf/meta@7.3.5)(heap-js@2.7.1)(proj4@2.20.9(geotiff@3.0.5))
+        version: 0.10.0(@kalisio/common-core@0.10.0(@xmldom/xmldom@0.9.12)(ajv@8.20.0)(lodash-es@4.18.1)(mathjs@15.2.0)(moment@2.30.1)(sanitize-html@2.17.4)(sift@17.1.3))(@turf/buffer@7.3.5)(@turf/convex@7.3.5)(@turf/helpers@7.3.5)(@turf/meta@7.3.5)(@xmldom/xmldom@0.9.12)(heap-js@2.7.1)(proj4@2.20.9(geotiff@3.0.5))
       cors:
         specifier: 'catalog:'
         version: 2.8.6
@@ -1598,39 +1598,52 @@ packages:
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
 
-  '@kalisio/common-core@0.9.0':
-    resolution: {integrity: sha512-lLOOpZIw3mXN4ne9c1FrCAdI11FesjZ/0IFworod8htxiOv6I9bwAI2b6gj3kyRK3pTu+SjI3X4B0ZtV5gS+cQ==}
+  '@kalisio/common-core@0.10.0':
+    resolution: {integrity: sha512-BcHBbrRFykvchcy21eZ1gDXtlSxenk8fcFw09AQT65xfzuHFH4SHCJ3BjYIzSzO3TKz/ZmyO6PTMQOW7C72VvA==}
     engines: {node: '>=20'}
     peerDependencies:
+      '@xmldom/xmldom': ~0.9.11
+      ajv: ~8.20.0
       lodash-es: ~4.18.1
-      mathjs: ~15.1.1
+      mathjs: ~15.2.0
       moment: ~2.30.1
+      papaparse: ~5.7.0
       sanitize-html: ~2.17.4
       sift: ~17.1.3
     peerDependenciesMeta:
+      '@xmldom/xmldom':
+        optional: true
+      ajv:
+        optional: true
       lodash-es:
         optional: true
       mathjs:
         optional: true
       moment:
         optional: true
+      papaparse:
+        optional: true
       sanitize-html:
         optional: true
       sift:
         optional: true
 
-  '@kalisio/common-geospatial@0.9.0':
-    resolution: {integrity: sha512-e8kupgNa28nxLqIkZ/w5//eFt1MhVl8rtpeOG8M9ShWatE0w2FISOfJgUH/3zpGbDlQAOx2tMcc1tQIgG0ar4Q==}
+  '@kalisio/common-geospatial@0.10.0':
+    resolution: {integrity: sha512-7cIhc8ShHHR3+1EnReIUzINuJCp40gHafu+o2ch21395mPZYz1N+ni+juNx6x5Qtas9UoJh9HpvZooK+6QZjCQ==}
     engines: {node: '>=20'}
     peerDependencies:
-      '@kalisio/common-core': 0.9.0
-      '@logtape/logtape': ~0.7.0
+      '@kalisio/common-core': 0.10.0
+      '@tmcw/togeojson': ~7.1.2
       '@turf/buffer': ~7.3.5
       '@turf/convex': ~7.3.5
       '@turf/helpers': ~7.3.5
       '@turf/meta': ~7.3.5
+      '@xmldom/xmldom': ~0.9.11
       heap-js: ~2.7.1
       proj4: ~2.20.4
+    peerDependenciesMeta:
+      '@tmcw/togeojson':
+        optional: true
 
   '@kalisio/feathers-distributed@2.4.0':
     resolution: {integrity: sha512-rWGiF9gl7YD8rvJWd7HfEou9125YnT6jnIKSrae7WtY+QXSOyA2BH2m8XtGnFC1yUxxT1jtQx4sxWR2Ri+s16A==}
@@ -1663,9 +1676,6 @@ packages:
   '@koa/cors@5.0.0':
     resolution: {integrity: sha512-x/iUDjcS90W69PryLDIMgFyV21YLTnG9zOpPXS7Bkt2b8AsY3zZsIpOLBkYr9fBcF3HbkKaER5hOBZLfpLgYNw==}
     engines: {node: '>= 14.0.0'}
-
-  '@logtape/logtape@0.7.2':
-    resolution: {integrity: sha512-3iL71YEiJ8GM6HzeW4eCG2pS8/F9EX6tYfVVCp/oWhzYjQ5FY/QMesSPMtAYdAGG4Evac23ugOSXZJp592zg0A==}
 
   '@manypkg/find-root@1.1.0':
     resolution: {integrity: sha512-mki5uBvhHzO8kYYix/WRy2WX8S3B5wdVSc9D6KcU5lQNglP2yt58/VfLuAK49glRXChosY8ap2oJ1qgma3GUVA==}
@@ -2774,6 +2784,10 @@ packages:
 
   '@weacast/core@2.3.1':
     resolution: {integrity: sha512-XjDt40sCV/IXOC91jvWfDmWZkFm7YxNxcABl8jc5Ft4KFuCxlinpIFi446LfM8ZLie0sUHNtops5ijAKde4oLQ==}
+
+  '@xmldom/xmldom@0.9.12':
+    resolution: {integrity: sha512-5AXjrcMClTryPe9LgZrygpB1lj7s0S9E0+W+AHaVKAVyHanafK86iPSvG5xHVSp/jC+VH1UXu0TAEmY279xH7A==}
+    engines: {node: '>=14.6'}
 
   JSONStream@1.3.5:
     resolution: {integrity: sha512-E+iruNOY8VV9s4JEbe1aNEm6MiszPRr/UfcHMz0TQh1BXSxHK+ASV1R6W4HpjBhSeS+54PIsAMCBmwD06LLsqQ==}
@@ -5682,11 +5696,6 @@ packages:
   mathjs@11.12.0:
     resolution: {integrity: sha512-UGhVw8rS1AyedyI55DGz9q1qZ0p98kyKPyc9vherBkoueLntPfKtPBh14x+V4cdUWK0NZV2TBwqRFlvadscSuw==}
     engines: {node: '>= 14'}
-    hasBin: true
-
-  mathjs@15.1.1:
-    resolution: {integrity: sha512-rM668DTtpSzMVoh/cKAllyQVEbBApM5g//IMGD8vD7YlrIz9ITRr3SrdhjaDxcBNTdyETWwPebj2unZyHD7ZdA==}
-    engines: {node: '>= 18'}
     hasBin: true
 
   mathjs@15.2.0:
@@ -9032,41 +9041,24 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
 
-  '@kalisio/common-core@0.9.0(lodash-es@4.18.1)(mathjs@15.1.1)(moment@2.30.1)(sanitize-html@2.17.4)(sift@17.1.3)':
+  '@kalisio/common-core@0.10.0(@xmldom/xmldom@0.9.12)(ajv@8.20.0)(lodash-es@4.18.1)(mathjs@15.2.0)(moment@2.30.1)(sanitize-html@2.17.4)(sift@17.1.3)':
     optionalDependencies:
-      lodash-es: 4.18.1
-      mathjs: 15.1.1
-      moment: 2.30.1
-      sanitize-html: 2.17.4
-      sift: 17.1.3
-
-  '@kalisio/common-core@0.9.0(lodash-es@4.18.1)(mathjs@15.2.0)(moment@2.30.1)(sanitize-html@2.17.4)(sift@17.1.3)':
-    optionalDependencies:
+      '@xmldom/xmldom': 0.9.12
+      ajv: 8.20.0
       lodash-es: 4.18.1
       mathjs: 15.2.0
       moment: 2.30.1
       sanitize-html: 2.17.4
       sift: 17.1.3
 
-  '@kalisio/common-geospatial@0.9.0(@kalisio/common-core@0.9.0(lodash-es@4.18.1)(mathjs@15.1.1)(moment@2.30.1)(sanitize-html@2.17.4)(sift@17.1.3))(@logtape/logtape@0.7.2)(@turf/buffer@7.3.5)(@turf/convex@7.3.5)(@turf/helpers@7.3.5)(@turf/meta@7.3.5)(heap-js@2.7.1)(proj4@2.20.9(geotiff@3.0.5))':
+  '@kalisio/common-geospatial@0.10.0(@kalisio/common-core@0.10.0(@xmldom/xmldom@0.9.12)(ajv@8.20.0)(lodash-es@4.18.1)(mathjs@15.2.0)(moment@2.30.1)(sanitize-html@2.17.4)(sift@17.1.3))(@turf/buffer@7.3.5)(@turf/convex@7.3.5)(@turf/helpers@7.3.5)(@turf/meta@7.3.5)(@xmldom/xmldom@0.9.12)(heap-js@2.7.1)(proj4@2.20.9(geotiff@3.0.5))':
     dependencies:
-      '@kalisio/common-core': 0.9.0(lodash-es@4.18.1)(mathjs@15.1.1)(moment@2.30.1)(sanitize-html@2.17.4)(sift@17.1.3)
-      '@logtape/logtape': 0.7.2
+      '@kalisio/common-core': 0.10.0(@xmldom/xmldom@0.9.12)(ajv@8.20.0)(lodash-es@4.18.1)(mathjs@15.2.0)(moment@2.30.1)(sanitize-html@2.17.4)(sift@17.1.3)
       '@turf/buffer': 7.3.5
       '@turf/convex': 7.3.5
       '@turf/helpers': 7.3.5
       '@turf/meta': 7.3.5
-      heap-js: 2.7.1
-      proj4: 2.20.9(geotiff@3.0.5)
-
-  '@kalisio/common-geospatial@0.9.0(@kalisio/common-core@0.9.0(lodash-es@4.18.1)(mathjs@15.2.0)(moment@2.30.1)(sanitize-html@2.17.4)(sift@17.1.3))(@logtape/logtape@0.7.2)(@turf/buffer@7.3.5)(@turf/convex@7.3.5)(@turf/helpers@7.3.5)(@turf/meta@7.3.5)(heap-js@2.7.1)(proj4@2.20.9(geotiff@3.0.5))':
-    dependencies:
-      '@kalisio/common-core': 0.9.0(lodash-es@4.18.1)(mathjs@15.2.0)(moment@2.30.1)(sanitize-html@2.17.4)(sift@17.1.3)
-      '@logtape/logtape': 0.7.2
-      '@turf/buffer': 7.3.5
-      '@turf/convex': 7.3.5
-      '@turf/helpers': 7.3.5
-      '@turf/meta': 7.3.5
+      '@xmldom/xmldom': 0.9.12
       heap-js: 2.7.1
       proj4: 2.20.9(geotiff@3.0.5)
 
@@ -9258,8 +9250,6 @@ snapshots:
   '@koa/cors@5.0.0':
     dependencies:
       vary: 1.1.2
-
-  '@logtape/logtape@0.7.2': {}
 
   '@manypkg/find-root@1.1.0':
     dependencies:
@@ -10422,6 +10412,8 @@ snapshots:
       - supports-color
       - typescript
       - utf-8-validate
+
+  '@xmldom/xmldom@0.9.12': {}
 
   JSONStream@1.3.5:
     dependencies:
@@ -13837,19 +13829,6 @@ snapshots:
       seedrandom: 3.0.5
       tiny-emitter: 2.1.0
       typed-function: 4.2.2
-
-  mathjs@15.1.1:
-    dependencies:
-      '@babel/runtime': 7.29.2
-      complex.js: 2.4.3
-      decimal.js: 10.6.0
-      escape-latex: 1.2.0
-      fraction.js: 5.3.4
-      javascript-natural-sort: 0.7.1
-      seedrandom: 3.0.5
-      tiny-emitter: 2.1.0
-      typed-function: 4.2.2
-    optional: true
 
   mathjs@15.2.0:
     dependencies:
