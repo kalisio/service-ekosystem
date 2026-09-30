@@ -12,7 +12,8 @@ _Lightweight geocoder service providing forward and reverse geocoding_
 **service-geokoder** is a service that allows you to perform forward and reverse geocoding using various sources exposed by different providers. The following providers are currently supported:
 
 * `Kano` — exposes [Kano](https://kalisio.github.io/kano/) catalog layers as geocoding sources.
-* `NodeGeocoder` — exposes providers supported by [node-geocoder](https://nchaulet.github.io/node-geocoder/) as geocoding sources.
+* `OpenDataFrance` — exposes the French national address database ([BAN](https://adresse.data.gouv.fr/)) as the `opendatafrance` geocoding source.
+* `OpenStreetMap` — exposes [Nominatim](https://nominatim.org/) as the `openstreetmap` geocoding source.
 * `MBTiles` — exposes layers from [MBTiles](https://wiki.openstreetmap.org/wiki/MBTiles) as geocoding sources.
 * `Geokoder` — proxies requests to another **service-geokoder** instance, exposing the proxied sources locally under a configurable prefix.
 
@@ -42,7 +43,7 @@ yarn add @kalisio/service-geokoder
 
 By default, **service-geokoder** does not expose any sources. You are responsible to write a `local.cjs` file to declare the different sources you want to expose.
 
-Here is an example file that exposes all the sources from the **Kano** provider, `opendatafrance` from the **NodeGeocoder** provider, `api-geo` dataset sources from the **MBTiles** provider and all the sources matching `*hubeau*` from a remote geokoder instance:
+Here is an example file that exposes all the sources from the **Kano** provider, the `opendatafrance` source from the **OpenDataFrance** provider, `api-geo` dataset sources from the **MBTiles** provider and all the sources matching `*hubeau*` from a remote geokoder instance:
 
 ```js
 module.exports = {
@@ -50,9 +51,7 @@ module.exports = {
     Kano: {
       catalogFilter: 'hubeau-*'
     },
-    NodeGeocoder: {
-      opendatafrance: true
-    },
+    OpenDataFrance: true,
     MBTiles: {
       'api-geo': { filepath: '/mnt/data/api-geo-5m.mbtiles', layers: ['communes5m', 'epci5m', 'departements5m', 'regions5m'] }
     },
@@ -96,16 +95,27 @@ services: {
 > }
 > ```
 
-#### NodeGeocoder
+#### OpenDataFrance and OpenStreetMap
 
-Each key is a geocoder to instantiate in [node-geocoder](https://github.com/nchaulet/node-geocoder). If value is false-ish, it won't be instanciated. If you'd like to pass additional options to the geocoder instance then it could be an object containing the options.
+Each of these providers wraps a public geocoding service and exposes a single source. If value is false-ish, the provider won't be instanciated. If you'd like to pass additional options to the provider then it could be an object containing the options.
 
 ```js
-NodeGeocoder: {
-  opendatafrance: true,
-  openstreetmap: false
-}
+OpenDataFrance: true,
+OpenStreetMap: { language: 'fr', email: 'contact@my-domain.com' }
 ```
+
+| Provider | Source | Service | Options |
+|----------|--------|---------|---------|
+| `OpenDataFrance` | `opendatafrance` | French national address database ([BAN](https://adresse.data.gouv.fr/)) served by the [IGN Géoplateforme](https://geoservices.ign.fr/documentation/services/services-geoplateforme/geocodage) | `url` (defaults to `https://data.geopf.fr/geocodage`) |
+| `OpenStreetMap` | `openstreetmap` | [Nominatim](https://nominatim.org/) | `url` or `osmServer` (defaults to `https://nominatim.openstreetmap.org`), `language` (sent as `accept-language`), `email` |
+
+Both providers also accept a `timeout` option in milliseconds (defaults to `10000`) and a `userAgent` option (defaults to `geokoder/<version>`).
+
+> [!NOTE]
+> The public Nominatim instance requires a valid User-Agent and does not allow more than one request per second, see its [usage policy](https://operations.osmfoundation.org/policies/nominatim/).
+
+> [!WARNING]
+> These providers used to be configured as geocoders of the `NodeGeocoder` provider, e.g. `NodeGeocoder: { opendatafrance: true, openstreetmap: true }`. This configuration is still supported but deprecated, please use the `OpenDataFrance` and `OpenStreetMap` keys instead.
 
 #### MBtiles
 

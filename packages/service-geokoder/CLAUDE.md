@@ -9,8 +9,8 @@ A **Feathers.js** (express) application exposing a multi-provider geocoding API 
 - `src/server.js` — `createServer(configOverride = {})` factory that instantiates the app
 - `src/providers.js` — `Providers` singleton managing the provider lifecycle
 - `src/routes.js` — HTTP routes: `/healthcheck`, `/capabilities/:operation`, `/forward`, `/reverse`
-- `src/providers/` — one file per provider: `kano.js`, `nodegeocoder.js`, `mbtiles.js`, `geokoder.js`
-- `src/utils.js` — `filterSource`, `filterSources` (based on `minimatch`), tile helpers
+- `src/providers/` — one file per provider: `kano.js`, `opendatafrance.js`, `openstreetmap.js`, `mbtiles.js`, `geokoder.js`
+- `src/utils.js` — `filterSource`, `filterSources` (based on `minimatch`), `fetchJson`, `getGeocoderOptions`, `querySource`, tile helpers
 
 ---
 
@@ -45,13 +45,17 @@ export async function createProviders(app) { ... }
 
 ## Available Providers
 
-### NodeGeocoder
-- Config: `{ opendatafrance: true, openstreetmap: true }`
-- Wraps `node-geocoder`
-- Forward results: have `formattedAddress`, `streetName`, `city`, `country`, etc.
+### OpenDataFrance and OpenStreetMap
+- One provider per public geocoding service, each exposing a single source: `OpenDataFrance` → `opendatafrance` (BAN on the IGN Géoplateforme, `https://data.geopf.fr/geocodage`), `OpenStreetMap` → `openstreetmap` (Nominatim)
+- Config: `OpenDataFrance: true`, `OpenStreetMap: { language: 'fr' }` — an object value holds the options (`url`, `timeout`, `userAgent`, plus `osmServer`, `language`, `email` for OpenStreetMap)
+- They replace the `node-geocoder` library and the former `NodeGeocoder` provider: `NodeGeocoder: { opendatafrance, openstreetmap }` is still read as a deprecated configuration (`getGeocoderOptions` in `src/utils.js`, with a warning)
+- `querySource` (`src/utils.js`) skips the request when the source is filtered out, adds `source` to results and turns a failure into an empty result logged with `debug` — otherwise `routes.js` would log it as an error
+- `OpenDataFrance`: the viewbox is only used to focus the search (center as `lat`/`lon`), filtering happens in `routes.js`; a zero limit is not sent as the API rejects it
+- `OpenStreetMap`: a reverse query without result answers `{ error: 'Unable to geocode' }` with a 200 status; there is no `limit` parameter in reverse
+- Forward results: have `formattedAddress`, `streetName`, `city`, `country`, etc. — these property names are read by the KDK client (`kdk/map/client/utils/utils.location.js`), do not rename them
 - Reverse results: `formattedLabel` built as:
   - `opendatafrance`: `[streetNumber, streetName, city, country].filter(Boolean).join(' ')`
-  - `openstreetmap`: `entry.formattedAddress`
+  - `openstreetmap`: `formattedAddress`
 
 ### Kano
 - Config: `{ catalogFilter, services: { 'service-name': { featureLabel, baseQuery } } }`
@@ -92,8 +96,8 @@ normalized.geokoder = {
 
 | Provider | Strategy |
 |---|---|
-| NodeGeocoder/opendatafrance | `[streetNumber, streetName, city, country].filter(Boolean).join(' ')` |
-| NodeGeocoder/openstreetmap | `entry.formattedAddress` |
+| OpenDataFrance | `[streetNumber, streetName, city, country].filter(Boolean).join(' ')` |
+| OpenStreetMap | `formattedAddress` |
 | Kano | First non-null value across `source.keys`, joined with spaces |
 | MBTiles | `featureLabel(feature)` function from config |
 | Geokoder | Forwarded from upstream |
@@ -118,7 +122,7 @@ filterSources(sources, filter) // filters an array
 ### GET `/capabilities/:operation`
 - `operation`: `forward` or `reverse`
 - Returns `{ geocoders: [...], i18n: ... }`
-- Aggregates capabilities from all providers implementing the operation
+- Aggregates capabilities from all providers implementing the operation, sources are listed in the providers order
 
 ### GET `/forward`
 - Params: `q`, `sources` (filter), `limit`, `viewbox` (`lon1,lat1,lon2,lat2`)
@@ -141,6 +145,8 @@ See `service-geokoder-openapi.yaml` for the full OpenAPI 3.0 spec.
 ## Tests
 
 - Framework: **vitest**
+- `test/*.unit.test.js`: unit tests of the `OpenDataFrance`/`OpenStreetMap` providers and of the helpers, with an injected `fetch` (`fetch` option) and responses captured from the real services in `test/data/geocoders/` — no network; shared helpers in `test/helpers.js`
+- `test/opendatafrance-openstreetmap.test.js`: integration tests against the real BAN and Nominatim services
 - File: `test/geokoder.test.js`
 - Creates two servers in the same process: `remoteServer` (port 8450, real providers) and `server` (port 8451, Geokoder proxy provider only)
 - Server 8451 receives its config via `configOverride`: `{ port: 8451, providers: { Geokoder: { remote: { url: 'http://localhost:8450/api' } } } }`
