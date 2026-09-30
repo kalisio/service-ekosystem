@@ -1,0 +1,35 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          1.93729,
+          43.299612
+        ]
+      },
+      "properties": {
+        "label": "80 Chemin des Tournesols 11400 Castelnaudary",
+        "score": 0.9531499999999999,
+        "housenumber": "80",
+        "id": "11076_2942_00080",
+        "banId": "2024abc0-2600-4b61-9ac4-c7146bf391b4",
+        "name": "80 Chemin des Tournesols",
+        "postcode": "11400",
+        "citycode": "11076",
+        "x": 613719.09,
+        "y": 6245074.61,
+        "city": "Castelnaudary",
+        "context": "11, Aude, Occitanie",
+        "type": "housenumber",
+        "importance": 0.48465,
+        "depcode": "11",
+        "street": "Chemin des Tournesols",
+        "_type": "address"
+      }
+    }
+  ],
+  "query": "80 Chemin des tournesols, 11400 Castelnaudary"
+}

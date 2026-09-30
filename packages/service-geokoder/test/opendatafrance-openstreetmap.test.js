@@ -7,7 +7,7 @@ import { createServer } from '../src/server.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
-describe('geokoder:node-geocoder', () => {
+describe('geokoder:opendatafrance-openstreetmap', () => {
   let server, app
 
   const result = {
@@ -37,7 +37,7 @@ describe('geokoder:node-geocoder', () => {
     expect(app).toBeDefined()
   }, 10000)
 
-  it('node geocoder sources appear in capabilities', async () => {
+  it('opendatafrance and openstreetmap sources appear in capabilities', async () => {
     const baseUrl = app.get('baseUrl')
     let response = await fetch(`${baseUrl}/capabilities/forward`)
     let body = await response.json()
@@ -45,14 +45,20 @@ describe('geokoder:node-geocoder', () => {
     expect(body.geocoders.includes('openstreetmap')).toBe(true)
     expect(body.geocoders.includes('opendatafrance')).toBe(true)
 
+    // Sources are listed in the providers order, MBTiles ones come after in reverse
+    expect(body.geocoders.indexOf('openstreetmap')).toBe(body.geocoders.indexOf('opendatafrance') + 1)
+    expect(body.i18n.fr.Geocoders).toMatchObject({ opendatafrance: 'BAN', openstreetmap: 'Nominatim (OSM)' })
+
     response = await fetch(`${baseUrl}/capabilities/reverse`)
     body = await response.json()
     expect(body.geocoders).toBeDefined()
     expect(body.geocoders.includes('openstreetmap')).toBe(true)
     expect(body.geocoders.includes('opendatafrance')).toBe(true)
+    expect(body.geocoders.indexOf('openstreetmap')).toBe(body.geocoders.indexOf('opendatafrance') + 1)
+    expect(body.geocoders.indexOf('mairies:mairies')).toBeGreaterThan(body.geocoders.indexOf('openstreetmap'))
   }, 10000)
 
-  it('forward geocoding on node geocoder sources', async () => {
+  it('forward geocoding on opendatafrance and openstreetmap sources', async () => {
     const baseUrl = app.get('baseUrl')
     for (const search of searches) {
       const params = [`q=${search.pattern}`, `sources=${search.sources}`, 'limit=2']
@@ -67,7 +73,7 @@ describe('geokoder:node-geocoder', () => {
     }
   }, 20000)
 
-  it('reverse geocoding on node geocoder sources', async () => {
+  it('reverse geocoding on opendatafrance and openstreetmap sources', async () => {
     const baseUrl = app.get('baseUrl')
     for (const location of locations) {
       const response = await fetch(`${baseUrl}/reverse?lat=${location.lat}&lon=${location.lon}&limit=2&sources=${location.sources}`)

@@ -1,0 +1,37 @@
+[
+  {
+    "place_id": 85906497,
+    "licence": "Data © OpenStreetMap contributors, ODbL 1.0. http://osm.org/copyright",
+    "osm_type": "node",
+    "osm_id": 4392988805,
+    "lat": "43.2996036",
+    "lon": "1.9372955",
+    "class": "place",
+    "type": "house",
+    "place_rank": 30,
+    "importance": 0.0000644701304645917,
+    "addresstype": "place",
+    "name": "",
+    "display_name": "80, Chemin des Tournesols, Castelnaudary, Carcassonne, Aude, Occitanie, France métropolitaine, 11400, France",
+    "address": {
+      "house_number": "80",
+      "road": "Chemin des Tournesols",
+      "town": "Castelnaudary",
+      "municipality": "Carcassonne",
+      "county": "Aude",
+      "ISO3166-2-lvl6": "FR-11",
+      "state": "Occitanie",
+      "ISO3166-2-lvl4": "FR-OCC",
+      "region": "France métropolitaine",
+      "postcode": "11400",
+      "country": "France",
+      "country_code": "fr"
+    },
+    "boundingbox": [
+      "43.2995536",
+      "43.2996536",
+      "1.9372455",
+      "1.9373455"
+    ]
+  }
+]

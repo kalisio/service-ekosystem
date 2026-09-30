@@ -1,4 +1,5 @@
 export * from './kano.js'
 export * from './mbtiles.js'
-export * from './node-geocoder.js'
+export * from './opendatafrance.js'
+export * from './openstreetmap.js'
 export * from './geokoder.js'

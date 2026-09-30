@@ -1,0 +1,63 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          1.959918,
+          43.315108
+        ]
+      },
+      "properties": {
+        "label": "Castelnaudary",
+        "score": 0.9468490909090908,
+        "id": "11076",
+        "banId": "aa7c2519-f6ef-4fa5-adea-17d64540ef96",
+        "type": "municipality",
+        "name": "Castelnaudary",
+        "postcode": "11400",
+        "citycode": "11076",
+        "x": 615578.83,
+        "y": 6246772.6,
+        "population": 12151,
+        "city": "Castelnaudary",
+        "context": "11, Aude, Occitanie",
+        "importance": 0.41534,
+        "depcode": "11",
+        "municipality": "Castelnaudary",
+        "_type": "address"
+      }
+    },
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Point",
+        "coordinates": [
+          1.482492,
+          43.598415
+        ]
+      },
+      "properties": {
+        "label": "Rue de Castelnaudary 31500 Toulouse",
+        "score": 0.7066099999999998,
+        "id": "31555_1764",
+        "banId": "0f51ae8d-21e0-4adb-8789-3322ed36143e",
+        "name": "Rue de Castelnaudary",
+        "postcode": "31500",
+        "citycode": "31555",
+        "x": 577436.37,
+        "y": 6278884.41,
+        "city": "Toulouse",
+        "context": "31, Haute-Garonne, Occitanie",
+        "type": "street",
+        "importance": 0.77271,
+        "depcode": "31",
+        "street": "Rue de Castelnaudary",
+        "_type": "address"
+      }
+    }
+  ],
+  "query": "Castelnaudary"
+}

@@ -1,0 +1,7 @@
+{
+  "code": 400,
+  "message": "Failed parsing query",
+  "detail": [
+    "q: must contain between 3 and 200 chars and start with a number or a letter"
+  ]
+}

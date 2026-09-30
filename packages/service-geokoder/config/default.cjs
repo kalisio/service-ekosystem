@@ -35,12 +35,11 @@ module.exports = {
   },
   providers: {
     // Kano: {},
-    // NodeGeocoder: {
-    //   // Each key is a geocoder to instanciate in node-geocoder
-    //   // if value is false-ish, it won't be instanciated
-    //   opendatafrance: true,
-    //   openstreetmap: true
-    // },
+    // French national address database (BAN), exposed as the opendatafrance source
+    // if value is false-ish, it won't be instanciated, if it is an object it holds the provider options
+    // OpenDataFrance: true,
+    // OpenStreetMap Nominatim, exposed as the openstreetmap source
+    // OpenStreetMap: { language: 'fr' },
     // MBTiles: {
     //   // For performance reason each layer in a dataset should have the same max zoom level, if not two different providers should be created for now
     //   // Create a local.cjs file with your own data to test it as we don't provide any default datasets

@@ -1,6 +1,7 @@
 import {
   createKanoProvider,
-  createNodeGeocoderProvider,
+  createOpenDataFranceProvider,
+  createOpenStreetMapProvider,
   createMBTilesProvider,
   createGeokoderProvider
 } from './providers/index.js'
@@ -10,7 +11,8 @@ export const Providers = {
     app.providers = []
     const results = await Promise.allSettled([
       createKanoProvider(app),
-      createNodeGeocoderProvider(app),
+      createOpenDataFranceProvider(app),
+      createOpenStreetMapProvider(app),
       createMBTilesProvider(app),
       createGeokoderProvider(app)
     ])

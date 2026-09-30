@@ -2,10 +2,8 @@ const path = require('node:path')
 
 module.exports = {
   providers: {
-    NodeGeocoder: {
-      opendatafrance: true,
-      openstreetmap: true
-    },
+    OpenDataFrance: true,
+    OpenStreetMap: true,
     Kano: {
       catalogFilter: '!filtered-*',
       services: {
