@@ -177,9 +177,6 @@ catalogs:
     mongodb:
       specifier: ~6.20.0
       version: 6.20.0
-    node-geocoder:
-      specifier: git+https://github.com/nchaulet/node-geocoder.git#f66ea8db928d780b5d4268938909f86fba503eef
-      version: 4.4.1
     pixelmatch:
       specifier: ~7.2.0
       version: 7.2.0
@@ -444,9 +441,6 @@ importers:
       minimatch:
         specifier: 'catalog:'
         version: 10.2.5
-      node-geocoder:
-        specifier: 'catalog:'
-        version: https://codeload.github.com/nchaulet/node-geocoder/tar.gz/f66ea8db928d780b5d4268938909f86fba503eef(encoding@0.1.13)
       winston:
         specifier: 'catalog:'
         version: 3.19.0
@@ -6113,11 +6107,6 @@ packages:
     peerDependenciesMeta:
       encoding:
         optional: true
-
-  node-geocoder@https://codeload.github.com/nchaulet/node-geocoder/tar.gz/f66ea8db928d780b5d4268938909f86fba503eef:
-    resolution: {gitHosted: true, tarball: https://codeload.github.com/nchaulet/node-geocoder/tar.gz/f66ea8db928d780b5d4268938909f86fba503eef}
-    version: 4.4.1
-    engines: {node: '>=18'}
 
   node-gyp@8.4.1:
     resolution: {integrity: sha512-olTJRgUtAb/hOXG0E93wZDs5YiJlgbXxTwQAFHyNlRsXQnYzUaF2aGgujZbw+hR8aF4ZG/rST57bWMWD16jr9w==}
@@ -14309,13 +14298,6 @@ snapshots:
       whatwg-url: 5.0.0
     optionalDependencies:
       encoding: 0.1.13
-
-  node-geocoder@https://codeload.github.com/nchaulet/node-geocoder/tar.gz/f66ea8db928d780b5d4268938909f86fba503eef(encoding@0.1.13):
-    dependencies:
-      bluebird: 3.7.2
-      node-fetch: 2.7.0(encoding@0.1.13)
-    transitivePeerDependencies:
-      - encoding
 
   node-gyp@8.4.1:
     dependencies:

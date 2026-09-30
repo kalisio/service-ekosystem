@@ -61,7 +61,6 @@
     "helmet": "catalog:",
     "lodash": "catalog:",
     "minimatch": "catalog:",
-    "node-geocoder": "catalog:",
     "winston": "catalog:",
     "winston-daily-rotate-file": "catalog:",
     "zlib": "catalog:"
