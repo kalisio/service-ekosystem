@@ -48,7 +48,8 @@ export default function (app) {
         return
       }
 
-      response.geocoders.splice(-1, 0, ...result.value)
+      // Sources are listed in the providers order
+      response.geocoders.push(...result.value)
     })
 
     res.json(response)
