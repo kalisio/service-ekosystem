@@ -42,7 +42,9 @@ module.exports = {
   },
   db: {
     adapter: 'mongodb',
-    url: 'mongodb://127.0.0.1:27017/katalog'
+    url: process.env.DB_URL || 'mongodb://127.0.0.1:27017/katalog',
+    // Shared data DB used by the layers declaring dbName: 'data' (same as Kano)
+    secondaries: (process.env.DATA_DB_URL ? { data: process.env.DATA_DB_URL } : undefined)
   },
   distribution: {
     key: 'katalog',
