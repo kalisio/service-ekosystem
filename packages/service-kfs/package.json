@@ -10,7 +10,7 @@
     "lint": "standard --fix",
     "release": "git tag \"$(node -p \"const p=require('./package.json');p.name+'@'+p.version\")\" # e.g. git tag @kalisio/service-kfs@0.1.0",
     "postrelease": "git push origin \"$(node -p \"const p=require('./package.json');p.name+'@'+p.version\")\" # e.g. git push origin @kalisio/service-kfs@0.1.0",
-    "test": "bash -c 'source ../../../development/workspaces/services/services.sh kfs && export NODE_CONFIG_DIR=./test/config && vitest run --coverage'"
+    "test": "bash -c 'source ../../../development/workspaces/services/services.sh service-kfs && export NODE_CONFIG_DIR=./test/config && vitest run --coverage'"
   },
   "keywords": [
     "kalisio"
