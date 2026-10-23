@@ -40,8 +40,8 @@
     "@feathersjs/feathers": "catalog:",
     "@feathersjs/socketio": "catalog:",
     "@kalisio/feathers-distributed": "catalog:",
-    "@kalisio/kdk-core-api": "link:../../../kdk-ekosystem/packages/kdk-core-api",
-    "@kalisio/kdk-map-api": "link:../../../kdk-ekosystem/packages/kdk-map-api",
+    "@kalisio/kdk-core-api": "~0.2.0",
+    "@kalisio/kdk-map-api": "~0.2.0",
     "debug": "catalog:",
     "glob": "catalog:",
     "winston": "catalog:"
