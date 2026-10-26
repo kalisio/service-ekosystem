@@ -203,7 +203,7 @@ overridden by environment variables.
 | `port` | `8187` | Listening port (`PORT` env var). |
 | `baseUrl` | `http://localhost:8187/api` | Public URL of the API (`BASE_URL` env var). |
 | `https` | `null` | Set it to `{ key, cert }` to serve over HTTPS instead of HTTP. |
-| `db.url` | `mongodb://127.0.0.1:27017/katalog` | MongoDB connection string. |
+| `dbUrl` | `mongodb://127.0.0.1:27017/katalog` | MongoDB connection string. |
 | `paginate` | `{ default: 10, max: 50 }` | Application-wide pagination. The `catalog` service overrides it with `{ default: 1000, max: 1000 }`, and the layer feature services with `{ default: 5000, max: 5000 }`. |
 | `origins` | `['http://localhost:3030']` | CORS origins. |
 | `logs` | Console + daily rotating file | Winston transports, the files being written to `logs/` for 30 days. |
