@@ -22,7 +22,7 @@ EXTRA_FULL_REBUILD_PATHS=()
 ## Parse options
 ##
 
-NODE_VER=20
+NODE_VER=24
 MONGO_VER="7"
 CI_STEP_NAME="Run tests"
 RUN_SONAR=false

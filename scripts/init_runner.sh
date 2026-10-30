@@ -12,15 +12,15 @@ THIS_DIR=$(dirname "$THIS_FILE")
 ### Github Actions
 
 init_github_run_tests() {
-    install_reqs age sops nvm node20 mongo7 sonar_scanner_cli
+    install_reqs age sops nvm node24 mongo7 sonar_scanner_cli
 }
 
 init_github_additional_tests() {
-    install_reqs age sops nvm node22 mongo7 mongo8
+    install_reqs age sops nvm node24 node26 mongo7 mongo8
 }
 
 init_github_build_package() {
-    install_reqs age sops nvm node20
+    install_reqs age sops nvm node24
 }
 
 init_github_build_docs() {
