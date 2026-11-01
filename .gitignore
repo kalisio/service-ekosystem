@@ -51,6 +51,9 @@ coverage/
 jest-*.json
 run/
 
+# PNPM hooks
+.pnpmfile.cjs
+
 # Husky hooks
 .husky/_
 
