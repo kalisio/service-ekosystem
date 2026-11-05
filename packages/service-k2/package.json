@@ -1,7 +1,7 @@
 {
   "name": "@kalisio/service-k2",
-  "description": "3D terrain server for Cesium tiles",
-  "version": "0.0.0",
+  "description": "3D terrain tiles and elevation server",
+  "version": "2.1.1",
   "packageManager": "pnpm@10.34.5",
   "type": "module",
   "private": true,
