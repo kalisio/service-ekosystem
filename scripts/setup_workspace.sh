@@ -54,14 +54,15 @@ if [ "$CI" != true ]; then
     unset KALISIO_DEVELOPMENT_DIR
 fi
 
-setup_lib_workspace "$WORKSPACE_DIR" "$KALISIO_GITHUB_URL/kalisio/development.git"
+git_shallow_clone "$KALISIO_GITHUB_URL/kalisio/development.git" "$WORKSPACE_DIR/development"
 
 # Only use kli when requested + on master branch
 # otherwise package.json version will be used
 if [ "$WORKSPACE_KIND" != "nokli" ]; then
     # On master branch we use kli, on other branches / tags we just install
     if [ "$WORKSPACE_REF" = "master" ]; then
-        run_kli "$WORKSPACE_DIR" "$WORKSPACE_NODE" "$WORKSPACE_DIR/development/workspaces/services/service-ekosystem/dev/service-ekosystem.js" "$WORKSPACE_KIND"
+        KLI_FILE="$WORKSPACE_DIR/development/workspaces/services/service-ekosystem/dev/service-ekosystem.js"
+        run_meta_kli "$WORKSPACE_DIR" "$WORKSPACE_NODE" "$KLI_FILE" "$WORKSPACE_KIND"
     else
         cd "$WORKSPACE_DIR/service-ekosystem" && nvm exec "$WORKSPACE_NODE" pnpm install && cd ~-
     fi
