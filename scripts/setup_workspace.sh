@@ -14,14 +14,11 @@ WORKSPACE_DIR="$(dirname "$ROOT_DIR")"
 
 WORKSPACE_NODE=24
 WORKSPACE_KIND=klifull
-WORKSPACE_BRANCH=
-WORKSPACE_TAG=
+WORKSPACE_BRANCH=$(get_git_branch "$ROOT_DIR")
+WORKSPACE_TAG=$(get_git_tag "$ROOT_DIR")
 OPT_LIST="n:k:"
 if [ "$CI" != true ]; then
     OPT_LIST="b:n:t:k:"
-else
-    WORKSPACE_BRANCH=$(get_git_branch "$ROOT_DIR")
-    WORKSPACE_TAG=$(get_git_tag "$ROOT_DIR")
 fi
 
 while getopts "$OPT_LIST" OPT; do
