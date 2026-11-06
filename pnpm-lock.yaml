@@ -9,6 +9,9 @@ catalogs:
     '@changesets/cli':
       specifier: 2.30.0
       version: 2.30.0
+    '@duckdb/node-api':
+      specifier: 1.5.6-r.2
+      version: 1.5.6-r.2
     '@feathersjs/authentication':
       specifier: 5.0.50
       version: 5.0.50
@@ -701,6 +704,60 @@ importers:
         specifier: 'catalog:'
         version: 10.1.0
 
+  packages/service-kross:
+    dependencies:
+      '@duckdb/node-api':
+        specifier: 'catalog:'
+        version: 1.5.6-r.2
+      '@feathersjs/commons':
+        specifier: 'catalog:'
+        version: 5.0.50
+      '@feathersjs/configuration':
+        specifier: 'catalog:'
+        version: 5.0.50(typescript@6.0.3)
+      '@feathersjs/errors':
+        specifier: 'catalog:'
+        version: 5.0.50
+      '@feathersjs/express':
+        specifier: 'catalog:'
+        version: 5.0.50(typescript@6.0.3)
+      '@feathersjs/feathers':
+        specifier: 'catalog:'
+        version: 5.0.50
+      '@feathersjs/schema':
+        specifier: 'catalog:'
+        version: 5.0.50(typescript@6.0.3)
+      '@kalisio/feathers-distributed':
+        specifier: 'catalog:'
+        version: 3.1.0
+      compression:
+        specifier: 'catalog:'
+        version: 1.8.1
+      cors:
+        specifier: 'catalog:'
+        version: 2.8.6
+      debug:
+        specifier: 'catalog:'
+        version: 4.4.3
+      feathers-hooks-common:
+        specifier: 'catalog:'
+        version: 8.2.1(@feathersjs/feathers@5.0.50)
+      helmet:
+        specifier: 'catalog:'
+        version: 8.3.0
+      lodash:
+        specifier: 'catalog:'
+        version: 4.18.1
+      minimatch:
+        specifier: 'catalog:'
+        version: 10.2.5
+      winston:
+        specifier: 'catalog:'
+        version: 3.19.0
+      winston-daily-rotate-file:
+        specifier: 'catalog:'
+        version: 4.7.1(winston@3.19.0)
+
   packages/service-trakkar:
     dependencies:
       '@feathersjs/configuration':
@@ -1289,6 +1346,56 @@ packages:
         optional: true
       search-insights:
         optional: true
+
+  '@duckdb/node-api@1.5.6-r.2':
+    resolution: {integrity: sha512-xDXSabc44PIe7xzTVYtfXKkp1eqvXJSOPoYfgtcdj5ThYiy1lyNI1AGx8NHIg134pwy2xW4iqQ5IvKXVD/OKPg==}
+
+  '@duckdb/node-bindings-darwin-arm64@1.5.6-r.2':
+    resolution: {integrity: sha512-JGNh1WQtlXrxDs6/5dmSH0tGBrn4Kl/GTlzay/KlIb0rJLray5c5PdZOl6o+ApOsAbgoQ2tRWuFFtoqwsfPqrQ==}
+    cpu: [arm64]
+    os: [darwin]
+
+  '@duckdb/node-bindings-darwin-x64@1.5.6-r.2':
+    resolution: {integrity: sha512-kx3tVfqytffRXgJ4AN7wB4dBaSS2WrmA0iy3dfIa7tbDYI8bFf+muZp6jtbsWAxhx+BzHV+wRmtMC/Ygmh/FTw==}
+    cpu: [x64]
+    os: [darwin]
+
+  '@duckdb/node-bindings-linux-arm64-musl@1.5.6-r.2':
+    resolution: {integrity: sha512-scmH9rLsHc2npzWmJwEmhfPMlG/H3U+sHTqBEPs/eUQfD2OYf5uqo5M87BDOiStBaZICCDEpTnMOxoe4mgh2lw==}
+    cpu: [arm64]
+    os: [linux]
+    libc: [musl]
+
+  '@duckdb/node-bindings-linux-arm64@1.5.6-r.2':
+    resolution: {integrity: sha512-x/JvEl57X19PBlemOAQuyv0gf3QuP+GrnDZKLnCc6rDY/u8tlPYlzPoKHxWgcSu4FKXMSY0RXosgEm9ulMkOhA==}
+    cpu: [arm64]
+    os: [linux]
+    libc: [glibc]
+
+  '@duckdb/node-bindings-linux-x64-musl@1.5.6-r.2':
+    resolution: {integrity: sha512-GyLPoJcDRvi7vJMRnBNmI5kT95aaTVwgaFKBvpROen317oxckaA+OsBJovH+vtJlU7D+i+9mwmGN8wuDQAdJtg==}
+    cpu: [x64]
+    os: [linux]
+    libc: [musl]
+
+  '@duckdb/node-bindings-linux-x64@1.5.6-r.2':
+    resolution: {integrity: sha512-Vrr5W9xrQB6Xnv4mgFuyzbvjKBrjMCQdAQiIWzcDOuKW+HpJKhjSUuNnOXplFmryy2eTsP/t7fodiqrgDPJYRA==}
+    cpu: [x64]
+    os: [linux]
+    libc: [glibc]
+
+  '@duckdb/node-bindings-win32-arm64@1.5.6-r.2':
+    resolution: {integrity: sha512-cHb9onfkRv8UG4iWMguu/5//aiJjzUyVncPEL3qkwmHgWtkgDP2psy8TExwoMvtnA+gTAQlIOebpanQ9ZYyzWw==}
+    cpu: [arm64]
+    os: [win32]
+
+  '@duckdb/node-bindings-win32-x64@1.5.6-r.2':
+    resolution: {integrity: sha512-iFPP94+k8ODB0k0FnELFO5vFB3IkI203RiaPa/9gfymE3AaugLFiN/2oOLhKqvowXWzRLuDBF4dJXRAWJDJ0KA==}
+    cpu: [x64]
+    os: [win32]
+
+  '@duckdb/node-bindings@1.5.6-r.2':
+    resolution: {integrity: sha512-VthQ+73BXaxJCAcMEb5/tsArNaDcQ1DusAzlh7F6VXgoWRnK3F/j5+IQaHnlbSVNuYH5aGDZZIpAUQZvJrshlA==}
 
   '@emnapi/core@1.9.2':
     resolution: {integrity: sha512-UC+ZhH3XtczQYfOlu3lNEkdW/p4dsJ1r/bP7H8+rhao3TTTMO1ATq/4DdIi23XuGoFY+Cz0JmCbdVl0hz9jZcA==}
@@ -3820,7 +3927,6 @@ packages:
 
   charm@1.0.2:
     resolution: {integrity: sha512-wqW3VdPnlSWT4eRiYX+hcs+C6ViBPUWk1qTCd+37qw9kEm/a5n2qcyQDMBWvSYKN/ctqZzeXNQaeBjOetJJUkw==}
-    deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
 
   cheerio-select@2.1.0:
     resolution: {integrity: sha512-9v9kG0LvzrlcungtnJtpGNxY+fzECQKhK4EGJX2vByejiMX84MFNQw4UxPJl3bFbTMw+Dfs37XaIkCwTZfLh4g==}
@@ -10157,6 +10263,47 @@ snapshots:
     transitivePeerDependencies:
       - '@algolia/client-search'
 
+  '@duckdb/node-api@1.5.6-r.2':
+    dependencies:
+      '@duckdb/node-bindings': 1.5.6-r.2
+
+  '@duckdb/node-bindings-darwin-arm64@1.5.6-r.2':
+    optional: true
+
+  '@duckdb/node-bindings-darwin-x64@1.5.6-r.2':
+    optional: true
+
+  '@duckdb/node-bindings-linux-arm64-musl@1.5.6-r.2':
+    optional: true
+
+  '@duckdb/node-bindings-linux-arm64@1.5.6-r.2':
+    optional: true
+
+  '@duckdb/node-bindings-linux-x64-musl@1.5.6-r.2':
+    optional: true
+
+  '@duckdb/node-bindings-linux-x64@1.5.6-r.2':
+    optional: true
+
+  '@duckdb/node-bindings-win32-arm64@1.5.6-r.2':
+    optional: true
+
+  '@duckdb/node-bindings-win32-x64@1.5.6-r.2':
+    optional: true
+
+  '@duckdb/node-bindings@1.5.6-r.2':
+    dependencies:
+      detect-libc: 2.1.2
+    optionalDependencies:
+      '@duckdb/node-bindings-darwin-arm64': 1.5.6-r.2
+      '@duckdb/node-bindings-darwin-x64': 1.5.6-r.2
+      '@duckdb/node-bindings-linux-arm64': 1.5.6-r.2
+      '@duckdb/node-bindings-linux-arm64-musl': 1.5.6-r.2
+      '@duckdb/node-bindings-linux-x64': 1.5.6-r.2
+      '@duckdb/node-bindings-linux-x64-musl': 1.5.6-r.2
+      '@duckdb/node-bindings-win32-arm64': 1.5.6-r.2
+      '@duckdb/node-bindings-win32-x64': 1.5.6-r.2
+
   '@emnapi/core@1.9.2':
     dependencies:
       '@emnapi/wasi-threads': 1.2.1
@@ -12686,7 +12833,7 @@ snapshots:
       '@feathersjs/feathers': 5.0.50
       '@feathersjs/socketio': 5.0.44
       chroma-js: 2.6.0
-      compression: 1.8.1
+      compression: 1.8.2
       cors: 2.8.6
       debug: 4.4.3
       feathers-hooks-common: 6.1.5

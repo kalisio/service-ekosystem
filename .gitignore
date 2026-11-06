@@ -59,3 +59,9 @@ docs/.vitepress/cache/
 
 # Local terrain data 
 *.mbtiles
+
+# Local configurations
+local.cjs
+
+# PNPM hook
+.pnpmfile.cjs

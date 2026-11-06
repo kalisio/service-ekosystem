@@ -1,0 +1,64 @@
+{
+  "name": "@kalisio/service-kross",
+  "description": "Kalisio geometrical intersection service over multiple data providers",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "DOCKER_BUILDKIT=1 docker build -t ${KALISIO_DOCKERHUB_URL:-docker.io}/kalisio/kross:${IMAGE_TAG:-dev} --build-arg NODE_VERSION=${NODE_VERSION:-20} --build-arg DEBIAN_VERSION=${DEBIAN_VERSION:-bookworm} -f ./Dockerfile ../..",
+    "dev": "node --conditions=development --watch src/main.js",
+    "lint": "standard --fix",
+    "release": "git tag \"$(node -p \"const p=require('./package.json');p.name+'@'+p.version\")\"",
+    "postrelease": "git push origin \"$(node -p \"const p=require('./package.json');p.name+'@'+p.version\")\"",
+    "test": "bash -c 'source ../../../development/workspaces/services/services.sh service-kross && vitest run --coverage'"
+  },
+  "keywords": [
+    "kalisio",
+    "kross",
+    "intersection",
+    "spatial",
+    "duckdb",
+    "geoparquet",
+    "s3"
+  ],
+  "author": {
+    "name": "KALISIO",
+    "email": "contact@kalisio.com",
+    "url": "https://github.com/kalisio"
+  },
+  "contributors": [],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kalisio/service-ekosystem.git",
+    "directory": "packages/service-kross"
+  },
+  "bugs": {
+    "url": "https://github.com/kalisio/service-ekosystem/issues"
+  },
+  "homepage": "https://github.com/kalisio/service-ekosystem/tree/main/packages/service-kross",
+  "dependencies": {
+    "@duckdb/node-api": "catalog:",
+    "@feathersjs/commons": "catalog:",
+    "@feathersjs/configuration": "catalog:",
+    "@feathersjs/errors": "catalog:",
+    "@feathersjs/express": "catalog:",
+    "@feathersjs/feathers": "catalog:",
+    "@feathersjs/schema": "catalog:",
+    "@kalisio/feathers-distributed": "catalog:",
+    "compression": "catalog:",
+    "cors": "catalog:",
+    "debug": "catalog:",
+    "feathers-hooks-common": "catalog:",
+    "helmet": "catalog:",
+    "lodash": "catalog:",
+    "minimatch": "catalog:",
+    "winston": "catalog:",
+    "winston-daily-rotate-file": "catalog:"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": ">=20",
+    "pnpm": ">=10"
+  }
+}
