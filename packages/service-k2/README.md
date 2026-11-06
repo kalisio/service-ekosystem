@@ -1,6 +1,6 @@
 # service-k2
 
-_3D terrain server for Cesium tiles_
+_3D terrain tiles and elevation server_
 
 ---
 

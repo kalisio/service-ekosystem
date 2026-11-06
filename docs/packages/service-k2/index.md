@@ -1,11 +1,11 @@
 ---
 title: service-k2
-description: 3D terrain server for Cesium tiles
+description: 3D terrain tiles and elevation server
 ---
 
 # service-k2
 
-_3D terrain server for Cesium tiles_
+_3D terrain tiles and elevation server_
 
 ## Overview
 
