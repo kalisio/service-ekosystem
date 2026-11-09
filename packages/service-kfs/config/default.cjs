@@ -44,8 +44,8 @@ module.exports = {
   },
   distribution: { // Distribute no services simply use remote ones from Kano
     services: (service) => false,
-    // Use only Kano services
-    remoteServices: (service) => (service.key === 'kano'),
+    // Use only Katalog services
+    remoteServices: (service) => (service.key === 'katalog'),
     // We don't care about events
     distributedEvents: [],
     // https://github.com/kalisio/feathers-distributed#remote-services
