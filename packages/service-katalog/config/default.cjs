@@ -54,6 +54,8 @@ module.exports = {
     timeout: 30000,
     services: (service) => true,
     remoteServices: (service) => false,
+    // Distribute at least modelName and pagination for KFS to know about features services
+    remoteServiceOptions: () => ['modelName', 'paginate'],
     distributedMethods: ['find', 'get', 'create', 'update', 'patch', 'remove'],
     distributedEvents: ['created', 'updated', 'patched', 'removed'],
     middlewares: { after: express.errorHandler() }
