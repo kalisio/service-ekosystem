@@ -31,7 +31,7 @@ module.exports = {
     // for now we don't distribute the monitor service
     services: (service) => false,
     // Use only Kano services
-    remoteServices: (service) => (service.key === 'kano'),
+    remoteServices: (service) => (service.key === 'kano' || service.key === 'katalog'),
     healthcheckPath: apiPath + '/distribution/',
     key: 'services'
   }
