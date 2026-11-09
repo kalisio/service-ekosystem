@@ -593,6 +593,9 @@ importers:
       glob:
         specifier: 'catalog:'
         version: 13.0.1
+      lodash:
+        specifier: 'catalog:'
+        version: 4.18.1
       winston:
         specifier: 'catalog:'
         version: 3.19.0
