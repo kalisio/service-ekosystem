@@ -40,14 +40,14 @@
     "@feathersjs/feathers": "catalog:",
     "@feathersjs/socketio": "catalog:",
     "@kalisio/feathers-distributed": "catalog:",
-    "@kalisio/kdk-core-api": "~0.2.0",
-    "@kalisio/kdk-map-api": "~0.2.0",
+    "@kalisio/kdk-core-api": "catalog:",
+    "@kalisio/kdk-map-api": "catalog:",
     "debug": "catalog:",
     "glob": "catalog:",
     "lodash": "catalog:",
     "winston": "catalog:"
   },
   "engines": {
-    "node": ">= 20"
+    "node": ">=24"
   }
 }
