@@ -36,7 +36,7 @@
     "release:service-katalog": "pnpm --filter @kalisio/service-katalog release",
     "release:service-kfs": "pnpm --filter @kalisio/service-kfs release",
     "release:service-kross": "pnpm --filter @kalisio/service-kross release",
-    "test": "bash -c 'source ../../../development/workspaces/services/services.sh service-ekosystem && pnpm -r --workspace-concurrency=1 test'",
+    "test": "pnpm -r --workspace-concurrency=1 test",
     "test:service-geokatcher": "pnpm --filter @kalisio/service-geokatcher test",
     "test:service-geokoder": "pnpm --filter @kalisio/service-geokoder test",
     "test:service-k2": "pnpm --filter @kalisio/service-k2 test",
