@@ -5,7 +5,7 @@ import _ from 'lodash'
 import makeDebug from 'debug'
 import errors from '@feathersjs/errors'
 import { Providers } from './providers.js'
-import { toGeometry } from './utils.js'
+// import { toGeometry } from './utils.js'
 
 const debug = makeDebug('kross:routes')
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -50,13 +50,24 @@ export default async function (app) {
   app.post(`${apiPath}/intersect`, asyncHandler(async (req, res) => {
     debug(`${req.method} ${req.originalUrl}`)
     const body = req.body || {}
-    const geometry = toGeometry(body.geometry)
-    if (!geometry) throw new errors.BadRequest('Intersection expects a GeoJSON geometry or feature as geometry')
+
+    const inputName = body.input?.name
+    const overlayName = body.overlay?.query?.name
+
     const options = {
-      geometry,
-      filter: _.isString(body.sources) ? body.sources : '*',
-      clip: body.clip === true
+      input: { name: inputName, project: body.input?.project },
+      overlay: { query: { name: overlayName, cql: body.overlay?.query?.cql } }
     }
+
+    debug(options)
+
+    // const geometry = toGeometry(body.geometry)
+    // if (!geometry) throw new errors.BadRequest('Intersection expects a GeoJSON geometry or feature as geometry')
+    // const options = {
+    //   geometry,
+    //   filter: _.isString(body.sources) ? body.sources : '*',
+    //   clip: body.clip === true
+    // }
     if (_.has(body, 'limit')) options.limit = _.toInteger(body.limit)
     else options.limit = _.get(paginate, 'default.intersect', 1000)
     if (!(options.limit > 0)) throw new errors.BadRequest('Intersection expects a positive limit')

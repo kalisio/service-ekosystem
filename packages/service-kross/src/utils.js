@@ -1,15 +1,15 @@
 import _ from 'lodash'
-import { minimatch } from 'minimatch'
+// import { minimatch } from 'minimatch'
 
 const GEOMETRY_TYPES = ['Point', 'MultiPoint', 'LineString', 'MultiLineString', 'Polygon', 'MultiPolygon', 'GeometryCollection']
 
-export function filterSource (name, filter) {
-  return filter ? minimatch(_.replace(name, '/', '_'), _.replace(filter, '/', '_')) : true
-}
+// export function filterSource (name, filter) {
+//   return filter ? minimatch(_.replace(name, '/', '_'), _.replace(filter, '/', '_')) : true
+// }
 
-export function filterSources (sources, filter) {
-  return _.filter(sources, (source) => filterSource(source.name, filter))
-}
+// export function filterSources (sources, filter) {
+//   return _.filter(sources, (source) => filterSource(source.name, filter))
+// }
 
 // Extract a GeoJSON geometry from a geometry or a feature, returns null if not valid
 export function toGeometry (input) {
@@ -21,12 +21,12 @@ export function toGeometry (input) {
   return Array.isArray(geometry.coordinates) ? geometry : null
 }
 
-// SQL helpers, only applied to values coming from the configuration, never to user input
-// which always goes through prepared statement parameters
-export function quoteIdentifier (name) {
-  return `"${String(name).replaceAll('"', '""')}"`
-}
+// // SQL helpers, only applied to values coming from the configuration, never to user input
+// // which always goes through prepared statement parameters
+// export function quoteIdentifier (name) {
+//   return `"${String(name).replaceAll('"', '""')}"`
+// }
 
-export function quoteLiteral (value) {
-  return `'${String(value).replaceAll("'", "''")}'`
-}
+// export function quoteLiteral (value) {
+//   return `'${String(value).replaceAll("'", "''")}'`
+// }

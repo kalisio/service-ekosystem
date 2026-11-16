@@ -1,4 +1,4 @@
-import { createDuckDBProvider } from './providers/index.js'
+import { createDuckDBProvider } from '@kalisio/service-core/providers'
 
 // Provider contract:
 // {

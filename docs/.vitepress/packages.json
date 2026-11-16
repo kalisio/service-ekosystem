@@ -6,5 +6,6 @@
   "service-kfs",
   "service-trakkar",
   "service-geokatcher",
-  "service-kross"
+  "service-kross",
+  "service-core"
 ]

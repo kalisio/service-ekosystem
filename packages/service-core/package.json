@@ -1,0 +1,66 @@
+{
+  "name": "@kalisio/service-core",
+  "description": "Helpers shared between services",
+  "version": "0.0.0",
+  "type": "module",
+  "exports": {
+    "./providers": {
+      "development": "./src/providers/index.js",
+      "import": "./dist/providers/index.mjs",
+      "require": "./dist/providers/index.cjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "standard": {
+    "ignore": [
+      "dist/**"
+    ]
+  },
+  "scripts": {
+    "build": "vite build",
+    "postbuild": "publint",
+    "lint": "standard --fix",
+    "test": "vitest run --coverage"
+  },
+  "keywords": [
+    "service-core"
+  ],
+  "author": {
+    "name": "KALISIO",
+    "email": "contact@kalisio.com",
+    "url": "https://github.com/kalisio"
+  },
+  "contributors": [],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kalisio/service-ekosystem.git",
+    "directory": "packages/service-core"
+  },
+  "bugs": {
+    "url": "https://github.com/kalisio/service-ekosystem/issues"
+  },
+  "homepage": "https://github.com/kalisio/service-ekosystem/tree/main/packages/service-core",
+  "peerDependencies": {
+    "@duckdb/node-api": "catalog:",
+    "debug": "catalog:",
+    "lodash": "catalog:",
+    "minimatch": "catalog:"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": ">=20",
+    "pnpm": ">=10"
+  },
+  "publishConfig": {
+    "access": "public",
+    "exports": {
+      ".": {
+        "import": "./dist/index.mjs",
+        "require": "./dist/index.cjs"
+      }
+    }
+  }
+}
