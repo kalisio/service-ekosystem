@@ -51,12 +51,17 @@ export default async function (app) {
     debug(`${req.method} ${req.originalUrl}`)
     const body = req.body || {}
 
+    // body needs an 'input'
+    // body needs an 'overlay'
+    // overlay may contain either a 'query' or a 'feature'
+
     const inputName = body.input?.name
     const overlayName = body.overlay?.query?.name
 
     const options = {
       input: { name: inputName, project: body.input?.project },
-      overlay: { query: { name: overlayName, cql: body.overlay?.query?.cql } }
+      overlay: { query: { name: overlayName, cql: body.overlay?.query?.cql }, feature: body.overlay?.feature },
+      enableStats: body.enableStats
     }
 
     debug(options)

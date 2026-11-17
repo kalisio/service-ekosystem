@@ -58,139 +58,76 @@ WHERE ST_Intersects(${geometry}, input.g)
 LIMIT $2`
 }
 
-// function toFeature (row) {
-//   const geometry = row.kross_geometry
-//   return {
-//     type: 'Feature',
-//     geometry: _.isString(geometry) ? JSON.parse(geometry) : geometry,
-//     properties: _.omit(row, ['kross_geometry'])
-//   }
-// }
-
-class CQL2ToSQL {
-  constructor () {
-    this.params = []
-    this.operators = {
-      '=': '=',
-      '<>': '<>',
-      '<': '<',
-      '>': '>',
-      '<=': '<=',
-      '>=': '>=',
-      LIKE: 'LIKE',
-      ILIKE: 'ILIKE'
-    }
-  }
-
-  convert (cql) {
-    this.params = []
-
-    const sql = this.parse(cql)
-
-    return {
-      sql,
-      params: [...this.params]
-    }
-  }
-
-  parse (node) {
-    if (!node || typeof node !== 'object') {
-      throw new Error('Expression CQL2 invalide')
-    }
-
-    // Opérateur logique
-    if (node.op) {
-      return this.parseOperation(node)
-    }
-
-    // Opérande
-    if (node.property) {
-      return this.quoteIdentifier(node.property)
-    }
-
-    if (Object.prototype.hasOwnProperty.call(node, 'value')) {
-      return this.addParameter(node.value)
-    }
-
-    throw new Error('Expression CQL2 non supportée')
-  }
-
-  parseOperation (node) {
-    const op = node.op.toLowerCase()
-    const args = node.args
-
-    if (!Array.isArray(args)) {
-      throw new Error(`Arguments invalides pour ${op}`)
-    }
-
-    // Opérateurs logiques
-    if (op === 'and' || op === 'or') {
-      if (args.length < 2) {
-        throw new Error(`${op} nécessite au moins 2 arguments`)
-      }
-
-      const separator = op.toUpperCase()
-
-      return '(' +
-                args.map(arg => this.parse(arg)).join(` ${separator} `) +
-                ')'
-    }
-
-    if (op === 'not') {
-      if (args.length !== 1) {
-        throw new Error('NOT nécessite un argument')
-      }
-
-      return `(NOT ${this.parse(args[0])})`
-    }
-
-    // Opérateurs de comparaison
-    if (this.operators[op.toUpperCase()]) {
-      if (args.length !== 2) {
-        throw new Error(`${op} nécessite 2 arguments`)
-      }
-
-      const left = this.parse(args[0])
-      const right = args[1]
-
-      // Gestion des valeurs NULL
-      if (
-        right &&
-                Object.prototype.hasOwnProperty.call(right, 'value') &&
-                right.value === null
-      ) {
-        if (op === '=') return `(${left} IS NULL)`
-        if (op === '<>') return `(${left} IS NOT NULL)`
-        throw new Error(`Comparaison ${op} avec NULL invalide`)
-      }
-
-      return `(${left} ${this.operators[op.toUpperCase()]} ${this.parse(right)})`
-    }
-
-    throw new Error(`Opérateur non supporté : ${op}`)
-  }
-
-  addParameter (value) {
-    this.params.push(value)
-    // return "?";
-    return value
-  }
-
-  quoteIdentifier (identifier) {
-    if (
-      typeof identifier !== 'string' ||
-            !/^[a-zA-Z_][a-zA-Z0-9_]*$/.test(identifier)
-    ) {
-      throw new Error(`Identifiant SQL invalide : ${identifier}`)
-    }
-
-    return `"${identifier}"`
+function toFeature (row) {
+  const geometry = row.geom
+  return {
+    type: 'Feature',
+    geometry: _.isString(geometry) ? JSON.parse(geometry) : geometry,
+    properties: _.omit(row, ['geom'])
   }
 }
 
-function CQL2SQL (cql) {
-  const converter = new CQL2ToSQL()
-  return converter.convert(cql).sql
+const CMP = { '=': '=', '<>': '<>', '<': '<', '<=': '<=', '>': '>', '>=': '>=' }
+const ARITH = { '+': '+', '-': '-', '*': '*', '/': '/', '%': '%', div: '/' }
+
+function quoteIdent (name) {
+  if (!/^[A-Za-z_][A-Za-z0-9_.]*$/.test(name)) throw new Error(`Invalid property name: ${name}`)
+  return name.split('.').map(p => `"${p}"`).join('.')
+}
+
+function cql2sql (query, opts = {}) {
+  const params = []
+  const ident = opts.mapProp || quoteIdent
+  const ph = v => { params.push(v); return opts.placeholder ? opts.placeholder(params.length) : '?' }
+
+  const isOp = n => n && typeof n === 'object' && !Array.isArray(n) && typeof n.op === 'string'
+
+  function expr (n) {
+    if (Array.isArray(n)) throw new Error('Unexpected array')
+    if (n === null || typeof n !== 'object') return ph(n) // literal
+    if (n.property !== undefined) return ident(n.property)
+    if (n.timestamp !== undefined) return ph(n.timestamp)
+    if (n.date !== undefined) return ph(n.date)
+    if (n.bbox) return ph(JSON.stringify(n.bbox))
+    if ((n.type && n.coordinates) || n.type === 'GeometryCollection') return `ST_GeomFromGeoJSON(${ph(JSON.stringify(n))})`
+    if (isOp(n)) return op(n)
+    throw new Error('Unsupported node: ' + JSON.stringify(n))
+  }
+
+  function op (n) {
+    const a = n.args || []
+    const o = n.op.toLowerCase()
+    switch (o) {
+      case 'and': case 'or':
+        return '(' + a.map(op_ => expr(op_)).join(` ${o.toUpperCase()} `) + ')'
+      case 'not': return `(NOT ${expr(a[0])})`
+      case '=': case '<>': case '<': case '<=': case '>': case '>=':
+        return `(${expr(a[0])} ${CMP[o]} ${expr(a[1])})`
+      case '+': case '-': case '*': case '/': case '%': case 'div':
+        return `(${expr(a[0])} ${ARITH[o]} ${expr(a[1])})`
+      case '^': return `POWER(${expr(a[0])}, ${expr(a[1])})`
+      case 'isnull': return `(${expr(a[0])} IS NULL)`
+      case 'like': return `(${expr(a[0])} LIKE ${expr(a[1])})`
+      case 'between':
+        return `(${expr(a[0])} BETWEEN ${expr(a[1])} AND ${expr(a[2])})`
+      case 'in':
+        if (!Array.isArray(a[1]) || !a[1].length) throw new Error('IN needs non-empty list')
+        return `(${expr(a[0])} IN (${a[1].map(expr).join(', ')}))`
+      case 'casei': return `LOWER(${expr(a[0])})`
+      case 'accenti': return `UNACCENT(${expr(a[0])})`
+      case 'a_contains': return `(${expr(a[0])} @> ${expr(a[1])})`
+      case 'a_containedby': return `(${expr(a[0])} <@ ${expr(a[1])})`
+      case 'a_overlaps': return `(${expr(a[0])} && ${expr(a[1])})`
+      case 'a_equals': return `(${expr(a[0])} = ${expr(a[1])})`
+      case 's_intersects': case 's_equals': case 's_disjoint': case 's_touches':
+      case 's_within': case 's_overlaps': case 's_crosses': case 's_contains':
+        return `ST_${o.slice(2).replace(/^./, c => c.toUpperCase())}(${expr(a[0])}, ${expr(a[1])})`
+      default:
+        throw new Error(`Unsupported operator: ${n.op}`)
+    }
+  }
+
+  return { sql: expr(query), params }
 }
 
 export async function createDuckDBProvider (app) {
@@ -204,38 +141,14 @@ export async function createDuckDBProvider (app) {
   const connection = await instance.connect()
   await connection.run('INSTALL spatial; LOAD spatial;')
   await connection.run('INSTALL httpfs; LOAD httpfs;')
+  // if (config.enableStats) {
+  //   await connection.run('INSTALL http_stats FROM community; LOAD http_stats;')
+  // }
   if (s3) await connection.run(createS3SecretStatement(s3))
   connection.closeSync()
 
   const datasets = _.map(datasetsConfig, (dataset, name) => ({ geometry: 'geometry', ...dataset, name }))
   debug(`DuckDB provider: found ${datasets.length} datasets`, _.map(datasets, 'name'))
-
-  // async function query (dataset, { geometry, geometryQuery, limit, clip }) {
-  //   const geometrySql = getOverlayQuery(geometryQuery)
-  //   const sql = getIntersectQuery(dataset, { clip })
-  //   const parameters = [JSON.stringify(geometry), limit]
-  //   debug(`${dataset.name}: running query`, sql)
-  //   // One connection per query so that queries can run concurrently
-  //   const connection = await instance.connect()
-  //   try {
-  //     const reader = await connection.runAndReadAll(sql, parameters)
-  //     return reader.getRowObjectsJson().map(row => ({ source: dataset.name, feature: toFeature(row) }))
-  //   } finally {
-  //     connection.closeSync()
-  //   }
-  // }
-
-  // function getOverlaySql (dataset, overlay) {
-  //   return CQL2SQL(overlay.query.cql)
-  // }
-
-  //   function getQuerySql (input, overlay) {
-  //     return `WITH overlay AS (${overlay.sql})
-  // SELECT ${input.project}, ST_AsGeoJSON(${output}) AS kross_geometry
-  // FROM ${getDatasetRelation(dataset)} AS d, input
-  // WHERE ST_Intersects(${geometry}, input.g)
-  // LIMIT $2`
-  //   }
 
   return {
     name: 'DuckDB',
@@ -244,50 +157,61 @@ export async function createDuckDBProvider (app) {
       return _.map(datasets, 'name')
     },
 
-    // async intersect ({ geometry, filter, limit, clip }) {
-    //   const matchingDatasets = filterSources(datasets, filter)
-    //   debug(`Requesting ${matchingDatasets.length} matching datasets`, _.map(matchingDatasets, 'name'))
-    //   const results = await Promise.allSettled(matchingDatasets.map(dataset => query(dataset, { geometry, limit, clip })))
-    //   const response = []
-    //   results.forEach((result, index) => {
-    //     // A failing dataset should not prevent others from answering
-    //     if (result.status === 'fulfilled') response.push(...result.value)
-    //     else app.logger.error(`DuckDB provider: query failed on dataset ${matchingDatasets[index].name}: ${result.reason}`)
-    //   })
-    //   return response
+    // async listCollections () {
+    //   return datasets
     // },
 
-    async intersect ({ input, overlay, limit }) {
-      const overlayDatasets = filterSources(datasets, overlay.query.name)
-      const overlayDataset = overlayDatasets[0]
-      const overlaySql = CQL2SQL(overlay.query.cql)
+    async intersect ({ input, overlay, limit, enableStats }) {
+      let overlaySql = ''
+      const allParams = []
+
+      if (overlay.feature) {
+        overlaySql += 'SELECT ST_GeomFromGeoJSON($1::VARCHAR) AS geom'
+        allParams.push(JSON.stringify(overlay.feature))
+      } else {
+        const overlayDatasets = filterSources(datasets, overlay.query.name)
+        const overlayDataset = overlayDatasets[0]
+        const { sql, params } = cql2sql(overlay.query.cql)
+        debug(`Requesting overlay: ${overlayDataset.name} with ${sql}, ${params}`)
+        overlaySql = `SELECT overlay.${overlayDataset.geometry} AS geom
+  FROM ${getDatasetRelation(overlayDataset)} AS overlay
+  WHERE ${sql}`
+        allParams.push(...params)
+      }
       const inputDatasets = filterSources(datasets, input.name)
       const inputDataset = inputDatasets[0]
-      let sql = `WITH overlay AS (
-  SELECT geom,${overlayDataset.properties.join(',')}
-  FROM ${overlayDataset.url}
-  WHERE ${overlaySql}
-)
-`
-      sql += `SELECT ${inputDataset.properties.join(',')}
-FROM ${inputDataset.url} AS input
+      let allSql = `${enableStats ? 'EXPLAIN ANALYSE' : ''} WITH overlay AS (${overlaySql}) `
+      debug(`Intersecting with input: ${inputDataset.name}`)
+      const inputProps = `ST_AsGeoJSON(input.${inputDataset.geometry}) AS geom` + (inputDataset.properties ? `,${inputDataset.properties.join(',')}` : '')
+      allSql += `SELECT ${inputProps}
+FROM ${getDatasetRelation(inputDataset)} AS input
 JOIN overlay ON ST_Intersects(input.geom, overlay.geom)`
-      debug(sql)
 
-      // // One connection per query so that queries can run concurrently
-      // const connection = await instance.connect()
-      // try {
-      //   const reader = await connection.runAndReadAll(sql, parameters)
-      //   return reader.getRowObjectsJson().map(row => ({ source: dataset.name, feature: toFeature(row) }))
-      // } finally {
-      //   connection.closeSync()
-      // }
+      debug(allSql)
 
-      return [{ source: 'foo', feature: {} }]
+      // One connection per query so that queries can run concurrently
+      const connection = await instance.connect()
+      try {
+        const reader = await connection.runAndReadAll(allSql, allParams)
+        if (enableStats) {
+          debug(reader.getRowObjects())
+          return []
+        }
+        return reader.getRowObjects().map(row => ({ feature: toFeature(row), source: inputDataset.name }))
+      } finally {
+        connection.closeSync()
+      }
     },
 
     async close () {
       instance.closeSync()
+    },
+
+    async forwardGeocode ({ coordinates }) {
+
+    },
+
+    async reverseGeocode () {
     }
   }
 }
