@@ -25,7 +25,7 @@ LABEL maintainer="KALISIO <>"
 RUN DEBIAN_FRONTEND=noninteractive && \
   apt-get update && \
   apt-get --no-install-recommends --yes install \
-    ca-certificates &&
+    ca-certificates && \
   apt-get clean && \
   rm -rf /var/lib/apt/lists/*
 
