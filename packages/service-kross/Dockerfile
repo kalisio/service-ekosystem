@@ -13,7 +13,6 @@ COPY packages/service-kross ./packages/service-kross
 
 ENV NODE_ENV=production
 
-RUN pnpm build:core-service
 RUN pnpm install \
   --frozen-lockfile \
   --filter @kalisio/service-kross \
