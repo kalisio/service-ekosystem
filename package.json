@@ -5,7 +5,6 @@
   "packageManager": "pnpm@10.34.5",
   "scripts": {
     "build": "pnpm -r --filter './packages/*' build",
-    "build:service-core": "pnpm --filter @kalisio/service-core build",
     "build:service-geokoder": "pnpm --filter @kalisio/service-geokoder build",
     "build:service-k2": "pnpm --filter @kalisio/service-k2 build",
     "build:service-kapture": "pnpm --filter @kalisio/service-kapture build",

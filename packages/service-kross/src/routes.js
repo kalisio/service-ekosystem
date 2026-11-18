@@ -51,9 +51,12 @@ export default async function (app) {
     debug(`${req.method} ${req.originalUrl}`)
     const body = req.body || {}
 
-    // body needs an 'input'
+    // TODO: validate input parameters
+
+    // body needs an 'output'
     // body needs an 'overlay'
-    // overlay may contain either a 'query' or a 'feature'
+    // overlay must contain 'type' that can be 'cql2' or 'geojson'
+    // overlay must contain 'value' that must match the type
 
     const inputName = body.input?.name
     const overlayName = body.overlay?.query?.name
