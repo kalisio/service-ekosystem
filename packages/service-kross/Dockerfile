@@ -8,6 +8,7 @@ WORKDIR /app
 RUN corepack enable && corepack prepare pnpm@10.34.5 --activate
 
 COPY pnpm-workspace.yaml pnpm-lock.yaml package.json ./
+COPY packages/core-service ./packages/core-service
 COPY packages/service-kross ./packages/service-kross
 
 ENV NODE_ENV=production
