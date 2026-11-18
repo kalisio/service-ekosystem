@@ -322,7 +322,7 @@ importers:
         specifier: 'catalog:'
         version: 3.5.30(typescript@6.0.3)
 
-  packages/service-core:
+  packages/core-service:
     dependencies:
       '@duckdb/node-api':
         specifier: 'catalog:'
@@ -751,12 +751,12 @@ importers:
       '@feathersjs/schema':
         specifier: 'catalog:'
         version: 5.0.50(typescript@6.0.3)
+      '@kalisio/core-service':
+        specifier: 'workspace:'
+        version: link:../core-service
       '@kalisio/feathers-distributed':
         specifier: 'catalog:'
         version: 3.1.0
-      '@kalisio/service-core':
-        specifier: 'workspace:'
-        version: link:../service-core
       compression:
         specifier: 'catalog:'
         version: 1.8.1

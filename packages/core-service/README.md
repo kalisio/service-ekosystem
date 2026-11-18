@@ -1,4 +1,4 @@
-# service-core
+# core-service
 
 _Helpers shared between services_
 

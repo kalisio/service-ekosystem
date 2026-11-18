@@ -1,9 +1,9 @@
 ---
-title: service-core
+title: core-service
 description: Helpers shared between services
 ---
 
-# service-core
+# core-service
 
 _Helpers shared between services_
 
@@ -18,15 +18,15 @@ Install with your preferred package manager:
 ::: code-group
 
 ```bash [pnpm]
-pnpm add @kalisio/service-core
+pnpm add @kalisio/core-service
 ```
 
 ```bash [npm]
-npm install @kalisio/service-core
+npm install @kalisio/core-service
 ```
 
 ```bash [yarn]
-yarn add @kalisio/service-core
+yarn add @kalisio/core-service
 ```
 
 :::

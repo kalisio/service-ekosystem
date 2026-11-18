@@ -1,5 +1,5 @@
 {
-  "name": "@kalisio/service-core",
+  "name": "@kalisio/core-service",
   "description": "Helpers shared between services",
   "version": "0.0.0",
   "type": "module",
@@ -25,7 +25,7 @@
     "test": "vitest run --coverage"
   },
   "keywords": [
-    "service-core"
+    "core-service"
   ],
   "author": {
     "name": "KALISIO",
@@ -37,12 +37,12 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/kalisio/service-ekosystem.git",
-    "directory": "packages/service-core"
+    "directory": "packages/core-service"
   },
   "bugs": {
     "url": "https://github.com/kalisio/service-ekosystem/issues"
   },
-  "homepage": "https://github.com/kalisio/service-ekosystem/tree/main/packages/service-core",
+  "homepage": "https://github.com/kalisio/service-ekosystem/tree/main/packages/core-service",
   "peerDependencies": {
     "@duckdb/node-api": "catalog:",
     "debug": "catalog:",

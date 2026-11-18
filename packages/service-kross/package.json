@@ -46,7 +46,7 @@
     "@feathersjs/feathers": "catalog:",
     "@feathersjs/schema": "catalog:",
     "@kalisio/feathers-distributed": "catalog:",
-    "@kalisio/service-core": "workspace:",
+    "@kalisio/core-service": "workspace:",
     "compression": "catalog:",
     "cors": "catalog:",
     "debug": "catalog:",
