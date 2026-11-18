@@ -13,6 +13,7 @@ COPY packages/service-kross ./packages/service-kross
 
 ENV NODE_ENV=production
 
+RUN pnpm build:core-service
 RUN pnpm install \
   --frozen-lockfile \
   --filter @kalisio/service-kross \
@@ -29,4 +30,4 @@ USER node
 WORKDIR /kross
 EXPOSE 8080
 
-CMD ["node", "src/main.js"]
+CMD ["node", "--conditions=development", "src/main.js"]
