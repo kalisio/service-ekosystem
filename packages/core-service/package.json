@@ -57,9 +57,9 @@
   "publishConfig": {
     "access": "public",
     "exports": {
-      ".": {
-        "import": "./dist/index.mjs",
-        "require": "./dist/index.cjs"
+      "./providers": {
+        "import": "./dist/providers/index.mjs",
+        "require": "./dist/providers/index.cjs"
       }
     }
   }
