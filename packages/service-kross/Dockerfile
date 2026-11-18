@@ -22,6 +22,13 @@ RUN pnpm install \
 FROM node:${NODE_VERSION}-${DEBIAN_VERSION}-slim
 LABEL maintainer="KALISIO <>"
 
+RUN DEBIAN_FRONTEND=noninteractive && \
+  apt-get update && \
+  apt-get --no-install-recommends --yes install \
+    ca-certificates &&
+  apt-get clean && \
+  rm -rf /var/lib/apt/lists/*
+
 COPY --from=builder --chown=node:node /app /app
 RUN ln -s /app/packages/service-kross /kross
 
