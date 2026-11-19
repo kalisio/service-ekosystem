@@ -10,8 +10,8 @@ catalogs:
       specifier: 2.30.0
       version: 2.30.0
     '@duckdb/node-api':
-      specifier: 1.5.6-r.2
-      version: 1.5.6-r.2
+      specifier: 2.0.0-r.1
+      version: 2.0.0-r.1
     '@feathersjs/authentication':
       specifier: 5.0.50
       version: 5.0.50
@@ -61,8 +61,8 @@ catalogs:
       specifier: 0.2.0
       version: 0.2.0
     '@kalisio/vitepress-theme':
-      specifier: 2.1.0
-      version: 2.1.0
+      specifier: 2.2.1
+      version: 2.2.1
     '@mapbox/mbtiles':
       specifier: 0.12.1
       version: 0.12.1
@@ -311,7 +311,7 @@ importers:
     devDependencies:
       '@kalisio/vitepress-theme':
         specifier: 'catalog:'
-        version: 2.1.0(quasar@2.18.7)(vitepress@1.6.3(@algolia/client-search@5.56.0)(axios@1.15.0)(jwt-decode@4.0.0)(lightningcss@1.33.0)(postcss@8.5.18)(search-insights@2.17.3)(typescript@6.0.3))(vue@3.5.30(typescript@6.0.3))
+        version: 2.2.1(quasar@2.18.7)(vitepress@1.6.3(@algolia/client-search@5.56.0)(axios@1.15.0)(jwt-decode@4.0.0)(lightningcss@1.33.0)(postcss@8.5.18)(search-insights@2.17.3)(typescript@6.0.3))(vue@3.5.30(typescript@6.0.3))
       mermaid:
         specifier: 'catalog:'
         version: 10.8.0
@@ -332,7 +332,7 @@ importers:
     dependencies:
       '@duckdb/node-api':
         specifier: 'catalog:'
-        version: 1.5.6-r.2
+        version: 2.0.0-r.1
       debug:
         specifier: 'catalog:'
         version: 4.4.3
@@ -738,7 +738,7 @@ importers:
     dependencies:
       '@duckdb/node-api':
         specifier: 'catalog:'
-        version: 1.5.6-r.2
+        version: 2.0.0-r.1
       '@feathersjs/commons':
         specifier: 'catalog:'
         version: 5.0.50
@@ -1376,55 +1376,55 @@ packages:
       search-insights:
         optional: true
 
-  '@duckdb/node-api@1.5.6-r.2':
-    resolution: {integrity: sha512-xDXSabc44PIe7xzTVYtfXKkp1eqvXJSOPoYfgtcdj5ThYiy1lyNI1AGx8NHIg134pwy2xW4iqQ5IvKXVD/OKPg==}
+  '@duckdb/node-api@2.0.0-r.1':
+    resolution: {integrity: sha512-SA4oG7X9UNpSJsr99b7rbJxSs7n5KqMEGV1kC04TxdsYHjGH6w4kGEOiC/yXzvgWr6Jd1WRQD9RUPTX6qGdEwg==}
 
-  '@duckdb/node-bindings-darwin-arm64@1.5.6-r.2':
-    resolution: {integrity: sha512-JGNh1WQtlXrxDs6/5dmSH0tGBrn4Kl/GTlzay/KlIb0rJLray5c5PdZOl6o+ApOsAbgoQ2tRWuFFtoqwsfPqrQ==}
+  '@duckdb/node-bindings-darwin-arm64@2.0.0-r.1':
+    resolution: {integrity: sha512-vay0TmtEaUM7Dm7z1nXlxy2KOcwlY3Xq+wAHRbkuOYmJu//qjcZBT7ijT4qE6m5qGyuLSOiq3w36ShCYApL4yg==}
     cpu: [arm64]
     os: [darwin]
 
-  '@duckdb/node-bindings-darwin-x64@1.5.6-r.2':
-    resolution: {integrity: sha512-kx3tVfqytffRXgJ4AN7wB4dBaSS2WrmA0iy3dfIa7tbDYI8bFf+muZp6jtbsWAxhx+BzHV+wRmtMC/Ygmh/FTw==}
+  '@duckdb/node-bindings-darwin-x64@2.0.0-r.1':
+    resolution: {integrity: sha512-mkPKjf7YR6xk8r5nVyHYjbybrQxMW+mfXJwl2otSKi8bireJV+xaOodyxqzP2cqPB95rpIg1owfYjFfUyLi7NQ==}
     cpu: [x64]
     os: [darwin]
 
-  '@duckdb/node-bindings-linux-arm64-musl@1.5.6-r.2':
-    resolution: {integrity: sha512-scmH9rLsHc2npzWmJwEmhfPMlG/H3U+sHTqBEPs/eUQfD2OYf5uqo5M87BDOiStBaZICCDEpTnMOxoe4mgh2lw==}
+  '@duckdb/node-bindings-linux-arm64-musl@2.0.0-r.1':
+    resolution: {integrity: sha512-AAmQa/uI4LDfyY7zldUwU0Qnpv+yjQPxr0k2uJQylo0tyXWzQ1O0bBWfnDmN0ulym124gFRwr+fzlHyvxCt1FA==}
     cpu: [arm64]
     os: [linux]
     libc: [musl]
 
-  '@duckdb/node-bindings-linux-arm64@1.5.6-r.2':
-    resolution: {integrity: sha512-x/JvEl57X19PBlemOAQuyv0gf3QuP+GrnDZKLnCc6rDY/u8tlPYlzPoKHxWgcSu4FKXMSY0RXosgEm9ulMkOhA==}
+  '@duckdb/node-bindings-linux-arm64@2.0.0-r.1':
+    resolution: {integrity: sha512-V+oOWVY8qq7t5Uh+j8Hf+iwb4pLx2GsxAso1oGBP7ubf38QN1FGoPclJ8ByZob+ZcLdSDgwlS7QUbMB9pnCi2A==}
     cpu: [arm64]
     os: [linux]
     libc: [glibc]
 
-  '@duckdb/node-bindings-linux-x64-musl@1.5.6-r.2':
-    resolution: {integrity: sha512-GyLPoJcDRvi7vJMRnBNmI5kT95aaTVwgaFKBvpROen317oxckaA+OsBJovH+vtJlU7D+i+9mwmGN8wuDQAdJtg==}
+  '@duckdb/node-bindings-linux-x64-musl@2.0.0-r.1':
+    resolution: {integrity: sha512-8GCE/ye+w5GJsCgAk2owUyQA55rtoiBRe2T8A42CaqGbNNZm9hOj3C96d6flT82p7YhQVA8AzA40k9Pn30kJDg==}
     cpu: [x64]
     os: [linux]
     libc: [musl]
 
-  '@duckdb/node-bindings-linux-x64@1.5.6-r.2':
-    resolution: {integrity: sha512-Vrr5W9xrQB6Xnv4mgFuyzbvjKBrjMCQdAQiIWzcDOuKW+HpJKhjSUuNnOXplFmryy2eTsP/t7fodiqrgDPJYRA==}
+  '@duckdb/node-bindings-linux-x64@2.0.0-r.1':
+    resolution: {integrity: sha512-0VdXZQlCnD6oWwJABkp3ihZGBic/6Ora4PQekHv9jwa4Fe2OVcgm0hGtn6yyNGhURVDzZllMITEF98zdo6ussQ==}
     cpu: [x64]
     os: [linux]
     libc: [glibc]
 
-  '@duckdb/node-bindings-win32-arm64@1.5.6-r.2':
-    resolution: {integrity: sha512-cHb9onfkRv8UG4iWMguu/5//aiJjzUyVncPEL3qkwmHgWtkgDP2psy8TExwoMvtnA+gTAQlIOebpanQ9ZYyzWw==}
+  '@duckdb/node-bindings-win32-arm64@2.0.0-r.1':
+    resolution: {integrity: sha512-k47ASHylCPfUe7H+MvaNqsSwXGv8fjxixMF0vqJghp/wUUdAERMi1WNkPIjOj31cJ+O0x+Srdlfe4N0Diofm7Q==}
     cpu: [arm64]
     os: [win32]
 
-  '@duckdb/node-bindings-win32-x64@1.5.6-r.2':
-    resolution: {integrity: sha512-iFPP94+k8ODB0k0FnELFO5vFB3IkI203RiaPa/9gfymE3AaugLFiN/2oOLhKqvowXWzRLuDBF4dJXRAWJDJ0KA==}
+  '@duckdb/node-bindings-win32-x64@2.0.0-r.1':
+    resolution: {integrity: sha512-8moS6xWPmM4UahiUhkfNSPFQG+7kpN2zu8w39C+K9Xgn8Z4Ctu5jOSTdXlybYrLofLH8jwgoNFiUOLMXLD4giw==}
     cpu: [x64]
     os: [win32]
 
-  '@duckdb/node-bindings@1.5.6-r.2':
-    resolution: {integrity: sha512-VthQ+73BXaxJCAcMEb5/tsArNaDcQ1DusAzlh7F6VXgoWRnK3F/j5+IQaHnlbSVNuYH5aGDZZIpAUQZvJrshlA==}
+  '@duckdb/node-bindings@2.0.0-r.1':
+    resolution: {integrity: sha512-R8mrpS9FFUNUL5Xi4NgirZWuP9/1KVEqy6b91a7s7TptIKnu4ZZLch3yBrN+GeWz3hoo5RUctfbaORLRFgqgwQ==}
 
   '@emnapi/core@1.9.2':
     resolution: {integrity: sha512-UC+ZhH3XtczQYfOlu3lNEkdW/p4dsJ1r/bP7H8+rhao3TTTMO1ATq/4DdIi23XuGoFY+Cz0JmCbdVl0hz9jZcA==}
@@ -2118,13 +2118,13 @@ packages:
     resolution: {integrity: sha512-2LGp58CBt+YUrq7Ty1rwdpqFWTL0EBHEW21WBEtLH6vxhdADX5AtshN28Dib2Uv213n3jGxWlnVMMOcs26Na4w==}
     engines: {node: '>= 16.0.0'}
 
-  '@kalisio/vitepress-theme@2.1.0':
-    resolution: {integrity: sha512-J9H2qnp0JIwgSCZRW7ICAPwP4ZQeT5YUPybwtatDyv3PbvR7ENW+AXOYA8REPDjOz4IOwaHkT8aMBSpyEkV5yA==}
-    engines: {node: '>=20'}
+  '@kalisio/vitepress-theme@2.2.1':
+    resolution: {integrity: sha512-bNX27NHlN5NCVWOteqIshPWIcvqKb/jBhokV/5giA59aITFKQ0cZpbWa38viPc6jPHitd+U+uJykhNrAq/IqOQ==}
+    engines: {node: '>=22'}
     peerDependencies:
-      quasar: ~2.14.0
-      vitepress: ~1.6.0
-      vue: ~3.5.0
+      quasar: ^2.16.0
+      vitepress: ^1.6.0
+      vue: ^3.5.0
 
   '@koa/cors@5.0.0':
     resolution: {integrity: sha512-x/iUDjcS90W69PryLDIMgFyV21YLTnG9zOpPXS7Bkt2b8AsY3zZsIpOLBkYr9fBcF3HbkKaER5hOBZLfpLgYNw==}
@@ -6399,8 +6399,8 @@ packages:
     resolution: {integrity: sha512-C3iHfuGUXK2u8/ipq9LfjFfXFxAZMQJJq7vLS45r3D9Y2xQ/m4S8zaR4zMLFWh9AsNPXmcFfUDhTEO8UIC/V6Q==}
     engines: {node: '>=12.0.0'}
 
-  keycloak-js@23.0.7:
-    resolution: {integrity: sha512-OmszsKzBhhm5yP4W1q/tMd+nNnKpOAdeVYcoGhphlv8Fj1bNk4wRTYzp7pn5BkvueLz7fhvKHz7uOc33524YrA==}
+  keycloak-js@23.0.4:
+    resolution: {integrity: sha512-Dq0X/8Gap9As3eAaeNRlQldxdBjMeKh2Q81QwykwihLAcG9hSZHuwFioldDmNbdzymguNMZpqfr3mK9hv+G8hA==}
 
   keygrip@1.1.0:
     resolution: {integrity: sha512-iYSchDJ+liQ8iwbSI2QqsQOvqv58eJCEanyJPJi+Khyu8smkcKSFUCbPwzFcL7YVtZ6eONjqRX/38caJ7QjRAQ==}
@@ -10470,46 +10470,46 @@ snapshots:
     transitivePeerDependencies:
       - '@algolia/client-search'
 
-  '@duckdb/node-api@1.5.6-r.2':
+  '@duckdb/node-api@2.0.0-r.1':
     dependencies:
-      '@duckdb/node-bindings': 1.5.6-r.2
+      '@duckdb/node-bindings': 2.0.0-r.1
 
-  '@duckdb/node-bindings-darwin-arm64@1.5.6-r.2':
+  '@duckdb/node-bindings-darwin-arm64@2.0.0-r.1':
     optional: true
 
-  '@duckdb/node-bindings-darwin-x64@1.5.6-r.2':
+  '@duckdb/node-bindings-darwin-x64@2.0.0-r.1':
     optional: true
 
-  '@duckdb/node-bindings-linux-arm64-musl@1.5.6-r.2':
+  '@duckdb/node-bindings-linux-arm64-musl@2.0.0-r.1':
     optional: true
 
-  '@duckdb/node-bindings-linux-arm64@1.5.6-r.2':
+  '@duckdb/node-bindings-linux-arm64@2.0.0-r.1':
     optional: true
 
-  '@duckdb/node-bindings-linux-x64-musl@1.5.6-r.2':
+  '@duckdb/node-bindings-linux-x64-musl@2.0.0-r.1':
     optional: true
 
-  '@duckdb/node-bindings-linux-x64@1.5.6-r.2':
+  '@duckdb/node-bindings-linux-x64@2.0.0-r.1':
     optional: true
 
-  '@duckdb/node-bindings-win32-arm64@1.5.6-r.2':
+  '@duckdb/node-bindings-win32-arm64@2.0.0-r.1':
     optional: true
 
-  '@duckdb/node-bindings-win32-x64@1.5.6-r.2':
+  '@duckdb/node-bindings-win32-x64@2.0.0-r.1':
     optional: true
 
-  '@duckdb/node-bindings@1.5.6-r.2':
+  '@duckdb/node-bindings@2.0.0-r.1':
     dependencies:
       detect-libc: 2.1.2
     optionalDependencies:
-      '@duckdb/node-bindings-darwin-arm64': 1.5.6-r.2
-      '@duckdb/node-bindings-darwin-x64': 1.5.6-r.2
-      '@duckdb/node-bindings-linux-arm64': 1.5.6-r.2
-      '@duckdb/node-bindings-linux-arm64-musl': 1.5.6-r.2
-      '@duckdb/node-bindings-linux-x64': 1.5.6-r.2
-      '@duckdb/node-bindings-linux-x64-musl': 1.5.6-r.2
-      '@duckdb/node-bindings-win32-arm64': 1.5.6-r.2
-      '@duckdb/node-bindings-win32-x64': 1.5.6-r.2
+      '@duckdb/node-bindings-darwin-arm64': 2.0.0-r.1
+      '@duckdb/node-bindings-darwin-x64': 2.0.0-r.1
+      '@duckdb/node-bindings-linux-arm64': 2.0.0-r.1
+      '@duckdb/node-bindings-linux-arm64-musl': 2.0.0-r.1
+      '@duckdb/node-bindings-linux-x64': 2.0.0-r.1
+      '@duckdb/node-bindings-linux-x64-musl': 2.0.0-r.1
+      '@duckdb/node-bindings-win32-arm64': 2.0.0-r.1
+      '@duckdb/node-bindings-win32-x64': 2.0.0-r.1
 
   '@emnapi/core@1.9.2':
     dependencies:
@@ -11689,9 +11689,9 @@ snapshots:
       - walrus
       - whiskers
 
-  '@kalisio/vitepress-theme@2.1.0(quasar@2.18.7)(vitepress@1.6.3(@algolia/client-search@5.56.0)(axios@1.15.0)(jwt-decode@4.0.0)(lightningcss@1.33.0)(postcss@8.5.18)(search-insights@2.17.3)(typescript@6.0.3))(vue@3.5.30(typescript@6.0.3))':
+  '@kalisio/vitepress-theme@2.2.1(quasar@2.18.7)(vitepress@1.6.3(@algolia/client-search@5.56.0)(axios@1.15.0)(jwt-decode@4.0.0)(lightningcss@1.33.0)(postcss@8.5.18)(search-insights@2.17.3)(typescript@6.0.3))(vue@3.5.30(typescript@6.0.3))':
     dependencies:
-      keycloak-js: 23.0.7
+      keycloak-js: 23.0.4
       lodash-es: 4.18.1
       moment: 2.30.1
       quasar: 2.18.7
@@ -16512,7 +16512,7 @@ snapshots:
 
   kareem@2.6.3: {}
 
-  keycloak-js@23.0.7:
+  keycloak-js@23.0.4:
     dependencies:
       base64-js: 1.5.1
       js-sha256: 0.10.1
