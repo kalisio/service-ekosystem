@@ -6,6 +6,8 @@ import {
   createGeokoderProvider
 } from './providers/index.js'
 
+import { createDuckDBProvider } from '@kalisio/core-service/providers'
+
 export const Providers = {
   async initialize (app) {
     app.providers = []
@@ -14,7 +16,8 @@ export const Providers = {
       createOpenDataFranceProvider(app),
       createOpenStreetMapProvider(app),
       createMBTilesProvider(app),
-      createGeokoderProvider(app)
+      createGeokoderProvider(app),
+      createDuckDBProvider(app)
     ])
     results.forEach((result) => {
       if (result.status !== 'fulfilled') {

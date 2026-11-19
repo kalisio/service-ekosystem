@@ -3,7 +3,7 @@ import makeDebug from 'debug'
 import { DuckDBInstance } from '@duckdb/node-api'
 import { filterSources, quoteIdentifier, quoteLiteral } from '../utils.js'
 
-const debug = makeDebug('kross:providers:duckdb')
+const debug = makeDebug('core-service:providers:duckdb')
 
 // Maps our configuration keys to DuckDB S3 secret parameters,
 // see https://duckdb.org/docs/stable/core_extensions/httpfs/s3api
@@ -159,12 +159,44 @@ function getOutputQuery (datasets, output) {
   const dataset = candidates[0]
   sql.push('SELECT')
   sql.push(`  ST_AsGeoJSON(output.${dataset.geometry}) AS geom`)
-  dataset.properties.forEach((prop) => {
-    sql.push(`, ${prop}`)
-  })
+  dataset.properties.forEach((prop) => { sql.push(`, ${prop}`) })
   sql.push(`FROM ${getDatasetRelation(dataset)} AS output`)
 
   return { sql, params }
+}
+
+function getForwardGeocodeQuery (dataset, search) {
+  const sql = []
+  const params = []
+
+  sql.push('SELECT')
+  sql.push(`  ST_AsGeoJSON(output.${dataset.geometry}) AS geom`)
+  dataset.properties.forEach((prop) => { sql.push(`, ${prop}`) })
+  sql.push(`FROM ${getDatasetRelation(dataset)} AS output`)
+  sql.push(`WHERE ${dataset.geocode} ILIKE ?`)
+  params.push(`%${search}%`)
+
+  return { sql, params }
+}
+
+function getReverseGeocodeQuery (dataset, lat, lon) {
+  const sql = []
+  const params = []
+
+  // sql.push('EXPLAIN')
+  // sql.push('EXPLAIN ANALYZE')
+  sql.push('SELECT')
+  sql.push(`  ST_AsGeoJSON(output.${dataset.geometry}) AS geom`)
+  dataset.properties.forEach((prop) => { sql.push(`, ${prop}`) })
+  sql.push(`FROM ${getDatasetRelation(dataset)} AS output`)
+  sql.push(`WHERE ST_Covers(${dataset.geometry}, ST_Point(?, ?))`)
+  params.push(lon, lat)
+
+  return { sql, params }
+}
+
+function indentSql (lines, indent) {
+  return indent ? lines.map((line) => `${' '.repeat(indent)}${line}`) : lines
 }
 
 export async function createDuckDBProvider (app) {
@@ -187,11 +219,13 @@ export async function createDuckDBProvider (app) {
   const datasets = _.map(datasetsConfig, (dataset, name) => ({ geometry: 'geometry', ...dataset, name }))
   debug(`DuckDB provider: found ${datasets.length} datasets`, _.map(datasets, 'name'))
 
+  const sources = datasets.map((dataset) => ({ name: `duckdb:${dataset.name}`, dataset }))
+
   return {
     name: 'DuckDB',
 
     capabilities ({ operation }) {
-      return _.map(datasets, 'name')
+      return sources.map(source => source.name)
     },
 
     // async listCollections () {
@@ -208,7 +242,7 @@ export async function createDuckDBProvider (app) {
       if (profile === 'explain') sql.push('EXPLAIN')
       else if (profile === 'analyze') sql.push('EXPLAIN ANALYZE')
       sql.push('WITH overlay AS (')
-      sql.push(...overlaySql.map((sql) => `  ${sql}`))
+      sql.push(...indentSql(overlaySql, 2))
       sql.push(')')
       sql.push(...outputSql)
       sql.push('JOIN overlay ON ST_Intersects(output.geom, overlay.geom)')
@@ -235,11 +269,74 @@ export async function createDuckDBProvider (app) {
       instance.closeSync()
     },
 
-    async forwardGeocode ({ coordinates }) {
+    async forwardGeocode ({ search, filter, limit, viewbox }) {
+      const matchingSources = filterSources(sources, filter)
+      debug(`Requesting ${matchingSources.length} matching sources`, _.map(matchingSources, 'name'))
 
+      const queries = []
+      for (const source of matchingSources) {
+        if (!source.dataset.geocode) {
+          debug(`Skipping source ${source.name} since no 'geocode' property is set`)
+          continue
+        }
+
+        queries.push((async () => {
+          const { sql, params } = getForwardGeocodeQuery(source.dataset, search)
+          const finalSql = sql.join('\n')
+          debug(finalSql)
+          const connection = await instance.connect()
+          const reader = await connection.runAndReadAll(finalSql, params)
+          return reader.getRowObjects().map(row => ({
+            source: source.name,
+            match: row[source.dataset.geocode],
+            matchProp: source.dataset.geocode,
+            feature: toFeature(row)
+          }))
+        })())
+      }
+
+      try {
+        const results = await Promise.allSettled(queries)
+        return results
+          .filter(r => r.status === 'fulfilled')
+          .flatMap(r => r.value)
+      } catch (error) {
+        debug(error)
+      }
+      return []
     },
 
-    async reverseGeocode () {
-    }
+    async reverseGeocode ({ lat, lon, filter, distance, limit }) {
+      const matchingSources = filterSources(sources, filter)
+      debug(`Requesting ${matchingSources.length} matching sources`, _.map(matchingSources, 'name'))
+
+      const queries = []
+      for (const source of matchingSources) {
+        queries.push((async () => {
+          const { sql, params } = getReverseGeocodeQuery(source.dataset, lat, lon)
+          const finalSql = sql.join('\n')
+          debug(finalSql)
+          const connection = await instance.connect()
+          const reader = await connection.runAndReadAll(finalSql, params)
+          return reader.getRowObjects().map(row => ({
+            source: source.name,
+            feature: toFeature(row)
+          }))
+        })())
+      }
+
+      try {
+        const results = await Promise.allSettled(queries)
+        return results
+          .filter(r => r.status === 'fulfilled')
+          .flatMap(r => r.value)
+      } catch (error) {
+        debug(error)
+      }
+      return []
+    },
+
+    async forward (options) { return this.forwardGeocode(options) },
+    async reverse (options) { return this.reverseGeocode(options) }
   }
 }

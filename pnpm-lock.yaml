@@ -433,6 +433,9 @@ importers:
       '@feathersjs/feathers':
         specifier: 'catalog:'
         version: 5.0.50
+      '@kalisio/core-service':
+        specifier: 'workspace:'
+        version: link:../core-service
       '@kalisio/feathers-distributed':
         specifier: 'catalog:'
         version: 3.1.0

@@ -44,6 +44,7 @@
     "@feathersjs/express": "catalog:",
     "@feathersjs/errors": "catalog:",
     "@feathersjs/feathers": "catalog:",
+    "@kalisio/core-service": "workspace:",
     "@kalisio/feathers-distributed": "catalog:",
     "@kalisio/kdk-core-api": "~0.2.0",
     "@kalisio/kdk-map-api": "~0.2.0",
