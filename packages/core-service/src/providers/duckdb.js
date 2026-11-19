@@ -130,6 +130,43 @@ function cql2sql (query, opts = {}) {
   return { sql: expr(query), params }
 }
 
+function getOverlayQuery (datasets, overlay) {
+  const sql = []
+  const params = []
+
+  sql.push('SELECT')
+  if (overlay.type === 'cql2-json') {
+    const candidates = filterSources(datasets, overlay.value.source)
+    const dataset = candidates[0]
+    const { sql: filterSql, params: filterParams } = cql2sql(overlay.value.query)
+    sql.push(`  overlay.${dataset.geometry} AS geom`)
+    sql.push(`FROM ${getDatasetRelation(dataset)} AS overlay`)
+    sql.push(`WHERE ${filterSql}`)
+    params.push(...filterParams)
+  } else if (overlay.type === 'geometry') {
+    sql.push('  ST_GeomFromGeoJSON($1::VARCHAR) AS geom')
+    params.push(JSON.stringify(overlay.value))
+  }
+
+  return { sql, params }
+}
+
+function getOutputQuery (datasets, output) {
+  const sql = []
+  const params = []
+
+  const candidates = filterSources(datasets, output.source)
+  const dataset = candidates[0]
+  sql.push('SELECT')
+  sql.push(`  ST_AsGeoJSON(output.${dataset.geometry}) AS geom`)
+  dataset.properties.forEach((prop) => {
+    sql.push(`, ${prop}`)
+  })
+  sql.push(`FROM ${getDatasetRelation(dataset)} AS output`)
+
+  return { sql, params }
+}
+
 export async function createDuckDBProvider (app) {
   const config = _.get(app.get('providers'), 'DuckDB')
   if (!config) return null
@@ -161,43 +198,34 @@ export async function createDuckDBProvider (app) {
     //   return datasets
     // },
 
-    async intersect ({ input, overlay, limit, enableStats }) {
-      let overlaySql = ''
-      const allParams = []
+    async intersect ({ output, overlay, limit, profile }) {
+      const sql = []
+      const params = []
 
-      if (overlay.feature) {
-        overlaySql += 'SELECT ST_GeomFromGeoJSON($1::VARCHAR) AS geom'
-        allParams.push(JSON.stringify(overlay.feature))
-      } else {
-        const overlayDatasets = filterSources(datasets, overlay.query.name)
-        const overlayDataset = overlayDatasets[0]
-        const { sql, params } = cql2sql(overlay.query.cql)
-        debug(`Requesting overlay: ${overlayDataset.name} with ${sql}, ${params}`)
-        overlaySql = `SELECT overlay.${overlayDataset.geometry} AS geom
-  FROM ${getDatasetRelation(overlayDataset)} AS overlay
-  WHERE ${sql}`
-        allParams.push(...params)
-      }
-      const inputDatasets = filterSources(datasets, input.name)
-      const inputDataset = inputDatasets[0]
-      let allSql = `${enableStats ? 'EXPLAIN ANALYSE' : ''} WITH overlay AS (${overlaySql}) `
-      debug(`Intersecting with input: ${inputDataset.name}`)
-      const inputProps = `ST_AsGeoJSON(input.${inputDataset.geometry}) AS geom` + (inputDataset.properties ? `,${inputDataset.properties.join(',')}` : '')
-      allSql += `SELECT ${inputProps}
-FROM ${getDatasetRelation(inputDataset)} AS input
-JOIN overlay ON ST_Intersects(input.geom, overlay.geom)`
+      const { sql: overlaySql, params: overlayParams } = getOverlayQuery(datasets, overlay)
+      const { sql: outputSql, params: outputParams } = getOutputQuery(datasets, output)
 
-      debug(allSql)
+      if (profile === 'explain') sql.push('EXPLAIN')
+      else if (profile === 'analyze') sql.push('EXPLAIN ANALYZE')
+      sql.push('WITH overlay AS (')
+      sql.push(...overlaySql.map((sql) => `  ${sql}`))
+      sql.push(')')
+      sql.push(...outputSql)
+      sql.push('JOIN overlay ON ST_Intersects(output.geom, overlay.geom)')
+      params.push(...overlayParams, ...outputParams)
+
+      const fullSql = sql.join('\n')
+      debug(fullSql)
 
       // One connection per query so that queries can run concurrently
       const connection = await instance.connect()
       try {
-        const reader = await connection.runAndReadAll(allSql, allParams)
-        if (enableStats) {
-          debug(reader.getRowObjects())
+        const reader = await connection.runAndReadAll(fullSql, params)
+        if (profile) {
+          debug(reader.getRowObjects().map(row => row.explain_value).join(''))
           return []
         }
-        return reader.getRowObjects().map(row => ({ feature: toFeature(row), source: inputDataset.name }))
+        return reader.getRowObjects().map(row => ({ feature: toFeature(row), source: output.source }))
       } finally {
         connection.closeSync()
       }

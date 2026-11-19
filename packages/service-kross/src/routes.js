@@ -58,16 +58,7 @@ export default async function (app) {
     // overlay must contain 'type' that can be 'cql2' or 'geojson'
     // overlay must contain 'value' that must match the type
 
-    const inputName = body.input?.name
-    const overlayName = body.overlay?.query?.name
-
-    const options = {
-      input: { name: inputName, project: body.input?.project },
-      overlay: { query: { name: overlayName, cql: body.overlay?.query?.cql }, feature: body.overlay?.feature },
-      enableStats: body.enableStats
-    }
-
-    debug(options)
+    const options = { ...body }
 
     // const geometry = toGeometry(body.geometry)
     // if (!geometry) throw new errors.BadRequest('Intersection expects a GeoJSON geometry or feature as geometry')
@@ -80,6 +71,8 @@ export default async function (app) {
     else options.limit = _.get(paginate, 'default.intersect', 1000)
     if (!(options.limit > 0)) throw new errors.BadRequest('Intersection expects a positive limit')
     if (_.has(paginate, 'max.intersect')) options.limit = Math.min(options.limit, _.get(paginate, 'max.intersect'))
+
+    debug(options)
 
     const providers = Providers.get(app).filter(provider => typeof provider.intersect === 'function')
     const results = await Promise.allSettled(providers.map(provider => provider.intersect(options)))
