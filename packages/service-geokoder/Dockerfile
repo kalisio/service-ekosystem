@@ -20,6 +20,7 @@ ENV NODE_ENV=production
 
 RUN pnpm install \
   --frozen-lockfile \
+  --filter @kalisio/core-service \
   --filter @kalisio/service-geokoder \
   --ignore-scripts \
   --prod
