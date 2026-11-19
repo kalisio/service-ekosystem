@@ -45,4 +45,4 @@ USER node
 WORKDIR /geokoder
 EXPOSE 8080
 
-CMD ["node", "src/main.js"]
+CMD ["node", "--conditions=development", "src/main.js"]
