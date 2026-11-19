@@ -30,6 +30,14 @@ RUN pnpm --filter @kalisio/service-geokoder rebuild sqlite3 @mapbox/vtquery
 FROM node:${NODE_VERSION}-${DEBIAN_VERSION}-slim
 LABEL maintainer="Kalisio <contact@kalisio.xyz>"
 
+# DuckDB provider needs ca certificates to access S3 datasets
+RUN DEBIAN_FRONTEND=noninteractive && \
+  apt-get update && \
+  apt-get --no-install-recommends --yes install \
+    ca-certificates && \
+  apt-get clean && \
+  rm -rf /var/lib/apt/lists/*
+
 COPY --from=builder --chown=node:node /app /app
 RUN ln -s /app/packages/service-geokoder /geokoder
 
