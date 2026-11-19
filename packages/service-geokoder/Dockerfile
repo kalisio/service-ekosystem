@@ -13,6 +13,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
   && rm -rf /var/lib/apt/lists/*
 
 COPY pnpm-workspace.yaml pnpm-lock.yaml package.json ./
+COPY packages/core-service ./packages/core-service
 COPY packages/service-geokoder ./packages/service-geokoder
 
 ENV NODE_ENV=production
